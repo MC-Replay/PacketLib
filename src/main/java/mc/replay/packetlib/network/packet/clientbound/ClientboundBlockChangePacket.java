@@ -1,4 +1,4 @@
-package mc.replay.packetlib.network.packet.clientbound.block;
+package mc.replay.packetlib.network.packet.clientbound;
 
 import mc.replay.packetlib.network.packet.ClientboundPacket;
 import mc.replay.packetlib.network.PacketBuffer;

@@ -20,20 +20,18 @@ public final class PacketLibListener extends ChannelDuplexHandler {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (msg instanceof Packet<?> mcPacket) {
-            ByteBuffer buffer = ByteBuffer.allocateDirect(2_097_152);
-
-            PacketDataSerializer dataSerializer = new PacketDataSerializer(Unpooled.wrappedBuffer(buffer));
-            dataSerializer.writerIndex(0);
-            dataSerializer.readerIndex(0);
-            mcPacket.b(dataSerializer);
-
-            PacketBuffer packetBuffer = new PacketBuffer(buffer);
             Integer packetId = EnumProtocol.a(0).a(EnumProtocolDirection.SERVERBOUND, mcPacket);
-            System.out.println(packetId);
             if (packetId != null && PacketLib.getRegistry().isServerboundRegistered(packetId)) {
-                ServerboundPacket serverboundPacket = PacketLib.getRegistry().getServerboundPacket(packetId, packetBuffer);
+                ByteBuffer buffer = ByteBuffer.allocateDirect(2_097_152);
 
-                System.out.println(serverboundPacket);
+                PacketDataSerializer dataSerializer = new PacketDataSerializer(Unpooled.wrappedBuffer(buffer));
+                dataSerializer.writerIndex(0);
+                dataSerializer.readerIndex(0);
+                mcPacket.b(dataSerializer);
+
+                PacketBuffer packetBuffer = new PacketBuffer(buffer);
+
+                ServerboundPacket serverboundPacket = PacketLib.getRegistry().getServerboundPacket(packetId, packetBuffer);
 
                 if (serverboundPacket != null) {
                     AsyncPacketReceivedEvent event = new AsyncPacketReceivedEvent(serverboundPacket);

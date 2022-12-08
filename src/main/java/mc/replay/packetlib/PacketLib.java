@@ -2,15 +2,11 @@ package mc.replay.packetlib;
 
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
-import mc.replay.packetlib.network.netty.PacketLibInjector;
-import mc.replay.packetlib.network.packet.ClientboundPacket;
 import mc.replay.packetlib.network.PacketBuffer;
 import mc.replay.packetlib.network.PacketRegistry;
-import mc.replay.packetlib.utils.ProtocolVersion;
-import net.minecraft.server.v1_16_R3.EnumProtocol;
-import net.minecraft.server.v1_16_R3.EnumProtocolDirection;
-import net.minecraft.server.v1_16_R3.PacketDataSerializer;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
+import mc.replay.packetlib.network.netty.PacketLibInjector;
+import mc.replay.packetlib.network.packet.ClientboundPacket;
+import mc.replay.packetlib.utils.Reflections;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,12 +30,12 @@ public final class PacketLib {
 
             packet.write(packetBuffer);
 
-            net.minecraft.server.v1_16_R3.Packet<?> mcPacket = EnumProtocol.a(0).a(EnumProtocolDirection.CLIENTBOUND, packetId);
-            mcPacket.a(new PacketDataSerializer(Unpooled.copiedBuffer(buffer)));
+            Object clientboundPacket = Reflections.getClientboundPacket(Unpooled.copiedBuffer(buffer), packetId);
+            if (clientboundPacket == null) return;
 
-            ((CraftPlayer) player).getHandle().playerConnection.sendPacket(mcPacket);
-        } catch (Exception exception) {
-            exception.printStackTrace();
+            Reflections.sendPacket(player, clientboundPacket);
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
         }
     }
 

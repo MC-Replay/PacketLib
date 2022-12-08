@@ -49,15 +49,21 @@ public enum ProtocolVersion {
         return this.number == version.getNumber();
     }
 
+    private static final String SERVER_VERSION_STRING;
     private static final ProtocolVersion SERVER_VERSION;
     private static final Map<Integer, ProtocolVersion> PROTOCOL_VERSIONS = new LinkedHashMap<>();
 
     static {
+        SERVER_VERSION_STRING = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
         SERVER_VERSION = getByVersionString(Bukkit.getServer().getVersion().split("\\(MC: ")[1].split("\\)")[0]);
 
         for (ProtocolVersion version : values()) {
             PROTOCOL_VERSIONS.put(version.number, version);
         }
+    }
+
+    public static @NotNull String getServerVersionString() {
+        return SERVER_VERSION_STRING;
     }
 
     public static @NotNull ProtocolVersion getServerVersion() {
