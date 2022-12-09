@@ -3,6 +3,8 @@ package mc.replay.packetlib.utils;
 import io.netty.buffer.ByteBuf;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -33,6 +35,8 @@ public final class Reflections {
 
     private static Method PACKET_FROM_ID_METHOD_754;
     private static Method PACKET_FROM_ID_METHOD_760;
+    private static Method ID_FROM_PACKET_METHOD;
+    private static Method SERIALIZE_PACKET_METHOD;
 
     private static Constructor<?> PACKET_DATA_SERIALIZER_CONSTRUCTOR;
 
@@ -81,6 +85,9 @@ public final class Reflections {
             } else {
                 PACKET_FROM_ID_METHOD_760 = PLAY_ENUM_PROTOCOL.getClass().getMethod("a", enumProtocolDirection, int.class, PACKET_DATA_SERIALIZER);
             }
+
+            ID_FROM_PACKET_METHOD = PLAY_ENUM_PROTOCOL.getClass().getMethod("a", enumProtocolDirection, PACKET);
+            SERIALIZE_PACKET_METHOD = PACKET.getMethod("b", PACKET_DATA_SERIALIZER);
         } catch (Exception exception) {
             exception.printStackTrace();
         }
@@ -96,7 +103,7 @@ public final class Reflections {
         }
     }
 
-    public static Object getClientboundPacket(ByteBuf buffer, int packetId) {
+    public static @Nullable Object getClientboundPacket(@NotNull ByteBuf buffer, int packetId) {
         try {
             Object dataSerializer = createPacketDataSerializer(buffer);
 
@@ -113,7 +120,26 @@ public final class Reflections {
         }
     }
 
-    private static Object createPacketDataSerializer(ByteBuf buffer) throws Exception {
+    public static @Nullable Integer getServerboundPacketId(@NotNull Object minecraftPacket) {
+        if (!PACKET.isAssignableFrom(minecraftPacket.getClass())) return null;
+
+        try {
+            return (Integer) ID_FROM_PACKET_METHOD.invoke(PLAY_ENUM_PROTOCOL, SERVERBOUND_PROTOCOL_DIRECTION, minecraftPacket);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            return null;
+        }
+    }
+
+    public static Object createPacketDataSerializer(ByteBuf buffer) throws Exception {
         return PACKET_DATA_SERIALIZER_CONSTRUCTOR.newInstance(buffer);
+    }
+
+    public static void serializePacket(Object minecraftPacket, Object packetDataSerializer) {
+        try {
+            SERIALIZE_PACKET_METHOD.invoke(minecraftPacket, packetDataSerializer);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
     }
 }
