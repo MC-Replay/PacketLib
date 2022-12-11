@@ -1,33 +1,28 @@
 package mc.replay.packetlib.network.packet.clientbound;
 
-import mc.replay.packetlib.network.packet.ClientboundPacket;
+import mc.replay.packetlib.data.entity.EntityAnimation;
 import mc.replay.packetlib.network.PacketBuffer;
+import mc.replay.packetlib.network.packet.ClientboundPacket;
 import mc.replay.packetlib.network.packet.identifier.ClientboundPacketIdentifier;
 import org.jetbrains.annotations.NotNull;
 
-import static mc.replay.packetlib.network.PacketBuffer.BYTE;
 import static mc.replay.packetlib.network.PacketBuffer.VAR_INT;
 
 public record ClientboundEntityAnimationPacket(int entityId,
-                                               @NotNull Animation animation) implements ClientboundPacket {
+                                               @NotNull EntityAnimation animation) implements ClientboundPacket {
+
+    public ClientboundEntityAnimationPacket(@NotNull PacketBuffer reader) {
+        this(reader.read(VAR_INT), reader.readEnum(EntityAnimation.class));
+    }
 
     @Override
     public void write(@NotNull PacketBuffer writer) {
         writer.write(VAR_INT, this.entityId);
-        writer.write(BYTE, (byte) this.animation.ordinal());
+        writer.writeEnum(EntityAnimation.class, this.animation);
     }
 
     @Override
     public @NotNull ClientboundPacketIdentifier identifier() {
         return ClientboundPacketIdentifier.CLIENTBOUND_ENTITY_ANIMATION;
-    }
-
-    public enum Animation {
-        SWING_MAIN_ARM,
-        TAKE_DAMAGE,
-        LEAVE_BED,
-        SWING_OFFHAND,
-        CRITICAL_EFFECT,
-        MAGIC_CRITICAL_EFFECT
     }
 }

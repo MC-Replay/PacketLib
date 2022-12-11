@@ -120,6 +120,17 @@ public final class Reflections {
         }
     }
 
+    public static @Nullable Integer getClientboundPacketId(@NotNull Object minecraftPacket) {
+        if (!PACKET.isAssignableFrom(minecraftPacket.getClass())) return null;
+
+        try {
+            return (Integer) ID_FROM_PACKET_METHOD.invoke(PLAY_ENUM_PROTOCOL, CLIENTBOUND_PROTOCOL_DIRECTION, minecraftPacket);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            return null;
+        }
+    }
+
     public static @Nullable Integer getServerboundPacketId(@NotNull Object minecraftPacket) {
         if (!PACKET.isAssignableFrom(minecraftPacket.getClass())) return null;
 
