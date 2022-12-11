@@ -1,11 +1,17 @@
 package mc.replay.packetlib.network;
 
+import com.github.steveice10.opennbt.NBTIO;
+import com.github.steveice10.opennbt.tag.builtin.Tag;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Pose;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnknownNullability;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
@@ -232,6 +238,40 @@ final class PacketBufferTypes {
                 buffer.nioBuffer().get(buffer.readIndex(), bytes);
                 buffer.readIndex(buffer.readIndex() + length);
                 return new String(bytes, StandardCharsets.UTF_8);
+            }
+    );
+
+    static final TypeImpl<Tag> NBT = new TypeImpl<>(Tag.class,
+            (buffer, value) -> {
+                try {
+                    value.write(new DataOutputStream(new OutputStream() {
+                        @Override
+                        public void write(int b) {
+                            buffer.write(BYTE, (byte) b);
+                        }
+                    }));
+                } catch (IOException exception) {
+                    throw new RuntimeException(exception);
+                }
+
+                return -1;
+            },
+            buffer -> {
+                try {
+                    return NBTIO.readTag(new InputStream() {
+                        @Override
+                        public int read() {
+                            return buffer.read(BYTE) & 0xFF;
+                        }
+
+                        @Override
+                        public int available() {
+                            return buffer.readableBytes();
+                        }
+                    });
+                } catch (IOException exception) {
+                    throw new RuntimeException(exception);
+                }
             }
     );
 
