@@ -1,7 +1,9 @@
 package mc.replay.packetlib.network;
 
 import com.github.steveice10.opennbt.NBTIO;
+import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.opennbt.tag.builtin.Tag;
+import mc.replay.packetlib.data.ItemStackWrapper;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Pose;
 import org.bukkit.util.Vector;
@@ -305,6 +307,34 @@ final class PacketBufferTypes {
                 final long mostSignificantBits = buffer.read(LONG);
                 final long leastSignificantBits = buffer.read(LONG);
                 return new UUID(mostSignificantBits, leastSignificantBits);
+            }
+    );
+
+    static final TypeImpl<ItemStackWrapper> ITEM = new TypeImpl<>(ItemStackWrapper.class,
+            (buffer, value) -> {
+                if (value.materialId() == 0) {
+                    buffer.write(BOOLEAN, false);
+                    return -1;
+                }
+
+                buffer.write(BOOLEAN, true);
+                buffer.write(VAR_INT, value.materialId());
+                buffer.write(BYTE, value.amount());
+                buffer.writeOptional(NBT, value.meta());
+                return -1;
+            },
+            buffer -> {
+                final boolean present = buffer.read(BOOLEAN);
+                if (!present) return new ItemStackWrapper(0, (byte) 0, null);
+
+                final int id = buffer.read(VAR_INT);
+                final byte amount = buffer.read(BYTE);
+                final Tag meta = buffer.read(NBT);
+                if (!(meta instanceof CompoundTag compound)) {
+                    return new ItemStackWrapper(id, amount, null);
+                }
+
+                return new ItemStackWrapper(id, amount, compound);
             }
     );
 

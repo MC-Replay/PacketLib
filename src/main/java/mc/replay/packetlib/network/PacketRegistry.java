@@ -1,8 +1,10 @@
 package mc.replay.packetlib.network;
 
+import mc.replay.packetlib.PacketLib;
 import mc.replay.packetlib.network.packet.ClientboundPacket;
 import mc.replay.packetlib.network.packet.ServerboundPacket;
 import mc.replay.packetlib.network.packet.clientbound.*;
+import mc.replay.packetlib.network.packet.clientbound.version.ClientboundAcknowledgePlayerDigging754_758Packet;
 import mc.replay.packetlib.network.packet.identifier.ClientboundPacketIdentifier;
 import mc.replay.packetlib.network.packet.identifier.PacketIdentifier;
 import mc.replay.packetlib.network.packet.identifier.ServerboundPacketIdentifier;
@@ -16,22 +18,38 @@ import java.util.function.Function;
 
 public final class PacketRegistry {
 
+    private final PacketLib packetLib;
+
     private final Map<ServerboundPacketIdentifier, PacketDefinition<ServerboundPacketIdentifier, ? extends ServerboundPacket>> serverboundPacketRegistry = new HashMap<>();
     private final Map<ClientboundPacketIdentifier, PacketDefinition<ClientboundPacketIdentifier, ? extends ClientboundPacket>> clientboundPacketRegistry = new HashMap<>();
 
-    public PacketRegistry() {
+    public PacketRegistry(PacketLib packetLib) {
+        this.packetLib = packetLib;
+
+        this.registerClientboundPacket(ClientboundPacketIdentifier.ACKNOWLEDGE_BLOCK_CHANGE, ClientboundAcknowledgeBlockChangePacket.class, ClientboundAcknowledgeBlockChangePacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.BLOCK_ACTION, ClientboundBlockActionPacket.class, ClientboundBlockActionPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.BLOCK_CHANGE, ClientboundBlockChangePacket.class, ClientboundBlockChangePacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.BLOCK_ENTITY_DATA, ClientboundBlockEntityDataPacket.class, ClientboundBlockEntityDataPacket::new);
+        this.registerClientboundPacket(ClientboundPacketIdentifier.CUSTOM_SOUND_EFFECT, ClientboundCustomSoundEffectPacket.class, ClientboundCustomSoundEffectPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.ENTITY_ANIMATION, ClientboundEntityAnimationPacket.class, ClientboundEntityAnimationPacket::new);
+        this.registerClientboundPacket(ClientboundPacketIdentifier.ENTITY_EQUIPMENT, ClientboundEntityEquipmentPacket.class, ClientboundEntityEquipmentPacket::new);
+        this.registerClientboundPacket(ClientboundPacketIdentifier.ENTITY_HEAD_ROTATION, ClientboundEntityHeadRotationPacket.class, ClientboundEntityHeadRotationPacket::new);
+        this.registerClientboundPacket(ClientboundPacketIdentifier.ENTITY_POSITION_AND_ROTATION, ClientboundEntityPositionAndRotationPacket.class, ClientboundEntityPositionAndRotationPacket::new);
+        this.registerClientboundPacket(ClientboundPacketIdentifier.ENTITY_SOUND_EFFECT, ClientboundEntitySoundEffectPacket.class, ClientboundEntitySoundEffectPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.ENTITY_TELEPORT, ClientboundEntityTeleportPacket.class, ClientboundEntityTeleportPacket::new);
+        this.registerClientboundPacket(ClientboundPacketIdentifier.MULTI_BLOCK_CHANGE, ClientboundMultiBlockChangePacket.class, ClientboundMultiBlockChangePacket::new);
+        this.registerClientboundPacket(ClientboundPacketIdentifier.PARTICLE, ClientboundParticlePacket.class, ClientboundParticlePacket::new);
+        this.registerClientboundPacket(ClientboundPacketIdentifier.SOUND_EFFECT, ClientboundSoundEffectPacket.class, ClientboundSoundEffectPacket::new);
+        this.registerClientboundPacket(ClientboundPacketIdentifier.STOP_SOUND, ClientboundStopSoundPacket.class, ClientboundStopSoundPacket::new);
+        this.registerClientboundPacket(ClientboundPacketIdentifier.WORLD_EVENT, ClientboundWorldEventPacket.class, ClientboundWorldEventPacket::new);
+
+        this.registerClientboundPacket(ClientboundPacketIdentifier.ACKNOWLEDGE_PLAYER_DIGGING_754_758, ClientboundAcknowledgePlayerDigging754_758Packet.class, ClientboundAcknowledgePlayerDigging754_758Packet::new);
 
         this.registerServerboundPacket(ServerboundPacketIdentifier.ANIMATION, ServerboundAnimationPacket.class, ServerboundAnimationPacket::new);
     }
 
     public boolean isClientboundRegistered(@Nullable ClientboundPacketIdentifier identifier) {
-        if (identifier == null) return false;
-        return this.clientboundPacketRegistry.containsKey(identifier);
+        return identifier != null && this.clientboundPacketRegistry.containsKey(identifier);
     }
 
     public boolean isClientboundRegistered(int packetId) {
@@ -39,8 +57,7 @@ public final class PacketRegistry {
     }
 
     public boolean isServerboundRegistered(@Nullable ServerboundPacketIdentifier identifier) {
-        if (identifier == null) return false;
-        return this.serverboundPacketRegistry.containsKey(identifier);
+        return identifier != null && this.serverboundPacketRegistry.containsKey(identifier);
     }
 
     public boolean isServerboundRegistered(int packetId) {

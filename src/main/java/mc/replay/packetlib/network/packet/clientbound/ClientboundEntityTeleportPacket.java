@@ -11,8 +11,15 @@ public record ClientboundEntityTeleportPacket(int entityId, double x, double y, 
                                               boolean onGround) implements ClientboundPacket {
 
     public ClientboundEntityTeleportPacket(@NotNull PacketBuffer reader) {
-        this(reader.read(VAR_INT), reader.read(DOUBLE), reader.read(DOUBLE), reader.read(DOUBLE),
-                reader.read(BYTE), reader.read(BYTE), reader.read(BOOLEAN));
+        this(
+                reader.read(VAR_INT),
+                reader.read(DOUBLE),
+                reader.read(DOUBLE),
+                reader.read(DOUBLE),
+                reader.read(BYTE) * 360f / 256f,
+                reader.read(BYTE) * 360f / 256f,
+                reader.read(BOOLEAN)
+        );
     }
 
     @Override

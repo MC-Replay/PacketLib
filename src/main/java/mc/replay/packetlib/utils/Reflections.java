@@ -1,6 +1,7 @@
 package mc.replay.packetlib.utils;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.Channel;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -25,9 +26,7 @@ public final class Reflections {
     private static Class<?> ENTITY_PLAYER;
     private static Class<?> PLAYER_CONNECTION;
     private static Class<?> PACKET_DATA_SERIALIZER;
-
-    // OBC
-    private static Class<?> CRAFT_PLAYER;
+    private static Class<?> NETWORK_MANAGER;
 
     private static MethodHandle GET_PLAYER_HANDLE_METHOD;
     private static MethodHandle GET_PLAYER_CONNECTION_METHOD;
@@ -56,8 +55,9 @@ public final class Reflections {
             ENTITY_PLAYER = ReflectionUtils.nmsClass("server.level", "EntityPlayer");
             PLAYER_CONNECTION = ReflectionUtils.nmsClass("server.network", "PlayerConnection");
             PACKET_DATA_SERIALIZER = ReflectionUtils.nmsClass("network", "PacketDataSerializer");
+            NETWORK_MANAGER = ReflectionUtils.nmsClass("network", "NetworkManager");
 
-            CRAFT_PLAYER = ReflectionUtils.obcClass("entity.CraftPlayer");
+            Class<?> CRAFT_PLAYER = ReflectionUtils.obcClass("entity.CraftPlayer");
 
             Field playerConnectionField = Arrays.stream(ENTITY_PLAYER.getFields())
                     .filter(field -> field.getType().isAssignableFrom(PLAYER_CONNECTION))
@@ -95,7 +95,7 @@ public final class Reflections {
 
     public static void sendPacket(Player player, Object packet) {
         try {
-            Object entityPlayer = GET_PLAYER_HANDLE_METHOD.invoke(player);
+            Object entityPlayer = getEntityPlayer(player);
             Object playerConnection = GET_PLAYER_CONNECTION_METHOD.invoke(entityPlayer);
             SEND_PACKET_METHOD.invoke(playerConnection, packet);
         } catch (Throwable throwable) {
@@ -152,5 +152,30 @@ public final class Reflections {
         } catch (Exception exception) {
             exception.printStackTrace();
         }
+    }
+
+    public static Channel getPacketChannel(@NotNull Player player) {
+        try {
+            Object entityPlayer = getEntityPlayer(player);
+            Object networkManager = ENTITY_PLAYER.getField("networkManager").get(entityPlayer);
+
+            Object channel;
+            if (VERSION.isLowerOrEqual(ProtocolVersion.MINECRAFT_1_17_1)) {
+                channel = NETWORK_MANAGER.getField("channel").get(networkManager);
+            } else if (VERSION.isEqual(ProtocolVersion.MINECRAFT_1_18_1)) {
+                channel = NETWORK_MANAGER.getField("k").get(networkManager);
+            } else {
+                channel = NETWORK_MANAGER.getField("m").get(networkManager);
+            }
+
+            return (Channel) channel;
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+            return null;
+        }
+    }
+
+    private static Object getEntityPlayer(@NotNull Player player) throws Throwable {
+        return GET_PLAYER_HANDLE_METHOD.invoke(player);
     }
 }

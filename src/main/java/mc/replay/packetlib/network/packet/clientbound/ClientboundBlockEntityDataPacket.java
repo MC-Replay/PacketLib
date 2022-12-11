@@ -14,7 +14,11 @@ public record ClientboundBlockEntityDataPacket(@NotNull Vector blockPosition, in
                                                @Nullable CompoundTag data) implements ClientboundPacket {
 
     public ClientboundBlockEntityDataPacket(@NotNull PacketBuffer reader) {
-        this(reader.read(BLOCK_POSITION), reader.read(VAR_INT), (CompoundTag) reader.read(NBT));
+        this(
+                reader.read(BLOCK_POSITION),
+                reader.read(VAR_INT),
+                (CompoundTag) reader.read(NBT)
+        );
     }
 
     @Override

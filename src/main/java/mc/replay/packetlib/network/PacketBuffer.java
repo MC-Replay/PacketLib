@@ -1,6 +1,7 @@
 package mc.replay.packetlib.network;
 
 import com.github.steveice10.opennbt.tag.builtin.Tag;
+import mc.replay.packetlib.data.ItemStackWrapper;
 import mc.replay.packetlib.utils.Either;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Pose;
@@ -35,7 +36,8 @@ public final class PacketBuffer {
     public static Type<Tag> NBT = PacketBufferTypes.NBT;
     public static Type<Vector> BLOCK_POSITION = PacketBufferTypes.BLOCK_POSITION;
 
-    public static Type<java.util.UUID> UUID = PacketBufferTypes.UUID;
+    public static Type<UUID> UUID = PacketBufferTypes.UUID;
+    public static Type<ItemStackWrapper> ITEM = PacketBufferTypes.ITEM;
     public static Type<byte[]> BYTE_ARRAY = PacketBufferTypes.BYTE_ARRAY;
     public static Type<long[]> LONG_ARRAY = PacketBufferTypes.LONG_ARRAY;
     public static Type<int[]> VAR_INT_ARRAY = PacketBufferTypes.VAR_INT_ARRAY;

@@ -3,30 +3,25 @@ package mc.replay.packetlib.network.packet.clientbound;
 import mc.replay.packetlib.network.PacketBuffer;
 import mc.replay.packetlib.network.packet.ClientboundPacket;
 import mc.replay.packetlib.network.packet.identifier.ClientboundPacketIdentifier;
-import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-import static mc.replay.packetlib.network.PacketBuffer.BLOCK_POSITION;
 import static mc.replay.packetlib.network.PacketBuffer.VAR_INT;
 
-public record ClientboundBlockChangePacket(@NotNull Vector blockPosition,
-                                           int blockStateId) implements ClientboundPacket {
+public record ClientboundAcknowledgeBlockChangePacket(int sequence) implements ClientboundPacket {
 
-    public ClientboundBlockChangePacket(@NotNull PacketBuffer reader) {
+    public ClientboundAcknowledgeBlockChangePacket(@NotNull PacketBuffer reader) {
         this(
-                reader.read(BLOCK_POSITION),
                 reader.read(VAR_INT)
         );
     }
 
     @Override
     public void write(@NotNull PacketBuffer writer) {
-        writer.write(BLOCK_POSITION, this.blockPosition);
-        writer.write(VAR_INT, this.blockStateId);
+        writer.write(VAR_INT, this.sequence);
     }
 
     @Override
     public @NotNull ClientboundPacketIdentifier identifier() {
-        return ClientboundPacketIdentifier.BLOCK_CHANGE;
+        return ClientboundPacketIdentifier.ACKNOWLEDGE_BLOCK_CHANGE;
     }
 }

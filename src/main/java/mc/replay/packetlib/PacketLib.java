@@ -1,8 +1,8 @@
 package mc.replay.packetlib;
 
 import io.netty.buffer.Unpooled;
-import io.netty.channel.Channel;
 import mc.replay.packetlib.network.PacketBuffer;
+import mc.replay.packetlib.network.PacketListener;
 import mc.replay.packetlib.network.PacketRegistry;
 import mc.replay.packetlib.network.netty.PacketLibInjector;
 import mc.replay.packetlib.network.packet.ClientboundPacket;
@@ -24,19 +24,21 @@ public final class PacketLib {
     }
 
     private final PacketRegistry packetRegistry;
+    private final PacketListener packetListener;
     private final PacketIdentifierLoader packetIdentifierLoader;
     private final PacketLibInjector injector;
 
     public PacketLib() {
         instance = this;
 
-        this.packetRegistry = new PacketRegistry();
+        this.packetRegistry = new PacketRegistry(this);
+        this.packetListener = new PacketListener();
         this.packetIdentifierLoader = new PacketIdentifierLoader();
         this.injector = new PacketLibInjector(this);
     }
 
-    public void inject(@NotNull Channel channel) {
-        this.injector.inject(channel);
+    public void inject(@NotNull Player player, boolean listenForClientbound) {
+        this.injector.inject(player, listenForClientbound);
     }
 
     public void sendPacket(@NotNull Player player, @NotNull ClientboundPacket packet) {
@@ -59,6 +61,10 @@ public final class PacketLib {
 
     public @NotNull PacketRegistry getPacketRegistry() {
         return this.packetRegistry;
+    }
+
+    public @NotNull PacketListener getPacketListener() {
+        return this.packetListener;
     }
 
     public @NotNull PacketIdentifierLoader getPacketIdentifierLoader() {
