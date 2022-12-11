@@ -6,6 +6,6 @@ import org.jetbrains.annotations.NotNull;
 public final class PacketLibInjector {
 
     public void inject(@NotNull Channel channel) {
-        channel.pipeline().addBefore("packet_handler", "packetlib_listener", new PacketLibListener());
+        channel.pipeline().addBefore("packet_handler", "packetlib_handler", new PacketLibHandler());
     }
 }
