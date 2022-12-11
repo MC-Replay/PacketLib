@@ -1,6 +1,6 @@
 package mc.replay.packetlib.events;
 
-import mc.replay.packetlib.network.packet.Packet;
+import mc.replay.packetlib.network.packet.ServerboundPacket;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -9,14 +9,14 @@ public final class AsyncPacketReceivedEvent extends Event {
 
     private static final HandlerList HANDLERS = new HandlerList();
 
-    private final Packet packet;
+    private final ServerboundPacket packet;
 
-    public AsyncPacketReceivedEvent(@NotNull Packet packet) {
+    public AsyncPacketReceivedEvent(@NotNull ServerboundPacket packet) {
         super(true);
         this.packet = packet;
     }
 
-    public @NotNull Packet getPacket() {
+    public @NotNull ServerboundPacket getPacket() {
         return this.packet;
     }
 
