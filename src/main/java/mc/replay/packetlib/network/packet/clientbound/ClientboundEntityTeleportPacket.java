@@ -28,6 +28,6 @@ public record ClientboundEntityTeleportPacket(int entityId, double x, double y, 
 
     @Override
     public @NotNull ClientboundPacketIdentifier identifier() {
-        return ClientboundPacketIdentifier.CLIENTBOUND_ENTITY_ROTATION;
+        return ClientboundPacketIdentifier.ENTITY_TELEPORT;
     }
 }

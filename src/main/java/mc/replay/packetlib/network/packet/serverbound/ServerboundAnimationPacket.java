@@ -16,6 +16,6 @@ public record ServerboundAnimationPacket(@NotNull PlayerHand hand) implements Se
 
     @Override
     public @NotNull ServerboundPacketIdentifier identifier() {
-        return ServerboundPacketIdentifier.SERVERBOUND_ANIMATION;
+        return ServerboundPacketIdentifier.ANIMATION;
     }
 }

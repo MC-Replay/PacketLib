@@ -1,13 +1,19 @@
 package mc.replay.packetlib.network.packet.identifier;
 
-import mc.replay.packetlib.utils.ProtocolVersion;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface PacketIdentifier {
 
-    int getIdentifier(@NotNull ProtocolVersion protocolVersion);
+    int getIdentifier();
 
-    default int getIdentifier() {
-        return this.getIdentifier(ProtocolVersion.getServerVersion());
+    static <I extends PacketIdentifier> @Nullable I getPacketIdentifier(@NotNull Class<I> clazz, int packetId) {
+        for (I enumConstant : clazz.getEnumConstants()) {
+            if (enumConstant.getIdentifier() == packetId) {
+                return enumConstant;
+            }
+        }
+
+        return null;
     }
 }

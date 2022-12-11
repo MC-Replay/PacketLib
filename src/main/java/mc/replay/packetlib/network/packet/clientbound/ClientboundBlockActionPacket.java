@@ -39,6 +39,6 @@ public record ClientboundBlockActionPacket(@NotNull Vector blockPosition, byte a
 
     @Override
     public @NotNull ClientboundPacketIdentifier identifier() {
-        return ClientboundPacketIdentifier.CLIENTBOUND_BLOCK_ACTION;
+        return ClientboundPacketIdentifier.BLOCK_ACTION;
     }
 }

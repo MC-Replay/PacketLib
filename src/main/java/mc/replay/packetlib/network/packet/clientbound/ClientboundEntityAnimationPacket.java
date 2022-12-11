@@ -23,6 +23,6 @@ public record ClientboundEntityAnimationPacket(int entityId,
 
     @Override
     public @NotNull ClientboundPacketIdentifier identifier() {
-        return ClientboundPacketIdentifier.CLIENTBOUND_ENTITY_ANIMATION;
+        return ClientboundPacketIdentifier.ENTITY_ANIMATION;
     }
 }

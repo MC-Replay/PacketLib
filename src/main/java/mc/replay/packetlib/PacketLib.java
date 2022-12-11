@@ -6,22 +6,40 @@ import mc.replay.packetlib.network.PacketBuffer;
 import mc.replay.packetlib.network.PacketRegistry;
 import mc.replay.packetlib.network.netty.PacketLibInjector;
 import mc.replay.packetlib.network.packet.ClientboundPacket;
+import mc.replay.packetlib.network.packet.identifier.PacketIdentifierLoader;
 import mc.replay.packetlib.utils.Reflections;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.ByteBuffer;
 
 public final class PacketLib {
 
-    private static final PacketRegistry REGISTRY = new PacketRegistry();
-    private static final PacketLibInjector INJECTOR = new PacketLibInjector();
+    private static PacketLib instance;
 
-    public static void inject(@NotNull Channel channel) {
-        INJECTOR.inject(channel);
+    @ApiStatus.Internal
+    public static PacketLib getInstance() {
+        return instance;
     }
 
-    public static void sendPacket(@NotNull Player player, @NotNull ClientboundPacket packet) {
+    private final PacketRegistry packetRegistry;
+    private final PacketIdentifierLoader packetIdentifierLoader;
+    private final PacketLibInjector injector;
+
+    public PacketLib() {
+        instance = this;
+
+        this.packetRegistry = new PacketRegistry();
+        this.packetIdentifierLoader = new PacketIdentifierLoader();
+        this.injector = new PacketLibInjector(this);
+    }
+
+    public void inject(@NotNull Channel channel) {
+        this.injector.inject(channel);
+    }
+
+    public void sendPacket(@NotNull Player player, @NotNull ClientboundPacket packet) {
         try {
             int packetId = packet.identifier().getIdentifier();
 
@@ -39,7 +57,15 @@ public final class PacketLib {
         }
     }
 
-    public static @NotNull PacketRegistry getRegistry() {
-        return REGISTRY;
+    public @NotNull PacketRegistry getPacketRegistry() {
+        return this.packetRegistry;
+    }
+
+    public @NotNull PacketIdentifierLoader getPacketIdentifierLoader() {
+        return this.packetIdentifierLoader;
+    }
+
+    public @NotNull PacketLibInjector getInjector() {
+        return this.injector;
     }
 }

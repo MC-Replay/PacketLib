@@ -1,43 +1,65 @@
 package mc.replay.packetlib.network.packet.identifier;
 
-import mc.replay.packetlib.utils.ProtocolVersion;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Function;
+import mc.replay.packetlib.PacketLib;
 
 public enum ServerboundPacketIdentifier implements PacketIdentifier {
 
-    SERVERBOUND_ANIMATION((version) -> switch (version) {
-        case MINECRAFT_1_16_5 -> 0x2C;
-        default -> throw new IllegalStateException("Unexpected value: " + version);
-    });
+    TELEPORT_CONFIRM,
+    QUERY_BLOCK_ENTITY_NBT,
+    CHANGE_DIFFICULTY,
+    CHAT_ACKNOWLEDGE,
+    COMMAND_CHAT,
+    CHAT_MESSAGE,
+    CHAT_PREVIEW,
+    STATUS,
+    SETTINGS,
+    TAB_COMPLETE,
+    CLICK_WINDOW_BUTTON,
+    CLICK_WINDOW,
+    CLOSE_WINDOW,
+    PLUGIN_MESSAGE,
+    EDIT_BOOK,
+    QUERY_ENTITY_NBT,
+    INTERACT_ENTITY,
+    GENERATE_STRUCTURE,
+    KEEP_ALIVE,
+    LOCK_DIFFICULTY,
+    PLAYER_POSITION,
+    PLAYER_POSITION_AND_ROTATION,
+    PLAYER_ROTATION,
+    PLAYER_ON_GROUND,
+    VEHICLE_MOVE,
+    STEER_BOAT,
+    PICK_ITEM,
+    CRAFT_RECIPE,
+    PLAYER_ABILITIES,
+    PLAYER_DIGGING,
+    ENTITY_ACTION,
+    STEER_VEHICLE,
+    PONG,
+    SET_RECIPE_BOOK_STATE,
+    SET_DISPLAYED_RECIPE,
+    NAME_ITEM,
+    RESOURCE_PACK_STATUS,
+    ADVANCEMENT_TAB,
+    SELECT_TRADE,
+    SET_BEACON_EFFECT,
+    HELD_ITEM_CHANGE,
+    UPDATE_COMMAND_BLOCK,
+    UPDATE_COMMAND_BLOCK_MINECART,
+    CREATIVE_INVENTORY_ACTION,
+    UPDATE_JIGSAW_BLOCK,
+    UPDATE_STRUCTURE_BLOCK,
+    UPDATE_SIGN,
+    ANIMATION,
+    SPECTATE,
+    PLAYER_BLOCK_PLACEMENT,
+    USE_ITEM,
 
-    private final Function<ProtocolVersion, Integer> identifierFunction;
-
-    ServerboundPacketIdentifier(Function<ProtocolVersion, Integer> identifierFunction) {
-        this.identifierFunction = identifierFunction;
-    }
+    WINDOW_CONFIRMATION_754;
 
     @Override
-    public int getIdentifier(@NotNull ProtocolVersion protocolVersion) {
-        return this.identifierFunction.apply(protocolVersion);
-    }
-
-    private static final Map<Integer, ServerboundPacketIdentifier> PACKET_IDENTIFIER_MAP = new HashMap<>();
-
-    static {
-        for (ServerboundPacketIdentifier packetIdentifier : values()) {
-            try {
-                PACKET_IDENTIFIER_MAP.put(packetIdentifier.getIdentifier(), packetIdentifier);
-            } catch (IllegalStateException ignored) {
-            }
-        }
-    }
-
-    public static @Nullable ServerboundPacketIdentifier getPacketIdentifier(int identifier) {
-        return PACKET_IDENTIFIER_MAP.get(identifier);
+    public int getIdentifier() {
+        return PacketLib.getInstance().getPacketIdentifierLoader().getServerboundIdentifiers().getOrDefault(this, -1);
     }
 }

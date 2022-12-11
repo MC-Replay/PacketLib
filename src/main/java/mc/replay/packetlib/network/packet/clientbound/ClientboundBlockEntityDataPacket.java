@@ -31,6 +31,6 @@ public record ClientboundBlockEntityDataPacket(@NotNull Vector blockPosition, in
 
     @Override
     public @NotNull ClientboundPacketIdentifier identifier() {
-        return ClientboundPacketIdentifier.CLIENTBOUND_BLOCK_ENTITY_DATA;
+        return ClientboundPacketIdentifier.BLOCK_ENTITY_DATA;
     }
 }

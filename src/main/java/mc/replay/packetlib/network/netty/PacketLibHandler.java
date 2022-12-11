@@ -18,10 +18,16 @@ import java.nio.ByteBuffer;
 
 public final class PacketLibHandler extends ChannelDuplexHandler {
 
+    private final PacketLib packetLib;
+
+    public PacketLibHandler(PacketLib packetLib) {
+        this.packetLib = packetLib;
+    }
+
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object packetObject) throws Exception {
         Integer packetId = Reflections.getServerboundPacketId(packetObject);
-        if (packetId != null && PacketLib.getRegistry().isServerboundRegistered(packetId)) {
+        if (packetId != null && this.packetLib.getPacketRegistry().isServerboundRegistered(packetId)) {
             ByteBuffer buffer = ByteBuffer.allocateDirect(2_097_152);
 
             Object packetDataSerializer = Reflections.createPacketDataSerializer(Unpooled.wrappedBuffer(buffer));
@@ -30,7 +36,7 @@ public final class PacketLibHandler extends ChannelDuplexHandler {
             Reflections.serializePacket(packetObject, packetDataSerializer);
 
             PacketBuffer packetBuffer = new PacketBuffer(buffer);
-            ServerboundPacket serverboundPacket = PacketLib.getRegistry().getServerboundPacket(packetId, packetBuffer);
+            ServerboundPacket serverboundPacket = this.packetLib.getPacketRegistry().getServerboundPacket(packetId, packetBuffer);
 
             if (serverboundPacket != null) {
                 AsyncPacketReceivedEvent event = new AsyncPacketReceivedEvent(serverboundPacket);
@@ -44,7 +50,7 @@ public final class PacketLibHandler extends ChannelDuplexHandler {
     @Override
     public void write(ChannelHandlerContext ctx, Object packetObject, ChannelPromise promise) throws Exception {
         Integer packetId = Reflections.getClientboundPacketId(packetObject);
-        if (packetId != null && PacketLib.getRegistry().isClientboundRegistered(packetId)) {
+        if (packetId != null && this.packetLib.getPacketRegistry().isClientboundRegistered(packetId)) {
             ByteBuffer buffer = ByteBuffer.allocateDirect(2_097_152);
 
             Object packetDataSerializer = Reflections.createPacketDataSerializer(Unpooled.wrappedBuffer(buffer));
@@ -53,7 +59,7 @@ public final class PacketLibHandler extends ChannelDuplexHandler {
             Reflections.serializePacket(packetObject, packetDataSerializer);
 
             PacketBuffer packetBuffer = new PacketBuffer(buffer);
-            ClientboundPacket clientboundPacket = PacketLib.getRegistry().getClientboundPacket(packetId, packetBuffer);
+            ClientboundPacket clientboundPacket = this.packetLib.getPacketRegistry().getClientboundPacket(packetId, packetBuffer);
 
             if (clientboundPacket != null) {
                 AsyncPacketSentEvent event = new AsyncPacketSentEvent(clientboundPacket);

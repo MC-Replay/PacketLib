@@ -29,6 +29,6 @@ public record ClientboundBlockChangePacket(@NotNull Vector blockPosition,
 
     @Override
     public @NotNull ClientboundPacketIdentifier identifier() {
-        return ClientboundPacketIdentifier.CLIENTBOUND_BLOCK_CHANGE;
+        return ClientboundPacketIdentifier.BLOCK_CHANGE;
     }
 }

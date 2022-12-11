@@ -2,11 +2,9 @@ package mc.replay.packetlib.network;
 
 import mc.replay.packetlib.network.packet.ClientboundPacket;
 import mc.replay.packetlib.network.packet.ServerboundPacket;
-import mc.replay.packetlib.network.packet.clientbound.ClientboundBlockActionPacket;
-import mc.replay.packetlib.network.packet.clientbound.ClientboundBlockChangePacket;
-import mc.replay.packetlib.network.packet.clientbound.ClientboundBlockEntityDataPacket;
-import mc.replay.packetlib.network.packet.clientbound.ClientboundEntityAnimationPacket;
+import mc.replay.packetlib.network.packet.clientbound.*;
 import mc.replay.packetlib.network.packet.identifier.ClientboundPacketIdentifier;
+import mc.replay.packetlib.network.packet.identifier.PacketIdentifier;
 import mc.replay.packetlib.network.packet.identifier.ServerboundPacketIdentifier;
 import mc.replay.packetlib.network.packet.serverbound.ServerboundAnimationPacket;
 import org.jetbrains.annotations.NotNull;
@@ -22,12 +20,13 @@ public final class PacketRegistry {
     private final Map<ClientboundPacketIdentifier, PacketDefinition<ClientboundPacketIdentifier, ? extends ClientboundPacket>> clientboundPacketRegistry = new HashMap<>();
 
     public PacketRegistry() {
-        this.registerClientboundPacket(ClientboundPacketIdentifier.CLIENTBOUND_BLOCK_ACTION, ClientboundBlockActionPacket.class, ClientboundBlockActionPacket::new);
-        this.registerClientboundPacket(ClientboundPacketIdentifier.CLIENTBOUND_BLOCK_CHANGE, ClientboundBlockChangePacket.class, ClientboundBlockChangePacket::new);
-        this.registerClientboundPacket(ClientboundPacketIdentifier.CLIENTBOUND_BLOCK_ENTITY_DATA, ClientboundBlockEntityDataPacket.class, ClientboundBlockEntityDataPacket::new);
-        this.registerClientboundPacket(ClientboundPacketIdentifier.CLIENTBOUND_ENTITY_ANIMATION, ClientboundEntityAnimationPacket.class, ClientboundEntityAnimationPacket::new);
+        this.registerClientboundPacket(ClientboundPacketIdentifier.BLOCK_ACTION, ClientboundBlockActionPacket.class, ClientboundBlockActionPacket::new);
+        this.registerClientboundPacket(ClientboundPacketIdentifier.BLOCK_CHANGE, ClientboundBlockChangePacket.class, ClientboundBlockChangePacket::new);
+        this.registerClientboundPacket(ClientboundPacketIdentifier.BLOCK_ENTITY_DATA, ClientboundBlockEntityDataPacket.class, ClientboundBlockEntityDataPacket::new);
+        this.registerClientboundPacket(ClientboundPacketIdentifier.ENTITY_ANIMATION, ClientboundEntityAnimationPacket.class, ClientboundEntityAnimationPacket::new);
+        this.registerClientboundPacket(ClientboundPacketIdentifier.ENTITY_TELEPORT, ClientboundEntityTeleportPacket.class, ClientboundEntityTeleportPacket::new);
 
-        this.registerServerboundPacket(ServerboundPacketIdentifier.SERVERBOUND_ANIMATION, ServerboundAnimationPacket.class, ServerboundAnimationPacket::new);
+        this.registerServerboundPacket(ServerboundPacketIdentifier.ANIMATION, ServerboundAnimationPacket.class, ServerboundAnimationPacket::new);
     }
 
     public boolean isClientboundRegistered(@Nullable ClientboundPacketIdentifier identifier) {
@@ -36,7 +35,7 @@ public final class PacketRegistry {
     }
 
     public boolean isClientboundRegistered(int packetId) {
-        return this.isClientboundRegistered(ClientboundPacketIdentifier.getPacketIdentifier(packetId));
+        return this.isClientboundRegistered(PacketIdentifier.getPacketIdentifier(ClientboundPacketIdentifier.class, packetId));
     }
 
     public boolean isServerboundRegistered(@Nullable ServerboundPacketIdentifier identifier) {
@@ -45,7 +44,7 @@ public final class PacketRegistry {
     }
 
     public boolean isServerboundRegistered(int packetId) {
-        return this.isServerboundRegistered(ServerboundPacketIdentifier.getPacketIdentifier(packetId));
+        return this.isServerboundRegistered(PacketIdentifier.getPacketIdentifier(ServerboundPacketIdentifier.class, packetId));
     }
 
     @SuppressWarnings("unchecked")
@@ -57,7 +56,7 @@ public final class PacketRegistry {
     }
 
     public <P extends ClientboundPacket> @Nullable P getClientboundPacket(int packetId, @NotNull PacketBuffer reader) {
-        ClientboundPacketIdentifier packetIdentifier = ClientboundPacketIdentifier.getPacketIdentifier(packetId);
+        ClientboundPacketIdentifier packetIdentifier = PacketIdentifier.getPacketIdentifier(ClientboundPacketIdentifier.class, packetId);
         if (packetIdentifier == null) return null;
 
         return this.getClientboundPacket(packetIdentifier, reader);
@@ -72,7 +71,7 @@ public final class PacketRegistry {
     }
 
     public <P extends ServerboundPacket> @Nullable P getServerboundPacket(int packetId, @NotNull PacketBuffer reader) {
-        ServerboundPacketIdentifier packetIdentifier = ServerboundPacketIdentifier.getPacketIdentifier(packetId);
+        ServerboundPacketIdentifier packetIdentifier = PacketIdentifier.getPacketIdentifier(ServerboundPacketIdentifier.class, packetId);
         if (packetIdentifier == null) return null;
 
         return this.getServerboundPacket(packetIdentifier, reader);
