@@ -1,8 +1,11 @@
 package mc.replay.packetlib.utils;
 
+import com.google.common.collect.ForwardingMultimap;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
+import mc.replay.packetlib.data.PlayerProfile;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,6 +17,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 @ApiStatus.Internal
 public final class Reflections {
@@ -42,6 +48,14 @@ public final class Reflections {
     private static Object SERVERBOUND_PROTOCOL_DIRECTION;
     private static Object CLIENTBOUND_PROTOCOL_DIRECTION;
     private static Object PLAY_ENUM_PROTOCOL;
+
+    private static Field GAME_PROFILE_SKULL_META_FIELD;
+    private static Field GAME_PROFILE_UUID_FIELD;
+    private static Field GAME_PROFILE_NAME_FIELD;
+    private static Field GAME_PROFILE_PROPERTIES_FIELD;
+    private static Field PROPERTY_NAME_FIELD;
+    private static Field PROPERTY_VALUE_FIELD;
+    private static Field PROPERTY_SIGNATURE_FIELD;
 
     private static ProtocolVersion VERSION;
 
@@ -88,6 +102,18 @@ public final class Reflections {
 
             ID_FROM_PACKET_METHOD = PLAY_ENUM_PROTOCOL.getClass().getMethod("a", enumProtocolDirection, PACKET);
             SERIALIZE_PACKET_METHOD = PACKET.getMethod("b", PACKET_DATA_SERIALIZER);
+
+            Class<?> CRAFT_META_SKULL = ReflectionUtils.obcClass("inventory.CraftMetaSkull");
+            Class<?> GAME_PROFILE = ReflectionUtils.getClass("com.mojang.authlib.GameProfile");
+            Class<?> PROPERTY = ReflectionUtils.getClass("com.mojang.authlib.properties.Property");
+
+            GAME_PROFILE_SKULL_META_FIELD = ReflectionUtils.getField(CRAFT_META_SKULL, "profile");
+            GAME_PROFILE_UUID_FIELD = ReflectionUtils.getField(GAME_PROFILE, "id");
+            GAME_PROFILE_NAME_FIELD = ReflectionUtils.getField(GAME_PROFILE, "name");
+            GAME_PROFILE_PROPERTIES_FIELD = ReflectionUtils.getField(GAME_PROFILE, "properties");
+            PROPERTY_NAME_FIELD = ReflectionUtils.getField(PROPERTY, "name");
+            PROPERTY_VALUE_FIELD = ReflectionUtils.getField(PROPERTY, "value");
+            PROPERTY_SIGNATURE_FIELD = ReflectionUtils.getField(PROPERTY, "signature");
         } catch (Exception exception) {
             exception.printStackTrace();
         }
@@ -173,6 +199,41 @@ public final class Reflections {
             throwable.printStackTrace();
             return null;
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static PlayerProfile getGameProfile(@NotNull Object gameProfile) {
+        try {
+            UUID uuid = (UUID) GAME_PROFILE_UUID_FIELD.get(gameProfile);
+            String name = (String) GAME_PROFILE_NAME_FIELD.get(gameProfile);
+            ForwardingMultimap<String, Object> properties = (ForwardingMultimap<String, Object>) GAME_PROFILE_PROPERTIES_FIELD.get(gameProfile);
+            Map<String, PlayerProfile.Property> propertyMap = new HashMap<>();
+
+            for (Map.Entry<String, Object> entry : properties.entries()) {
+                propertyMap.put(entry.getKey(), getPropertyFromPropertyObject(entry.getValue()));
+            }
+
+            return new PlayerProfile(uuid, name, propertyMap);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            return null;
+        }
+    }
+
+    public static PlayerProfile getGameProfile(@NotNull SkullMeta skullMeta) {
+        try {
+            return getGameProfile(GAME_PROFILE_SKULL_META_FIELD.get(skullMeta));
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            return null;
+        }
+    }
+
+    private static PlayerProfile.Property getPropertyFromPropertyObject(@NotNull Object propertyObject) throws IllegalAccessException {
+        String name = (String) PROPERTY_NAME_FIELD.get(propertyObject);
+        String value = (String) PROPERTY_VALUE_FIELD.get(propertyObject);
+        String signature = (String) PROPERTY_SIGNATURE_FIELD.get(propertyObject);
+        return new PlayerProfile.Property(name, value, signature);
     }
 
     private static Object getEntityPlayer(@NotNull Player player) throws Throwable {

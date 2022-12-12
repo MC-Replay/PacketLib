@@ -10,7 +10,6 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnknownNullability;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -246,12 +245,12 @@ final class PacketBufferTypes {
     static final TypeImpl<Tag> NBT = new TypeImpl<>(Tag.class,
             (buffer, value) -> {
                 try {
-                    value.write(new DataOutputStream(new OutputStream() {
+                    NBTIO.writeTag(new OutputStream() {
                         @Override
                         public void write(int b) {
                             buffer.write(BYTE, (byte) b);
                         }
-                    }));
+                    }, value);
                 } catch (IOException exception) {
                     throw new RuntimeException(exception);
                 }
@@ -320,18 +319,18 @@ final class PacketBufferTypes {
                 buffer.write(BOOLEAN, true);
                 buffer.write(VAR_INT, value.materialId());
                 buffer.write(BYTE, value.amount());
-                buffer.writeOptional(NBT, value.meta());
+                buffer.write(NBT, value.meta());
                 return -1;
             },
             buffer -> {
                 final boolean present = buffer.read(BOOLEAN);
-                if (!present) return new ItemStackWrapper(0, (byte) 0, null);
+                if (!present) return new ItemStackWrapper(0, (byte) 0, new CompoundTag(""));
 
                 final int id = buffer.read(VAR_INT);
                 final byte amount = buffer.read(BYTE);
                 final Tag meta = buffer.read(NBT);
                 if (!(meta instanceof CompoundTag compound)) {
-                    return new ItemStackWrapper(id, amount, null);
+                    return new ItemStackWrapper(id, amount, new CompoundTag(""));
                 }
 
                 return new ItemStackWrapper(id, amount, compound);

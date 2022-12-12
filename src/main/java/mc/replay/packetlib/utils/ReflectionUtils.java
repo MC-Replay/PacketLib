@@ -2,6 +2,7 @@ package mc.replay.packetlib.utils;
 
 import org.jetbrains.annotations.ApiStatus;
 
+import java.lang.reflect.Field;
 import java.util.Optional;
 
 @ApiStatus.Internal
@@ -58,5 +59,11 @@ public final class ReflectionUtils {
 
     public static Optional<Class<?>> obcOptionalClass(String className) {
         return getClassOptional(obcClassName(className));
+    }
+
+    public static Field getField(Class<?> clazz, String fieldName) throws NoSuchFieldException {
+        Field field = clazz.getDeclaredField(fieldName);
+        field.setAccessible(true);
+        return field;
     }
 }
