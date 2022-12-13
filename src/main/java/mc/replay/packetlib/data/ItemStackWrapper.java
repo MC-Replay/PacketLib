@@ -6,6 +6,7 @@ import com.github.steveice10.opennbt.tag.builtin.ShortTag;
 import com.github.steveice10.opennbt.tag.builtin.StringTag;
 import mc.replay.packetlib.utils.NBTUtils;
 import mc.replay.packetlib.utils.Reflections;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -15,6 +16,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 
 public record ItemStackWrapper(int materialId, byte amount, @Nullable CompoundTag meta) {
+
+    public static @NotNull ItemStackWrapper AIR = of(new ItemStack(Material.AIR));
 
     public static @NotNull ItemStackWrapper of(@NotNull ItemStack itemStack) {
         int materialId = itemStack.getType().ordinal();
