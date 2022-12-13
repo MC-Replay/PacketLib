@@ -1,7 +1,7 @@
 package mc.replay.packetlib.network;
 
 import com.github.steveice10.opennbt.tag.builtin.Tag;
-import mc.replay.packetlib.data.ItemStackWrapper;
+import mc.replay.packetlib.data.Item;
 import mc.replay.packetlib.utils.Either;
 import net.kyori.adventure.text.Component;
 import org.bukkit.block.BlockFace;
@@ -39,7 +39,7 @@ public final class PacketBuffer {
     public static Type<Component> COMPONENT = PacketBufferTypes.COMPONENT;
 
     public static Type<UUID> UUID = PacketBufferTypes.UUID;
-    public static Type<ItemStackWrapper> ITEM = PacketBufferTypes.ITEM;
+    public static Type<Item> ITEM = PacketBufferTypes.ITEM;
     public static Type<byte[]> BYTE_ARRAY = PacketBufferTypes.BYTE_ARRAY;
     public static Type<long[]> LONG_ARRAY = PacketBufferTypes.LONG_ARRAY;
     public static Type<int[]> VAR_INT_ARRAY = PacketBufferTypes.VAR_INT_ARRAY;
@@ -119,6 +119,19 @@ public final class PacketBuffer {
     @SafeVarargs
     public final <T> void writeCollection(@NotNull Type<T> type, @NotNull T @Nullable ... values) {
         this.writeCollection(type, values == null ? null : List.of(values));
+    }
+
+    public <T extends Writer> void writeCollection(@Nullable Collection<@NotNull T> values) {
+        if (values == null) {
+            this.write(BYTE, (byte) 0);
+            return;
+        }
+
+        this.write(VAR_INT, values.size());
+
+        for (T value : values) {
+            this.write(value);
+        }
     }
 
     public <T> void writeCollection(@Nullable Collection<@NotNull T> values, @NotNull BiConsumer<@NotNull PacketBuffer, @NotNull T> consumer) {

@@ -1,6 +1,6 @@
 package mc.replay.packetlib.network.packet.clientbound.play;
 
-import mc.replay.packetlib.data.ItemStackWrapper;
+import mc.replay.packetlib.data.Item;
 import mc.replay.packetlib.network.PacketBuffer;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacketIdentifier;
@@ -12,7 +12,7 @@ import java.util.Map;
 import static mc.replay.packetlib.network.PacketBuffer.*;
 
 public record ClientboundEntityEquipmentPacket(int entityId,
-                                               Map<Byte, ItemStackWrapper> equipment) implements ClientboundPacket {
+                                               Map<Byte, Item> equipment) implements ClientboundPacket {
 
     public ClientboundEntityEquipmentPacket(@NotNull PacketBuffer reader) {
         this(
@@ -26,7 +26,7 @@ public record ClientboundEntityEquipmentPacket(int entityId,
         writer.write(VAR_INT, this.entityId);
 
         int index = 0;
-        for (Map.Entry<Byte, ItemStackWrapper> entry : this.equipment.entrySet()) {
+        for (Map.Entry<Byte, Item> entry : this.equipment.entrySet()) {
             boolean last = index++ == this.equipment.size() - 1;
             byte slot = entry.getKey();
             if (!last) slot |= 0x80;
@@ -40,8 +40,8 @@ public record ClientboundEntityEquipmentPacket(int entityId,
         return ClientboundPacketIdentifier.ENTITY_EQUIPMENT;
     }
 
-    private static Map<Byte, ItemStackWrapper> readEquipment(@NotNull PacketBuffer reader) {
-        Map<Byte, ItemStackWrapper> equipment = new HashMap<>();
+    private static Map<Byte, Item> readEquipment(@NotNull PacketBuffer reader) {
+        Map<Byte, Item> equipment = new HashMap<>();
 
         byte slot;
         do {

@@ -2,7 +2,7 @@ package mc.replay.packetlib.data.entity;
 
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.opennbt.tag.builtin.Tag;
-import mc.replay.packetlib.data.ItemStackWrapper;
+import mc.replay.packetlib.data.Item;
 import mc.replay.packetlib.network.PacketBuffer;
 import net.kyori.adventure.text.Component;
 import org.bukkit.block.BlockFace;
@@ -45,7 +45,7 @@ public final class Metadata {
         return new Entry<>(TYPE_OPT_CHAT, value, OPT_CHAT);
     }
 
-    public static Entry<ItemStackWrapper> Slot(@NotNull ItemStackWrapper value) {
+    public static Entry<Item> Slot(@NotNull Item value) {
         return new Entry<>(TYPE_SLOT, value, ITEM);
     }
 
@@ -124,7 +124,7 @@ public final class Metadata {
         EMPTY_VALUES.put(TYPE_STRING, String(""));
         EMPTY_VALUES.put(TYPE_CHAT, Chat(Component.empty()));
         EMPTY_VALUES.put(TYPE_OPT_CHAT, OptChat(null));
-        EMPTY_VALUES.put(TYPE_SLOT, Slot(ItemStackWrapper.AIR));
+        EMPTY_VALUES.put(TYPE_SLOT, Slot(Item.AIR));
         EMPTY_VALUES.put(TYPE_BOOLEAN, Boolean(false));
         EMPTY_VALUES.put(TYPE_ROTATION, Rotation(new Vector(0, 0, 0)));
         EMPTY_VALUES.put(TYPE_POSITION, Position(new Vector(0, 0, 0)));

@@ -5,9 +5,9 @@ import mc.replay.packetlib.network.packet.identifier.PacketIdentifier;
 
 public enum ClientboundPacketIdentifier implements PacketIdentifier {
 
-    SPAWN_ENTITY,
-    SPAWN_EXPERIENCE_ORB,
-    SPAWN_PLAYER,
+    ENTITY_SPAWN,
+    EXPERIENCE_ORB_SPAWN,
+    PLAYER_SPAWN,
     ENTITY_ANIMATION,
     STATISTICS,
     ACKNOWLEDGE_BLOCK_CHANGE,
@@ -64,7 +64,7 @@ public enum ClientboundPacketIdentifier implements PacketIdentifier {
     FACE_PLAYER,
     PLAYER_POSITION_AND_LOOK,
     UNLOCK_RECIPES,
-    DESTROY_ENTITIES,
+    ENTITY_DESTROY,
     REMOVE_ENTITY_EFFECT,
     RESOURCE_PACK_SEND,
     RESPAWN,

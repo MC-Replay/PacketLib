@@ -3,7 +3,7 @@ package mc.replay.packetlib.network;
 import com.github.steveice10.opennbt.NBTIO;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.opennbt.tag.builtin.Tag;
-import mc.replay.packetlib.data.ItemStackWrapper;
+import mc.replay.packetlib.data.Item;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.block.BlockFace;
@@ -323,7 +323,7 @@ final class PacketBufferTypes {
             }
     );
 
-    static final TypeImpl<ItemStackWrapper> ITEM = new TypeImpl<>(ItemStackWrapper.class,
+    static final TypeImpl<Item> ITEM = new TypeImpl<>(Item.class,
             (buffer, value) -> {
                 if (value.materialId() == 0) {
                     buffer.write(BOOLEAN, false);
@@ -338,16 +338,16 @@ final class PacketBufferTypes {
             },
             buffer -> {
                 final boolean present = buffer.read(BOOLEAN);
-                if (!present) return new ItemStackWrapper(0, (byte) 0, new CompoundTag(""));
+                if (!present) return new Item(0, (byte) 0, new CompoundTag(""));
 
                 final int id = buffer.read(VAR_INT);
                 final byte amount = buffer.read(BYTE);
                 final Tag meta = buffer.read(NBT);
                 if (!(meta instanceof CompoundTag compound)) {
-                    return new ItemStackWrapper(id, amount, new CompoundTag(""));
+                    return new Item(id, amount, new CompoundTag(""));
                 }
 
-                return new ItemStackWrapper(id, amount, compound);
+                return new Item(id, amount, compound);
             }
     );
 
