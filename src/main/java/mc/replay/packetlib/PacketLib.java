@@ -5,7 +5,7 @@ import mc.replay.packetlib.network.PacketBuffer;
 import mc.replay.packetlib.network.PacketListener;
 import mc.replay.packetlib.network.PacketRegistry;
 import mc.replay.packetlib.network.netty.PacketLibInjector;
-import mc.replay.packetlib.network.packet.ClientboundPacket;
+import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
 import mc.replay.packetlib.network.packet.identifier.PacketIdentifierLoader;
 import mc.replay.packetlib.utils.Reflections;
 import org.bukkit.entity.Player;

@@ -1,14 +1,14 @@
 package mc.replay.packetlib.network;
 
 import mc.replay.packetlib.PacketLib;
-import mc.replay.packetlib.network.packet.ClientboundPacket;
-import mc.replay.packetlib.network.packet.ServerboundPacket;
-import mc.replay.packetlib.network.packet.clientbound.*;
-import mc.replay.packetlib.network.packet.clientbound.version.ClientboundAcknowledgePlayerDigging754_758Packet;
-import mc.replay.packetlib.network.packet.identifier.ClientboundPacketIdentifier;
+import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
+import mc.replay.packetlib.network.packet.clientbound.ClientboundPacketIdentifier;
+import mc.replay.packetlib.network.packet.clientbound.play.*;
+import mc.replay.packetlib.network.packet.clientbound.play.version.ClientboundAcknowledgePlayerDigging754_758Packet;
 import mc.replay.packetlib.network.packet.identifier.PacketIdentifier;
-import mc.replay.packetlib.network.packet.identifier.ServerboundPacketIdentifier;
-import mc.replay.packetlib.network.packet.serverbound.ServerboundAnimationPacket;
+import mc.replay.packetlib.network.packet.serverbound.ServerboundPacket;
+import mc.replay.packetlib.network.packet.serverbound.ServerboundPacketIdentifier;
+import mc.replay.packetlib.network.packet.serverbound.play.ServerboundAnimationPacket;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,6 +34,7 @@ public final class PacketRegistry {
         this.registerClientboundPacket(ClientboundPacketIdentifier.ENTITY_ANIMATION, ClientboundEntityAnimationPacket.class, ClientboundEntityAnimationPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.ENTITY_EQUIPMENT, ClientboundEntityEquipmentPacket.class, ClientboundEntityEquipmentPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.ENTITY_HEAD_ROTATION, ClientboundEntityHeadRotationPacket.class, ClientboundEntityHeadRotationPacket::new);
+        this.registerClientboundPacket(ClientboundPacketIdentifier.ENTITY_METADATA, ClientboundEntityMetadataPacket.class, ClientboundEntityMetadataPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.ENTITY_POSITION_AND_ROTATION, ClientboundEntityPositionAndRotationPacket.class, ClientboundEntityPositionAndRotationPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.ENTITY_SOUND_EFFECT, ClientboundEntitySoundEffectPacket.class, ClientboundEntitySoundEffectPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.ENTITY_TELEPORT, ClientboundEntityTeleportPacket.class, ClientboundEntityTeleportPacket::new);

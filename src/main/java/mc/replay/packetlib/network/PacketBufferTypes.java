@@ -4,6 +4,8 @@ import com.github.steveice10.opennbt.NBTIO;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.opennbt.tag.builtin.Tag;
 import mc.replay.packetlib.data.ItemStackWrapper;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Pose;
 import org.bukkit.util.Vector;
@@ -296,6 +298,18 @@ final class PacketBufferTypes {
             }
     );
 
+    static final TypeImpl<Component> COMPONENT = new TypeImpl<>(Component.class,
+            (buffer, value) -> {
+                final String json = GsonComponentSerializer.gson().serialize(value);
+                buffer.write(STRING, json);
+                return -1;
+            },
+            buffer -> {
+                final String json = buffer.read(STRING);
+                return GsonComponentSerializer.gson().deserialize(json);
+            }
+    );
+
     static final TypeImpl<UUID> UUID = new TypeImpl<>(UUID.class,
             (buffer, value) -> {
                 buffer.write(LONG, value.getMostSignificantBits());
@@ -407,6 +421,23 @@ final class PacketBufferTypes {
     );
 
 
+    static final TypeImpl<Component> OPT_CHAT = new TypeImpl<>(Component.class,
+            (buffer, value) -> {
+                if (value == null) {
+                    buffer.write(BOOLEAN, false);
+                    return -1;
+                }
+                buffer.write(BOOLEAN, true);
+                buffer.write(COMPONENT, value);
+                return -1;
+            },
+            buffer -> {
+                final boolean present = buffer.read(BOOLEAN);
+                if (!present) return null;
+                return buffer.read(COMPONENT);
+            }
+    );
+
     static final TypeImpl<Vector> ROTATION = new TypeImpl<>(Vector.class,
             (buffer, value) -> {
                 buffer.write(FLOAT, (float) value.getX());
@@ -479,6 +510,22 @@ final class PacketBufferTypes {
             buffer -> {
                 final int value = buffer.read(VAR_INT);
                 return value == 0 ? null : value;
+            }
+    );
+
+    static final TypeImpl<int[]> VILLAGER_DATA = new TypeImpl<>(int[].class,
+            (buffer, value) -> {
+                buffer.write(VAR_INT, value[0]);
+                buffer.write(VAR_INT, value[1]);
+                buffer.write(VAR_INT, value[2]);
+                return -1;
+            },
+            buffer -> {
+                final int[] value = new int[3];
+                value[0] = buffer.read(VAR_INT);
+                value[1] = buffer.read(VAR_INT);
+                value[2] = buffer.read(VAR_INT);
+                return value;
             }
     );
 

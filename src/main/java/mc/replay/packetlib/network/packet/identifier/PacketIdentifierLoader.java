@@ -1,5 +1,7 @@
 package mc.replay.packetlib.network.packet.identifier;
 
+import mc.replay.packetlib.network.packet.clientbound.ClientboundPacketIdentifier;
+import mc.replay.packetlib.network.packet.serverbound.ServerboundPacketIdentifier;
 import mc.replay.packetlib.utils.ProtocolVersion;
 import org.jetbrains.annotations.NotNull;
 import org.json.simple.JSONObject;

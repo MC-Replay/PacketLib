@@ -4,8 +4,8 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import mc.replay.packetlib.PacketLib;
 import mc.replay.packetlib.network.PacketBuffer;
-import mc.replay.packetlib.network.packet.ClientboundPacket;
-import mc.replay.packetlib.network.packet.ServerboundPacket;
+import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
+import mc.replay.packetlib.network.packet.serverbound.ServerboundPacket;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

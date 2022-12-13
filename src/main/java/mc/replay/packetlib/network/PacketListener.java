@@ -1,7 +1,7 @@
 package mc.replay.packetlib.network;
 
-import mc.replay.packetlib.network.packet.ClientboundPacket;
-import mc.replay.packetlib.network.packet.ServerboundPacket;
+import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
+import mc.replay.packetlib.network.packet.serverbound.ServerboundPacket;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 

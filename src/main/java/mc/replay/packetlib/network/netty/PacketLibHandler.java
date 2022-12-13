@@ -4,8 +4,8 @@ import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import mc.replay.packetlib.PacketLib;
-import mc.replay.packetlib.network.packet.ClientboundPacket;
-import mc.replay.packetlib.network.packet.ServerboundPacket;
+import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
+import mc.replay.packetlib.network.packet.serverbound.ServerboundPacket;
 import mc.replay.packetlib.utils.PacketUtils;
 import org.bukkit.entity.Player;
 

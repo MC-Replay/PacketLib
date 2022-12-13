@@ -1,8 +1,8 @@
-package mc.replay.packetlib.network.packet.clientbound;
+package mc.replay.packetlib.network.packet.clientbound.play;
 
 import mc.replay.packetlib.network.PacketBuffer;
-import mc.replay.packetlib.network.packet.ClientboundPacket;
-import mc.replay.packetlib.network.packet.identifier.ClientboundPacketIdentifier;
+import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
+import mc.replay.packetlib.network.packet.clientbound.ClientboundPacketIdentifier;
 import org.jetbrains.annotations.NotNull;
 
 import static mc.replay.packetlib.network.PacketBuffer.*;

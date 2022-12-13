@@ -1,8 +1,8 @@
-package mc.replay.packetlib.network.packet.serverbound;
+package mc.replay.packetlib.network.packet.serverbound.play;
 
 import mc.replay.packetlib.network.PacketBuffer;
-import mc.replay.packetlib.network.packet.ServerboundPacket;
-import mc.replay.packetlib.network.packet.identifier.ServerboundPacketIdentifier;
+import mc.replay.packetlib.network.packet.serverbound.ServerboundPacket;
+import mc.replay.packetlib.network.packet.serverbound.ServerboundPacketIdentifier;
 import org.jetbrains.annotations.NotNull;
 
 import static mc.replay.packetlib.network.PacketBuffer.VAR_INT;

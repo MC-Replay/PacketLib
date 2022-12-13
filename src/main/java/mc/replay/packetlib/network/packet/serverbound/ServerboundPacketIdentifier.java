@@ -1,6 +1,7 @@
-package mc.replay.packetlib.network.packet.identifier;
+package mc.replay.packetlib.network.packet.serverbound;
 
 import mc.replay.packetlib.PacketLib;
+import mc.replay.packetlib.network.packet.identifier.PacketIdentifier;
 
 public enum ServerboundPacketIdentifier implements PacketIdentifier {
 

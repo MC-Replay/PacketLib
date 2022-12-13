@@ -3,6 +3,7 @@ package mc.replay.packetlib.network;
 import com.github.steveice10.opennbt.tag.builtin.Tag;
 import mc.replay.packetlib.data.ItemStackWrapper;
 import mc.replay.packetlib.utils.Either;
+import net.kyori.adventure.text.Component;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Pose;
 import org.bukkit.util.Vector;
@@ -35,6 +36,7 @@ public final class PacketBuffer {
     public static Type<String> STRING = PacketBufferTypes.STRING;
     public static Type<Tag> NBT = PacketBufferTypes.NBT;
     public static Type<Vector> BLOCK_POSITION = PacketBufferTypes.BLOCK_POSITION;
+    public static Type<Component> COMPONENT = PacketBufferTypes.COMPONENT;
 
     public static Type<UUID> UUID = PacketBufferTypes.UUID;
     public static Type<ItemStackWrapper> ITEM = PacketBufferTypes.ITEM;
@@ -43,10 +45,13 @@ public final class PacketBuffer {
     public static Type<int[]> VAR_INT_ARRAY = PacketBufferTypes.VAR_INT_ARRAY;
     public static Type<long[]> VAR_LONG_ARRAY = PacketBufferTypes.VAR_LONG_ARRAY;
 
+    public static Type<Component> OPT_CHAT = PacketBufferTypes.OPT_CHAT;
     public static Type<Vector> ROTATION = PacketBufferTypes.ROTATION;
     public static Type<Vector> OPT_BLOCK_POSITION = PacketBufferTypes.OPT_BLOCK_POSITION;
     public static Type<BlockFace> BLOCK_FACE = PacketBufferTypes.BLOCK_FACE;
     public static Type<UUID> OPT_UUID = PacketBufferTypes.OPT_UUID;
+    public static Type<Integer> OPT_BLOCK_ID = PacketBufferTypes.OPT_BLOCK_ID;
+    public static Type<int[]> VILLAGER_DATA = PacketBufferTypes.VILLAGER_DATA;
     public static Type<Integer> OPT_VAR_INT = PacketBufferTypes.OPT_VAR_INT;
     public static Type<Pose> POSE = PacketBufferTypes.POSE;
 
@@ -68,6 +73,10 @@ public final class PacketBuffer {
         }
     }
 
+    public <T> void write(@NotNull Writer writer) {
+        writer.write(this);
+    }
+
     public <T> T read(@NotNull Type<T> type) {
         return type.reader().read(this);
     }
@@ -76,6 +85,13 @@ public final class PacketBuffer {
         this.write(BOOLEAN, value != null);
         if (value != null) {
             this.write(type, value);
+        }
+    }
+
+    public <T> void writeOptional(@Nullable Writer writer) {
+        this.write(BOOLEAN, writer != null);
+        if (writer != null) {
+            writer.write(this);
         }
     }
 
@@ -232,5 +248,11 @@ public final class PacketBuffer {
         @NotNull PacketBufferTypes.TypeWriter<T> writer();
 
         @NotNull PacketBufferTypes.TypeReader<T> reader();
+    }
+
+    @FunctionalInterface
+    public interface Writer {
+
+        void write(@NotNull PacketBuffer writer);
     }
 }
