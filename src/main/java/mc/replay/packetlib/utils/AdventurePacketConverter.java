@@ -32,4 +32,14 @@ public class AdventurePacketConverter {
     public static int getNamedTextColorValue(@NotNull NamedTextColor color) {
         return NAMED_TEXT_COLOR_ID_MAP.get(color);
     }
+
+    public static @NotNull NamedTextColor getNamedTextColorFromId(int id) {
+        for (Map.Entry<NamedTextColor, Integer> entry : NAMED_TEXT_COLOR_ID_MAP.entrySet()) {
+            if (entry.getValue() == id) {
+                return entry.getKey();
+            }
+        }
+
+        return NamedTextColor.BLACK;
+    }
 }
