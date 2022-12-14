@@ -1,6 +1,6 @@
 package mc.replay.packetlib.data.entity.player;
 
-import mc.replay.packetlib.data.PlayerProfile;
+import mc.replay.packetlib.data.PlayerProfileProperty;
 import mc.replay.packetlib.network.PacketBuffer;
 import net.kyori.adventure.text.Component;
 import org.bukkit.GameMode;
@@ -16,7 +16,7 @@ public interface PlayerInfoEntry extends PacketBuffer.Writer {
 
     @NotNull UUID uuid();
 
-    record AddPlayer(@NotNull UUID uuid, String name, List<PlayerProfile.Property> properties, GameMode gameMode,
+    record AddPlayer(@NotNull UUID uuid, String name, List<PlayerProfileProperty> properties, GameMode gameMode,
                      int ping, @Nullable Component displayName) implements PlayerInfoEntry {
 
         public AddPlayer {
@@ -27,7 +27,7 @@ public interface PlayerInfoEntry extends PacketBuffer.Writer {
             this(
                     uuid,
                     reader.read(STRING),
-                    reader.readCollection(PlayerProfile.Property::new),
+                    reader.readCollection(PlayerProfileProperty::new),
                     reader.readEnum(GameMode.class),
                     reader.read(VAR_INT),
                     reader.readOptional(COMPONENT)
