@@ -5,6 +5,7 @@ import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacketIdentifier;
 import mc.replay.packetlib.network.packet.clientbound.play.*;
 import mc.replay.packetlib.network.packet.clientbound.play.version.ClientboundAcknowledgePlayerDigging754_758Packet;
+import mc.replay.packetlib.network.packet.clientbound.play.version.ClientboundLivingEntitySpawn754_758Packet;
 import mc.replay.packetlib.network.packet.identifier.PacketIdentifier;
 import mc.replay.packetlib.network.packet.serverbound.ServerboundPacket;
 import mc.replay.packetlib.network.packet.serverbound.ServerboundPacketIdentifier;
@@ -51,6 +52,7 @@ public final class PacketRegistry {
         this.registerClientboundPacket(ClientboundPacketIdentifier.WORLD_EVENT, ClientboundWorldEventPacket.class, ClientboundWorldEventPacket::new);
 
         this.registerClientboundPacket(ClientboundPacketIdentifier.ACKNOWLEDGE_PLAYER_DIGGING_754_758, ClientboundAcknowledgePlayerDigging754_758Packet.class, ClientboundAcknowledgePlayerDigging754_758Packet::new);
+        this.registerClientboundPacket(ClientboundPacketIdentifier.SPAWN_LIVING_ENTITY_754_758, ClientboundLivingEntitySpawn754_758Packet.class, ClientboundLivingEntitySpawn754_758Packet::new);
 
         this.registerServerboundPacket(ServerboundPacketIdentifier.ANIMATION, ServerboundAnimationPacket.class, ServerboundAnimationPacket::new);
     }

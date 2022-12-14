@@ -1,4 +1,4 @@
-package mc.replay.packetlib.network.packet.clientbound.play;
+package mc.replay.packetlib.network.packet.clientbound.play.version;
 
 import mc.replay.packetlib.data.Pos;
 import mc.replay.packetlib.network.PacketBuffer;
@@ -10,11 +10,11 @@ import java.util.UUID;
 
 import static mc.replay.packetlib.network.PacketBuffer.*;
 
-public record ClientboundEntitySpawnPacket(int entityId, @NotNull UUID uuid, int type, @NotNull Pos position,
-                                           float headRotation, int data, short velocityX, short velocityY,
-                                           short velocityZ) implements ClientboundPacket {
+public record ClientboundLivingEntitySpawn754_758Packet(int entityId, @NotNull UUID uuid, int type, @NotNull Pos position,
+                                                        float headRotation, short velocityX, short velocityY,
+                                                        short velocityZ) implements ClientboundPacket {
 
-    public ClientboundEntitySpawnPacket(@NotNull PacketBuffer reader) {
+    public ClientboundLivingEntitySpawn754_758Packet(@NotNull PacketBuffer reader) {
         this(
                 reader.read(VAR_INT),
                 reader.read(UUID),
@@ -27,7 +27,6 @@ public record ClientboundEntitySpawnPacket(int entityId, @NotNull UUID uuid, int
                         reader.read(BYTE) * 360f / 256f
                 ),
                 reader.read(BYTE) * 360f / 256f,
-                reader.read(VAR_INT),
                 reader.read(SHORT),
                 reader.read(SHORT),
                 reader.read(SHORT)
@@ -48,8 +47,6 @@ public record ClientboundEntitySpawnPacket(int entityId, @NotNull UUID uuid, int
         writer.write(BYTE, (byte) (this.position.yaw() * 256 / 360));
         writer.write(BYTE, (byte) (this.headRotation * 256 / 360));
 
-        writer.write(VAR_INT, this.data);
-
         writer.write(SHORT, this.velocityX);
         writer.write(SHORT, this.velocityY);
         writer.write(SHORT, this.velocityZ);
@@ -57,6 +54,6 @@ public record ClientboundEntitySpawnPacket(int entityId, @NotNull UUID uuid, int
 
     @Override
     public @NotNull ClientboundPacketIdentifier identifier() {
-        return ClientboundPacketIdentifier.ENTITY_SPAWN;
+        return ClientboundPacketIdentifier.SPAWN_LIVING_ENTITY_754_758;
     }
 }
