@@ -1,6 +1,5 @@
 package mc.replay.packetlib.data.entity;
 
-import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.opennbt.tag.builtin.Tag;
 import mc.replay.packetlib.data.Item;
 import mc.replay.packetlib.network.PacketBuffer;
@@ -115,27 +114,32 @@ public final class Metadata {
     public static final byte TYPE_OPT_VAR_INT = 17;
     public static final byte TYPE_POSE = 18;
 
-    private static final Map<Byte, Entry<?>> EMPTY_VALUES = new HashMap<>();
+    private static final Map<Byte, PacketBuffer.Type<?>> SERIALIZERS = new HashMap<>();
 
     static {
-        EMPTY_VALUES.put(TYPE_BYTE, Byte((byte) 0));
-        EMPTY_VALUES.put(TYPE_VAR_INT, VarInt(0));
-        EMPTY_VALUES.put(TYPE_FLOAT, Float(0f));
-        EMPTY_VALUES.put(TYPE_STRING, String(""));
-        EMPTY_VALUES.put(TYPE_CHAT, Chat(Component.empty()));
-        EMPTY_VALUES.put(TYPE_OPT_CHAT, OptChat(null));
-        EMPTY_VALUES.put(TYPE_SLOT, Slot(Item.AIR));
-        EMPTY_VALUES.put(TYPE_BOOLEAN, Boolean(false));
-        EMPTY_VALUES.put(TYPE_ROTATION, Rotation(new Vector(0, 0, 0)));
-        EMPTY_VALUES.put(TYPE_POSITION, Position(new Vector(0, 0, 0)));
-        EMPTY_VALUES.put(TYPE_OPT_POSITION, OptPosition(null));
-        EMPTY_VALUES.put(TYPE_DIRECTION, BlockFace(BlockFace.DOWN));
-        EMPTY_VALUES.put(TYPE_OPT_UUID, OptUUID(null));
-        EMPTY_VALUES.put(TYPE_OPT_BLOCK_ID, OptBlockID(null));
-        EMPTY_VALUES.put(TYPE_NBT, NBT(new CompoundTag("")));
-        EMPTY_VALUES.put(TYPE_VILLAGER_DATA, VillagerData(0, 0, 0));
-        EMPTY_VALUES.put(TYPE_OPT_VAR_INT, OptVarInt(null));
-        EMPTY_VALUES.put(TYPE_POSE, Pose(Pose.STANDING));
+        SERIALIZERS.put(TYPE_BYTE, BYTE);
+        SERIALIZERS.put(TYPE_VAR_INT, VAR_INT);
+        SERIALIZERS.put(TYPE_FLOAT, FLOAT);
+        SERIALIZERS.put(TYPE_STRING, STRING);
+        SERIALIZERS.put(TYPE_CHAT, COMPONENT);
+        SERIALIZERS.put(TYPE_OPT_CHAT, OPT_CHAT);
+        SERIALIZERS.put(TYPE_SLOT, ITEM);
+        SERIALIZERS.put(TYPE_BOOLEAN, BOOLEAN);
+        SERIALIZERS.put(TYPE_ROTATION, ROTATION);
+        SERIALIZERS.put(TYPE_POSITION, BLOCK_POSITION);
+        SERIALIZERS.put(TYPE_OPT_POSITION, OPT_BLOCK_POSITION);
+        SERIALIZERS.put(TYPE_DIRECTION, BLOCK_FACE);
+        SERIALIZERS.put(TYPE_OPT_UUID, OPT_UUID);
+        SERIALIZERS.put(TYPE_OPT_BLOCK_ID, OPT_BLOCK_ID);
+        SERIALIZERS.put(TYPE_NBT, NBT);
+        SERIALIZERS.put(TYPE_VILLAGER_DATA, VILLAGER_DATA);
+        SERIALIZERS.put(TYPE_OPT_VAR_INT, OPT_VAR_INT);
+        SERIALIZERS.put(TYPE_POSE, POSE);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> PacketBuffer.Type<T> getSerializer(int type) {
+        return (Type<T>) SERIALIZERS.get((byte) type);
     }
 
     private Entry<?>[] entries = new Entry<?>[0];
@@ -177,20 +181,16 @@ public final class Metadata {
     public record Entry<T>(int type, @UnknownNullability T value,
                            @NotNull PacketBuffer.Type<T> serializer) implements PacketBuffer.Writer {
 
-        public static Entry<?> read(int type, @NotNull PacketBuffer reader) {
-            final Entry<?> value = EMPTY_VALUES.get((byte) type);
-            if (value == null) throw new UnsupportedOperationException("Unknown value type: " + type);
-            return value.withValue(reader);
+        public static <T> Entry<T> read(int type, @NotNull PacketBuffer reader) {
+            final PacketBuffer.Type<T> serializer = getSerializer(type);
+            if (serializer == null) throw new UnsupportedOperationException("Unknown value type: " + type);
+            return new Entry<>(type, reader.read(serializer), serializer);
         }
 
         @Override
         public void write(@NotNull PacketBuffer writer) {
             writer.write(VAR_INT, this.type);
             writer.write(this.serializer, this.value);
-        }
-
-        private Entry<T> withValue(@NotNull PacketBuffer reader) {
-            return new Entry<>(this.type, reader.read(this.serializer), this.serializer);
         }
     }
 }
