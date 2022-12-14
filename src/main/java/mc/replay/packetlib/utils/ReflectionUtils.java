@@ -1,7 +1,5 @@
 package mc.replay.packetlib.utils;
 
-import org.jetbrains.annotations.ApiStatus;
-
 import java.lang.reflect.Field;
 import java.util.Optional;
 

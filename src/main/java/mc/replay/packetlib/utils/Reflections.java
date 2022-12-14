@@ -1,12 +1,8 @@
 package mc.replay.packetlib.utils;
 
-import com.google.common.collect.ForwardingMultimap;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
-import mc.replay.packetlib.data.PlayerProfile;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.meta.SkullMeta;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,9 +13,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
 public final class Reflections {
 
@@ -27,36 +20,28 @@ public final class Reflections {
     }
 
     // NMS
-    private static Class<?> PACKET;
-    private static Class<?> ENTITY_PLAYER;
-    private static Class<?> PLAYER_CONNECTION;
-    private static Class<?> PACKET_DATA_SERIALIZER;
-    private static Class<?> NETWORK_MANAGER;
+    public static Class<?> PACKET;
+    public static Class<?> ENTITY_PLAYER;
+    public static Class<?> PLAYER_CONNECTION;
+    public static Class<?> PACKET_DATA_SERIALIZER;
+    public static Class<?> NETWORK_MANAGER;
 
-    private static MethodHandle GET_PLAYER_HANDLE_METHOD;
-    private static MethodHandle GET_PLAYER_CONNECTION_METHOD;
-    private static MethodHandle SEND_PACKET_METHOD;
+    public static MethodHandle GET_PLAYER_HANDLE_METHOD;
+    public static MethodHandle GET_PLAYER_CONNECTION_METHOD;
+    public static MethodHandle SEND_PACKET_METHOD;
 
-    private static Method PACKET_FROM_ID_METHOD_754;
-    private static Method PACKET_FROM_ID_METHOD_760;
-    private static Method ID_FROM_PACKET_METHOD;
-    private static Method SERIALIZE_PACKET_METHOD;
+    public static Method PACKET_FROM_ID_METHOD_754;
+    public static Method PACKET_FROM_ID_METHOD_760;
+    public static Method ID_FROM_PACKET_METHOD;
+    public static Method SERIALIZE_PACKET_METHOD;
 
-    private static Constructor<?> PACKET_DATA_SERIALIZER_CONSTRUCTOR;
+    public static Constructor<?> PACKET_DATA_SERIALIZER_CONSTRUCTOR;
 
-    private static Object SERVERBOUND_PROTOCOL_DIRECTION;
-    private static Object CLIENTBOUND_PROTOCOL_DIRECTION;
-    private static Object PLAY_ENUM_PROTOCOL;
+    public static Object SERVERBOUND_PROTOCOL_DIRECTION;
+    public static Object CLIENTBOUND_PROTOCOL_DIRECTION;
+    public static Object PLAY_ENUM_PROTOCOL;
 
-    private static Field GAME_PROFILE_SKULL_META_FIELD;
-    private static Field GAME_PROFILE_UUID_FIELD;
-    private static Field GAME_PROFILE_NAME_FIELD;
-    private static Field GAME_PROFILE_PROPERTIES_FIELD;
-    private static Field PROPERTY_NAME_FIELD;
-    private static Field PROPERTY_VALUE_FIELD;
-    private static Field PROPERTY_SIGNATURE_FIELD;
-
-    private static ProtocolVersion VERSION;
+    public static ProtocolVersion VERSION;
 
     static {
         try {
@@ -101,18 +86,6 @@ public final class Reflections {
 
             ID_FROM_PACKET_METHOD = PLAY_ENUM_PROTOCOL.getClass().getMethod("a", enumProtocolDirection, PACKET);
             SERIALIZE_PACKET_METHOD = PACKET.getMethod("b", PACKET_DATA_SERIALIZER);
-
-            Class<?> CRAFT_META_SKULL = ReflectionUtils.obcClass("inventory.CraftMetaSkull");
-            Class<?> GAME_PROFILE = ReflectionUtils.getClass("com.mojang.authlib.GameProfile");
-            Class<?> PROPERTY = ReflectionUtils.getClass("com.mojang.authlib.properties.Property");
-
-            GAME_PROFILE_SKULL_META_FIELD = ReflectionUtils.getField(CRAFT_META_SKULL, "profile");
-            GAME_PROFILE_UUID_FIELD = ReflectionUtils.getField(GAME_PROFILE, "id");
-            GAME_PROFILE_NAME_FIELD = ReflectionUtils.getField(GAME_PROFILE, "name");
-            GAME_PROFILE_PROPERTIES_FIELD = ReflectionUtils.getField(GAME_PROFILE, "properties");
-            PROPERTY_NAME_FIELD = ReflectionUtils.getField(PROPERTY, "name");
-            PROPERTY_VALUE_FIELD = ReflectionUtils.getField(PROPERTY, "value");
-            PROPERTY_SIGNATURE_FIELD = ReflectionUtils.getField(PROPERTY, "signature");
         } catch (Exception exception) {
             exception.printStackTrace();
         }
@@ -200,42 +173,7 @@ public final class Reflections {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public static PlayerProfile getGameProfile(@NotNull Object gameProfile) {
-        try {
-            UUID uuid = (UUID) GAME_PROFILE_UUID_FIELD.get(gameProfile);
-            String name = (String) GAME_PROFILE_NAME_FIELD.get(gameProfile);
-            ForwardingMultimap<String, Object> properties = (ForwardingMultimap<String, Object>) GAME_PROFILE_PROPERTIES_FIELD.get(gameProfile);
-            Map<String, PlayerProfile.Property> propertyMap = new HashMap<>();
-
-            for (Map.Entry<String, Object> entry : properties.entries()) {
-                propertyMap.put(entry.getKey(), getPropertyFromPropertyObject(entry.getValue()));
-            }
-
-            return new PlayerProfile(uuid, name, propertyMap);
-        } catch (Exception exception) {
-            exception.printStackTrace();
-            return null;
-        }
-    }
-
-    public static PlayerProfile getGameProfile(@NotNull SkullMeta skullMeta) {
-        try {
-            return getGameProfile(GAME_PROFILE_SKULL_META_FIELD.get(skullMeta));
-        } catch (Exception exception) {
-            exception.printStackTrace();
-            return null;
-        }
-    }
-
-    private static PlayerProfile.Property getPropertyFromPropertyObject(@NotNull Object propertyObject) throws IllegalAccessException {
-        String name = (String) PROPERTY_NAME_FIELD.get(propertyObject);
-        String value = (String) PROPERTY_VALUE_FIELD.get(propertyObject);
-        String signature = (String) PROPERTY_SIGNATURE_FIELD.get(propertyObject);
-        return new PlayerProfile.Property(name, value, signature);
-    }
-
-    private static Object getEntityPlayer(@NotNull Player player) throws Throwable {
+    public static Object getEntityPlayer(@NotNull Player player) throws Throwable {
         return GET_PLAYER_HANDLE_METHOD.invoke(player);
     }
 }
