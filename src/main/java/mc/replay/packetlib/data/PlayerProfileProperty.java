@@ -9,7 +9,7 @@ public record PlayerProfileProperty(String name, String value, String signature)
         this(
                 reader.read(PacketBuffer.STRING),
                 reader.read(PacketBuffer.STRING),
-                reader.read(PacketBuffer.STRING)
+                reader.readOptional(PacketBuffer.STRING)
         );
     }
 
@@ -17,6 +17,6 @@ public record PlayerProfileProperty(String name, String value, String signature)
     public void write(@NotNull PacketBuffer writer) {
         writer.write(PacketBuffer.STRING, this.name);
         writer.write(PacketBuffer.STRING, this.value);
-        writer.write(PacketBuffer.STRING, this.signature);
+        writer.writeOptional(PacketBuffer.STRING, this.signature);
     }
 }
