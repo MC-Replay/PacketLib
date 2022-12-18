@@ -7,12 +7,10 @@ import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacketIdentifier;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import static mc.replay.packetlib.network.PacketBuffer.UUID;
-import static mc.replay.packetlib.network.PacketBuffer.VAR_INT;
 
 public record ClientboundPlayerInfoPacket(@NotNull PlayerInfoAction action,
                                           @NotNull List<PlayerInfoEntry> entries) implements ClientboundPacket {
@@ -53,19 +51,18 @@ public record ClientboundPlayerInfoPacket(@NotNull PlayerInfoAction action,
     }
 
     private static @NotNull ClientboundPlayerInfoPacket read(@NotNull PacketBuffer reader) {
-        PlayerInfoAction action = reader.readEnum(PlayerInfoAction.class);
-        final int playerInfoCount = reader.read(VAR_INT);
-        List<PlayerInfoEntry> entries = new ArrayList<>(playerInfoCount);
-        for (int i = 0; i < playerInfoCount; i++) {
-            final UUID uuid = reader.read(UUID);
-            entries.add(switch (action) {
-                case ADD_PLAYER -> new PlayerInfoEntry.AddPlayer(uuid, reader);
-                case UPDATE_GAMEMODE -> new PlayerInfoEntry.UpdateGameMode(uuid, reader);
-                case UPDATE_LATENCY -> new PlayerInfoEntry.UpdateLatency(uuid, reader);
-                case UPDATE_DISPLAY_NAME -> new PlayerInfoEntry.UpdateDisplayName(uuid, reader);
+        final PlayerInfoAction action = reader.readEnum(PlayerInfoAction.class);
+        final List<PlayerInfoEntry> entries = reader.readCollection((buffer) -> {
+            final UUID uuid = buffer.read(UUID);
+            return switch (action) {
+                case ADD_PLAYER -> new PlayerInfoEntry.AddPlayer(uuid, buffer);
+                case UPDATE_GAMEMODE -> new PlayerInfoEntry.UpdateGameMode(uuid, buffer);
+                case UPDATE_LATENCY -> new PlayerInfoEntry.UpdateLatency(uuid, buffer);
+                case UPDATE_DISPLAY_NAME -> new PlayerInfoEntry.UpdateDisplayName(uuid, buffer);
                 case REMOVE_PLAYER -> new PlayerInfoEntry.RemovePlayer(uuid);
-            });
-        }
+            };
+        });
+
         return new ClientboundPlayerInfoPacket(action, entries);
     }
 }

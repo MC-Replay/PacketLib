@@ -9,6 +9,7 @@ import org.bukkit.entity.Pose;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnknownNullability;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -66,7 +67,7 @@ public final class PacketBuffer {
         this.readIndex = buffer.position();
     }
 
-    public <T> void write(@NotNull Type<T> type, @NotNull T value) {
+    public <T> void write(@NotNull Type<T> type, @UnknownNullability T value) {
         final long length = type.writer().write(this, value);
         if (length != -1) {
             this.writeIndex += length;

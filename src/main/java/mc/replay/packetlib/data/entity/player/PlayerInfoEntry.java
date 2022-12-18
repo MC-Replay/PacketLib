@@ -41,6 +41,7 @@ public interface PlayerInfoEntry extends PacketBuffer.Writer {
             writer.write(VAR_INT, this.gameMode.ordinal());
             writer.write(VAR_INT, this.ping);
             writer.writeOptional(COMPONENT, this.displayName);
+            // TODO 1.19 public key
         }
     }
 
