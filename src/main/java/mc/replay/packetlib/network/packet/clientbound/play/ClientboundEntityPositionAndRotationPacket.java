@@ -12,14 +12,22 @@ public record ClientboundEntityPositionAndRotationPacket(int entityId, short del
                                                          short deltaZ, float yaw, float pitch,
                                                          boolean onGround) implements ClientboundPacket {
 
+    public ClientboundEntityPositionAndRotationPacket(int entityId, @NotNull Pos deltaPosition, boolean onGround) {
+        this(
+                entityId,
+                (short) (deltaPosition.x() * 128),
+                (short) (deltaPosition.y() * 128),
+                (short) (deltaPosition.z() * 128),
+                deltaPosition.yaw(),
+                deltaPosition.pitch(),
+                onGround
+        );
+    }
+
     public ClientboundEntityPositionAndRotationPacket(int entityId, @NotNull Pos newPosition, @NotNull Pos oldPosition, boolean onGround) {
         this(
                 entityId,
-                (short) ((newPosition.x() * 32 - oldPosition.x() * 32) * 128),
-                (short) ((newPosition.y() * 32 - oldPosition.y() * 32) * 128),
-                (short) ((newPosition.z() * 32 - oldPosition.z() * 32) * 128),
-                newPosition.yaw(),
-                newPosition.pitch(),
+                newPosition.subtract(oldPosition),
                 onGround
         );
     }
