@@ -74,14 +74,14 @@ public final class PacketRegistry {
     }
 
     @SuppressWarnings("unchecked")
-    public <P extends ClientboundPacket> @Nullable P getClientboundPacket(@NotNull ClientboundPacketIdentifier identifier, @NotNull PacketBuffer reader) {
+    public <P extends ClientboundPacket> @Nullable P getClientboundPacket(@NotNull ClientboundPacketIdentifier identifier, @NotNull ReplayByteBuffer reader) {
         PacketDefinition<ClientboundPacketIdentifier, ?> packetDefinition = this.clientboundPacketRegistry.get(identifier);
         if (packetDefinition == null) return null;
 
         return (P) packetDefinition.construct(reader);
     }
 
-    public <P extends ClientboundPacket> @Nullable P getClientboundPacket(int packetId, @NotNull PacketBuffer reader) {
+    public <P extends ClientboundPacket> @Nullable P getClientboundPacket(int packetId, @NotNull ReplayByteBuffer reader) {
         ClientboundPacketIdentifier packetIdentifier = PacketIdentifier.getPacketIdentifier(ClientboundPacketIdentifier.class, packetId);
         if (packetIdentifier == null) return null;
 
@@ -89,14 +89,14 @@ public final class PacketRegistry {
     }
 
     @SuppressWarnings("unchecked")
-    public <P extends ServerboundPacket> @Nullable P getServerboundPacket(@NotNull ServerboundPacketIdentifier identifier, @NotNull PacketBuffer reader) {
+    public <P extends ServerboundPacket> @Nullable P getServerboundPacket(@NotNull ServerboundPacketIdentifier identifier, @NotNull ReplayByteBuffer reader) {
         PacketDefinition<ServerboundPacketIdentifier, ?> packetDefinition = this.serverboundPacketRegistry.get(identifier);
         if (packetDefinition == null) return null;
 
         return (P) packetDefinition.construct(reader);
     }
 
-    public <P extends ServerboundPacket> @Nullable P getServerboundPacket(int packetId, @NotNull PacketBuffer reader) {
+    public <P extends ServerboundPacket> @Nullable P getServerboundPacket(int packetId, @NotNull ReplayByteBuffer reader) {
         ServerboundPacketIdentifier packetIdentifier = PacketIdentifier.getPacketIdentifier(ServerboundPacketIdentifier.class, packetId);
         if (packetIdentifier == null) return null;
 
@@ -105,13 +105,13 @@ public final class PacketRegistry {
 
     private <P extends ClientboundPacket> void registerClientboundPacket(@NotNull ClientboundPacketIdentifier identifier,
                                                                          @NotNull Class<P> packetClass,
-                                                                         @NotNull Function<@NotNull PacketBuffer, @NotNull P> packetConstructor) {
+                                                                         @NotNull Function<@NotNull ReplayByteBuffer, @NotNull P> packetConstructor) {
         this.clientboundPacketRegistry.put(identifier, new PacketDefinition<>(identifier, packetClass, packetConstructor));
     }
 
     private <P extends ServerboundPacket> void registerServerboundPacket(@NotNull ServerboundPacketIdentifier identifier,
                                                                          @NotNull Class<P> packetClass,
-                                                                         @NotNull Function<@NotNull PacketBuffer, @NotNull P> packetConstructor) {
+                                                                         @NotNull Function<@NotNull ReplayByteBuffer, @NotNull P> packetConstructor) {
         this.serverboundPacketRegistry.put(identifier, new PacketDefinition<>(identifier, packetClass, packetConstructor));
     }
 }

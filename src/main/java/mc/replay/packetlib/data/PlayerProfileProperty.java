@@ -1,22 +1,22 @@
 package mc.replay.packetlib.data;
 
-import mc.replay.packetlib.network.PacketBuffer;
+import mc.replay.packetlib.network.ReplayByteBuffer;
 import org.jetbrains.annotations.NotNull;
 
-public record PlayerProfileProperty(String name, String value, String signature) implements PacketBuffer.Writer {
+public record PlayerProfileProperty(String name, String value, String signature) implements ReplayByteBuffer.Writer {
 
-    public PlayerProfileProperty(@NotNull PacketBuffer reader) {
+    public PlayerProfileProperty(@NotNull ReplayByteBuffer reader) {
         this(
-                reader.read(PacketBuffer.STRING),
-                reader.read(PacketBuffer.STRING),
-                reader.readOptional(PacketBuffer.STRING)
+                reader.read(ReplayByteBuffer.STRING),
+                reader.read(ReplayByteBuffer.STRING),
+                reader.readOptional(ReplayByteBuffer.STRING)
         );
     }
 
     @Override
-    public void write(@NotNull PacketBuffer writer) {
-        writer.write(PacketBuffer.STRING, this.name);
-        writer.write(PacketBuffer.STRING, this.value);
-        writer.writeOptional(PacketBuffer.STRING, this.signature);
+    public void write(@NotNull ReplayByteBuffer writer) {
+        writer.write(ReplayByteBuffer.STRING, this.name);
+        writer.write(ReplayByteBuffer.STRING, this.value);
+        writer.writeOptional(ReplayByteBuffer.STRING, this.signature);
     }
 }

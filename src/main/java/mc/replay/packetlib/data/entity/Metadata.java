@@ -2,7 +2,7 @@ package mc.replay.packetlib.data.entity;
 
 import com.github.steveice10.opennbt.tag.builtin.Tag;
 import mc.replay.packetlib.data.Item;
-import mc.replay.packetlib.network.PacketBuffer;
+import mc.replay.packetlib.network.ReplayByteBuffer;
 import net.kyori.adventure.text.Component;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Pose;
@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static mc.replay.packetlib.network.PacketBuffer.*;
+import static mc.replay.packetlib.network.ReplayByteBuffer.*;
 
 public final class Metadata {
 
@@ -114,7 +114,7 @@ public final class Metadata {
     public static final byte TYPE_OPT_VAR_INT = 17;
     public static final byte TYPE_POSE = 18;
 
-    private static final Map<Byte, PacketBuffer.Type<?>> SERIALIZERS = new HashMap<>();
+    private static final Map<Byte, ReplayByteBuffer.Type<?>> SERIALIZERS = new HashMap<>();
 
     static {
         SERIALIZERS.put(TYPE_BYTE, BYTE);
@@ -138,7 +138,7 @@ public final class Metadata {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> PacketBuffer.Type<T> getSerializer(int type) {
+    public static <T> ReplayByteBuffer.Type<T> getSerializer(int type) {
         return (Type<T>) SERIALIZERS.get((byte) type);
     }
 
@@ -179,16 +179,16 @@ public final class Metadata {
     }
 
     public record Entry<T>(int type, @UnknownNullability T value,
-                           @NotNull PacketBuffer.Type<T> serializer) implements PacketBuffer.Writer {
+                           @NotNull ReplayByteBuffer.Type<T> serializer) implements ReplayByteBuffer.Writer {
 
-        public static <T> Entry<T> read(int type, @NotNull PacketBuffer reader) {
-            final PacketBuffer.Type<T> serializer = getSerializer(type);
+        public static <T> Entry<T> read(int type, @NotNull ReplayByteBuffer reader) {
+            final ReplayByteBuffer.Type<T> serializer = getSerializer(type);
             if (serializer == null) throw new UnsupportedOperationException("Unknown value type: " + type);
             return new Entry<>(type, reader.read(serializer), serializer);
         }
 
         @Override
-        public void write(@NotNull PacketBuffer writer) {
+        public void write(@NotNull ReplayByteBuffer writer) {
             writer.write(VAR_INT, this.type);
             writer.write(this.serializer, this.value);
         }

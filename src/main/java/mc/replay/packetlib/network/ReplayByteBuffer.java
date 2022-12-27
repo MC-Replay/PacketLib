@@ -21,46 +21,46 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public final class PacketBuffer {
+public final class ReplayByteBuffer {
 
-    public static Type<Boolean> BOOLEAN = PacketBufferTypes.BOOLEAN;
-    public static Type<Byte> BYTE = PacketBufferTypes.BYTE;
-    public static Type<Short> SHORT = PacketBufferTypes.SHORT;
-    public static Type<Integer> UNSIGNED_SHORT = PacketBufferTypes.UNSIGNED_SHORT;
-    public static Type<Integer> INT = PacketBufferTypes.INT;
-    public static Type<Long> LONG = PacketBufferTypes.LONG;
-    public static Type<Float> FLOAT = PacketBufferTypes.FLOAT;
-    public static Type<Double> DOUBLE = PacketBufferTypes.DOUBLE;
-    public static Type<Integer> VAR_INT = PacketBufferTypes.VAR_INT;
-    public static Type<Long> VAR_LONG = PacketBufferTypes.VAR_LONG;
-    public static Type<byte[]> RAW_BYTES = PacketBufferTypes.RAW_BYTES;
-    public static Type<String> STRING = PacketBufferTypes.STRING;
-    public static Type<Tag> NBT = PacketBufferTypes.NBT;
-    public static Type<Vector> BLOCK_POSITION = PacketBufferTypes.BLOCK_POSITION;
-    public static Type<Component> COMPONENT = PacketBufferTypes.COMPONENT;
+    public static Type<Boolean> BOOLEAN = ReplayByteBufferTypes.BOOLEAN;
+    public static Type<Byte> BYTE = ReplayByteBufferTypes.BYTE;
+    public static Type<Short> SHORT = ReplayByteBufferTypes.SHORT;
+    public static Type<Integer> UNSIGNED_SHORT = ReplayByteBufferTypes.UNSIGNED_SHORT;
+    public static Type<Integer> INT = ReplayByteBufferTypes.INT;
+    public static Type<Long> LONG = ReplayByteBufferTypes.LONG;
+    public static Type<Float> FLOAT = ReplayByteBufferTypes.FLOAT;
+    public static Type<Double> DOUBLE = ReplayByteBufferTypes.DOUBLE;
+    public static Type<Integer> VAR_INT = ReplayByteBufferTypes.VAR_INT;
+    public static Type<Long> VAR_LONG = ReplayByteBufferTypes.VAR_LONG;
+    public static Type<byte[]> RAW_BYTES = ReplayByteBufferTypes.RAW_BYTES;
+    public static Type<String> STRING = ReplayByteBufferTypes.STRING;
+    public static Type<Tag> NBT = ReplayByteBufferTypes.NBT;
+    public static Type<Vector> BLOCK_POSITION = ReplayByteBufferTypes.BLOCK_POSITION;
+    public static Type<Component> COMPONENT = ReplayByteBufferTypes.COMPONENT;
 
-    public static Type<UUID> UUID = PacketBufferTypes.UUID;
-    public static Type<Item> ITEM = PacketBufferTypes.ITEM;
-    public static Type<byte[]> BYTE_ARRAY = PacketBufferTypes.BYTE_ARRAY;
-    public static Type<long[]> LONG_ARRAY = PacketBufferTypes.LONG_ARRAY;
-    public static Type<int[]> VAR_INT_ARRAY = PacketBufferTypes.VAR_INT_ARRAY;
-    public static Type<long[]> VAR_LONG_ARRAY = PacketBufferTypes.VAR_LONG_ARRAY;
+    public static Type<UUID> UUID = ReplayByteBufferTypes.UUID;
+    public static Type<Item> ITEM = ReplayByteBufferTypes.ITEM;
+    public static Type<byte[]> BYTE_ARRAY = ReplayByteBufferTypes.BYTE_ARRAY;
+    public static Type<long[]> LONG_ARRAY = ReplayByteBufferTypes.LONG_ARRAY;
+    public static Type<int[]> VAR_INT_ARRAY = ReplayByteBufferTypes.VAR_INT_ARRAY;
+    public static Type<long[]> VAR_LONG_ARRAY = ReplayByteBufferTypes.VAR_LONG_ARRAY;
 
-    public static Type<Component> OPT_CHAT = PacketBufferTypes.OPT_CHAT;
-    public static Type<Vector> ROTATION = PacketBufferTypes.ROTATION;
-    public static Type<Vector> OPT_BLOCK_POSITION = PacketBufferTypes.OPT_BLOCK_POSITION;
-    public static Type<BlockFace> BLOCK_FACE = PacketBufferTypes.BLOCK_FACE;
-    public static Type<UUID> OPT_UUID = PacketBufferTypes.OPT_UUID;
-    public static Type<Integer> OPT_BLOCK_ID = PacketBufferTypes.OPT_BLOCK_ID;
-    public static Type<int[]> VILLAGER_DATA = PacketBufferTypes.VILLAGER_DATA;
-    public static Type<Integer> OPT_VAR_INT = PacketBufferTypes.OPT_VAR_INT;
-    public static Type<Pose> POSE = PacketBufferTypes.POSE;
+    public static Type<Component> OPT_CHAT = ReplayByteBufferTypes.OPT_CHAT;
+    public static Type<Vector> ROTATION = ReplayByteBufferTypes.ROTATION;
+    public static Type<Vector> OPT_BLOCK_POSITION = ReplayByteBufferTypes.OPT_BLOCK_POSITION;
+    public static Type<BlockFace> BLOCK_FACE = ReplayByteBufferTypes.BLOCK_FACE;
+    public static Type<UUID> OPT_UUID = ReplayByteBufferTypes.OPT_UUID;
+    public static Type<Integer> OPT_BLOCK_ID = ReplayByteBufferTypes.OPT_BLOCK_ID;
+    public static Type<int[]> VILLAGER_DATA = ReplayByteBufferTypes.VILLAGER_DATA;
+    public static Type<Integer> OPT_VAR_INT = ReplayByteBufferTypes.OPT_VAR_INT;
+    public static Type<Pose> POSE = ReplayByteBufferTypes.POSE;
 
     ByteBuffer nioBuffer;
     int writeIndex;
     int readIndex;
 
-    public PacketBuffer(@NotNull ByteBuffer buffer) {
+    public ReplayByteBuffer(@NotNull ByteBuffer buffer) {
         this.nioBuffer = buffer.order(ByteOrder.BIG_ENDIAN);
 
         this.writeIndex = buffer.position();
@@ -100,7 +100,7 @@ public final class PacketBuffer {
         return this.read(BOOLEAN) ? this.read(type) : null;
     }
 
-    public <T> @Nullable T readOptional(@NotNull Function<@NotNull PacketBuffer, @NotNull T> function) {
+    public <T> @Nullable T readOptional(@NotNull Function<@NotNull ReplayByteBuffer, @NotNull T> function) {
         return this.read(BOOLEAN) ? function.apply(this) : null;
     }
 
@@ -135,7 +135,7 @@ public final class PacketBuffer {
         }
     }
 
-    public <T> void writeCollection(@Nullable Collection<@NotNull T> values, @NotNull BiConsumer<@NotNull PacketBuffer, @NotNull T> consumer) {
+    public <T> void writeCollection(@Nullable Collection<@NotNull T> values, @NotNull BiConsumer<@NotNull ReplayByteBuffer, @NotNull T> consumer) {
         if (values == null) {
             this.write(BYTE, (byte) 0);
             return;
@@ -159,7 +159,7 @@ public final class PacketBuffer {
         return values;
     }
 
-    public @NotNull <T> List<@NotNull T> readCollection(@NotNull Function<@NotNull PacketBuffer, @NotNull T> function) {
+    public @NotNull <T> List<@NotNull T> readCollection(@NotNull Function<@NotNull ReplayByteBuffer, @NotNull T> function) {
         final int size = this.read(VAR_INT);
         final List<T> values = new ArrayList<>(size);
 
@@ -170,7 +170,7 @@ public final class PacketBuffer {
         return values;
     }
 
-    public <L, R> void writeEither(Either<L, R> either, BiConsumer<PacketBuffer, L> leftWriter, BiConsumer<PacketBuffer, R> rightWriter) {
+    public <L, R> void writeEither(Either<L, R> either, BiConsumer<ReplayByteBuffer, L> leftWriter, BiConsumer<ReplayByteBuffer, R> rightWriter) {
         if (either.isLeft()) {
             this.write(BOOLEAN, true);
             leftWriter.accept(this, either.left());
@@ -180,7 +180,7 @@ public final class PacketBuffer {
         }
     }
 
-    public <L, R> Either<L, R> readEither(Function<PacketBuffer, L> leftReader, Function<PacketBuffer, R> rightReader) {
+    public <L, R> Either<L, R> readEither(Function<ReplayByteBuffer, L> leftReader, Function<ReplayByteBuffer, R> rightReader) {
         return this.read(BOOLEAN) ? Either.left(leftReader.apply(this)) : Either.right(rightReader.apply(this));
     }
 
@@ -203,7 +203,7 @@ public final class PacketBuffer {
         this.nioBuffer.get(srcOffset, dest, destOffset, length);
     }
 
-    public byte @NotNull [] extractBytes(@NotNull Consumer<@NotNull PacketBuffer> extractor) {
+    public byte @NotNull [] extractBytes(@NotNull Consumer<@NotNull ReplayByteBuffer> extractor) {
         final int startingPosition = this.readIndex;
         extractor.accept(this);
         final int endingPosition = this.readIndex;
@@ -259,14 +259,14 @@ public final class PacketBuffer {
 
     public interface Type<T> {
 
-        @NotNull PacketBufferTypes.TypeWriter<T> writer();
+        @NotNull ReplayByteBufferTypes.TypeWriter<T> writer();
 
-        @NotNull PacketBufferTypes.TypeReader<T> reader();
+        @NotNull ReplayByteBufferTypes.TypeReader<T> reader();
     }
 
     @FunctionalInterface
     public interface Writer {
 
-        void write(@NotNull PacketBuffer writer);
+        void write(@NotNull ReplayByteBuffer writer);
     }
 }

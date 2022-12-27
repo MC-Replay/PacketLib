@@ -1,17 +1,17 @@
 package mc.replay.packetlib.network.packet.clientbound.play;
 
 import mc.replay.packetlib.data.entity.EntityAnimation;
-import mc.replay.packetlib.network.PacketBuffer;
+import mc.replay.packetlib.network.ReplayByteBuffer;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacketIdentifier;
 import org.jetbrains.annotations.NotNull;
 
-import static mc.replay.packetlib.network.PacketBuffer.VAR_INT;
+import static mc.replay.packetlib.network.ReplayByteBuffer.VAR_INT;
 
 public record ClientboundEntityAnimationPacket(int entityId,
                                                @NotNull EntityAnimation animation) implements ClientboundPacket {
 
-    public ClientboundEntityAnimationPacket(@NotNull PacketBuffer reader) {
+    public ClientboundEntityAnimationPacket(@NotNull ReplayByteBuffer reader) {
         this(
                 reader.read(VAR_INT),
                 reader.readEnum(EntityAnimation.class)
@@ -19,7 +19,7 @@ public record ClientboundEntityAnimationPacket(int entityId,
     }
 
     @Override
-    public void write(@NotNull PacketBuffer writer) {
+    public void write(@NotNull ReplayByteBuffer writer) {
         writer.write(VAR_INT, this.entityId);
         writer.writeEnum(EntityAnimation.class, this.animation);
     }

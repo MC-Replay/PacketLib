@@ -2,7 +2,7 @@ package mc.replay.packetlib.network.packet.clientbound.play;
 
 import mc.replay.packetlib.data.entity.player.PlayerInfoAction;
 import mc.replay.packetlib.data.entity.player.PlayerInfoEntry;
-import mc.replay.packetlib.network.PacketBuffer;
+import mc.replay.packetlib.network.ReplayByteBuffer;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacketIdentifier;
 import org.jetbrains.annotations.NotNull;
@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.UUID;
 
-import static mc.replay.packetlib.network.PacketBuffer.UUID;
+import static mc.replay.packetlib.network.ReplayByteBuffer.UUID;
 
 public record ClientboundPlayerInfoPacket(@NotNull PlayerInfoAction action,
                                           @NotNull List<PlayerInfoEntry> entries) implements ClientboundPacket {
@@ -28,7 +28,7 @@ public record ClientboundPlayerInfoPacket(@NotNull PlayerInfoAction action,
         this(action, List.of(entry));
     }
 
-    public ClientboundPlayerInfoPacket(@NotNull PacketBuffer reader) {
+    public ClientboundPlayerInfoPacket(@NotNull ReplayByteBuffer reader) {
         this(read(reader));
     }
 
@@ -37,7 +37,7 @@ public record ClientboundPlayerInfoPacket(@NotNull PlayerInfoAction action,
     }
 
     @Override
-    public void write(@NotNull PacketBuffer writer) {
+    public void write(@NotNull ReplayByteBuffer writer) {
         writer.writeEnum(PlayerInfoAction.class, this.action);
         writer.writeCollection(this.entries, (buffer, entry) -> {
             buffer.write(UUID, entry.uuid());
@@ -50,7 +50,7 @@ public record ClientboundPlayerInfoPacket(@NotNull PlayerInfoAction action,
         return ClientboundPacketIdentifier.PLAYER_INFO;
     }
 
-    private static @NotNull ClientboundPlayerInfoPacket read(@NotNull PacketBuffer reader) {
+    private static @NotNull ClientboundPlayerInfoPacket read(@NotNull ReplayByteBuffer reader) {
         final PlayerInfoAction action = reader.readEnum(PlayerInfoAction.class);
         final List<PlayerInfoEntry> entries = reader.readCollection((buffer) -> {
             final UUID uuid = buffer.read(UUID);

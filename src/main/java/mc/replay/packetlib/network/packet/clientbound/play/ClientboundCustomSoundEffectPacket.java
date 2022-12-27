@@ -1,18 +1,18 @@
 package mc.replay.packetlib.network.packet.clientbound.play;
 
-import mc.replay.packetlib.network.PacketBuffer;
+import mc.replay.packetlib.network.ReplayByteBuffer;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacketIdentifier;
 import mc.replay.packetlib.utils.ProtocolVersion;
 import org.jetbrains.annotations.NotNull;
 
-import static mc.replay.packetlib.network.PacketBuffer.*;
+import static mc.replay.packetlib.network.ReplayByteBuffer.*;
 
 public record ClientboundCustomSoundEffectPacket(@NotNull String soundName, int sourceId, int x, int y,
                                                  int z,
                                                  float volume, float pitch, long seed) implements ClientboundPacket {
 
-    public ClientboundCustomSoundEffectPacket(@NotNull PacketBuffer reader) {
+    public ClientboundCustomSoundEffectPacket(@NotNull ReplayByteBuffer reader) {
         this(
                 reader.read(STRING),
                 reader.read(VAR_INT),
@@ -28,7 +28,7 @@ public record ClientboundCustomSoundEffectPacket(@NotNull String soundName, int 
     }
 
     @Override
-    public void write(@NotNull PacketBuffer writer) {
+    public void write(@NotNull ReplayByteBuffer writer) {
         writer.write(STRING, this.soundName);
         writer.write(VAR_INT, this.sourceId);
         writer.write(INT, this.x * 8);

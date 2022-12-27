@@ -1,17 +1,17 @@
 package mc.replay.packetlib.network.packet.clientbound.play;
 
-import mc.replay.packetlib.network.PacketBuffer;
+import mc.replay.packetlib.network.ReplayByteBuffer;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacketIdentifier;
 import org.jetbrains.annotations.NotNull;
 
-import static mc.replay.packetlib.network.PacketBuffer.*;
+import static mc.replay.packetlib.network.ReplayByteBuffer.*;
 
 public record ClientboundParticlePacket(int particleId, boolean longDistance, double x, double y, double z,
                                         float offsetX, float offsetY, float offsetZ, float particleData,
                                         int particleCount, byte[] data) implements ClientboundPacket {
 
-    public ClientboundParticlePacket(@NotNull PacketBuffer reader) {
+    public ClientboundParticlePacket(@NotNull ReplayByteBuffer reader) {
         this(
                 reader.read(VAR_INT),
                 reader.read(BOOLEAN),
@@ -28,7 +28,7 @@ public record ClientboundParticlePacket(int particleId, boolean longDistance, do
     }
 
     @Override
-    public void write(@NotNull PacketBuffer writer) {
+    public void write(@NotNull ReplayByteBuffer writer) {
         writer.write(VAR_INT, this.particleId);
         writer.write(BOOLEAN, this.longDistance);
         writer.write(DOUBLE, this.x);

@@ -10,9 +10,9 @@ final class PacketDefinition<I extends PacketIdentifier, P extends Packet<I>> {
 
     private final I identifier;
     private final Class<P> packetClass;
-    private final Function<PacketBuffer, P> packetConstructor;
+    private final Function<ReplayByteBuffer, P> packetConstructor;
 
-    PacketDefinition(I identifier, Class<P> packetClass, Function<PacketBuffer, P> packetConstructor) {
+    PacketDefinition(I identifier, Class<P> packetClass, Function<ReplayByteBuffer, P> packetConstructor) {
         this.identifier = identifier;
         this.packetClass = packetClass;
         this.packetConstructor = packetConstructor;
@@ -26,7 +26,7 @@ final class PacketDefinition<I extends PacketIdentifier, P extends Packet<I>> {
         return this.packetClass;
     }
 
-    P construct(@NotNull PacketBuffer reader) {
+    P construct(@NotNull ReplayByteBuffer reader) {
         return this.packetConstructor.apply(reader);
     }
 }

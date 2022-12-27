@@ -18,7 +18,7 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
-final class PacketBufferTypes {
+final class ReplayByteBufferTypes {
 
     private static final int SEGMENT_BITS = 0x7F;
     private static final int CONTINUE_BIT = 0x80;
@@ -557,16 +557,16 @@ final class PacketBufferTypes {
 
     record TypeImpl<T>(@NotNull Class<T> type,
                        @NotNull TypeWriter<T> writer,
-                       @NotNull TypeReader<T> reader) implements PacketBuffer.Type<T> {
+                       @NotNull TypeReader<T> reader) implements ReplayByteBuffer.Type<T> {
     }
 
     interface TypeWriter<T> {
 
-        long write(@NotNull PacketBuffer buffer, @UnknownNullability T value);
+        long write(@NotNull ReplayByteBuffer buffer, @UnknownNullability T value);
     }
 
     interface TypeReader<T> {
 
-        @UnknownNullability T read(@NotNull PacketBuffer buffer);
+        @UnknownNullability T read(@NotNull ReplayByteBuffer buffer);
     }
 }

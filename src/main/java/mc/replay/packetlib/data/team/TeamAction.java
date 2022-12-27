@@ -1,6 +1,6 @@
 package mc.replay.packetlib.data.team;
 
-import mc.replay.packetlib.network.PacketBuffer;
+import mc.replay.packetlib.network.ReplayByteBuffer;
 import mc.replay.packetlib.utils.AdventurePacketConverter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -9,9 +9,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.List;
 
-import static mc.replay.packetlib.network.PacketBuffer.*;
+import static mc.replay.packetlib.network.ReplayByteBuffer.*;
 
-public interface TeamAction extends PacketBuffer.Writer {
+public interface TeamAction extends ReplayByteBuffer.Writer {
 
     int id();
 
@@ -23,7 +23,7 @@ public interface TeamAction extends PacketBuffer.Writer {
             entities = List.copyOf(entities);
         }
 
-        public CreateTeamAction(@NotNull PacketBuffer reader) {
+        public CreateTeamAction(@NotNull ReplayByteBuffer reader) {
             this(
                     reader.read(COMPONENT),
                     reader.read(BYTE),
@@ -37,7 +37,7 @@ public interface TeamAction extends PacketBuffer.Writer {
         }
 
         @Override
-        public void write(@NotNull PacketBuffer writer) {
+        public void write(@NotNull ReplayByteBuffer writer) {
             writer.write(COMPONENT, this.displayName);
             writer.write(BYTE, this.friendlyFlags);
             writer.write(STRING, this.nameTagVisibility.getIdentifier());
@@ -57,7 +57,7 @@ public interface TeamAction extends PacketBuffer.Writer {
     record RemoveTeamAction() implements TeamAction {
 
         @Override
-        public void write(@NotNull PacketBuffer writer) {
+        public void write(@NotNull ReplayByteBuffer writer) {
         }
 
         @Override
@@ -70,7 +70,7 @@ public interface TeamAction extends PacketBuffer.Writer {
                             CollisionRule collisionRule, NamedTextColor teamColor, Component teamPrefix,
                             Component teamSuffix) implements TeamAction {
 
-        public UpdateTeamAction(@NotNull PacketBuffer reader) {
+        public UpdateTeamAction(@NotNull ReplayByteBuffer reader) {
             this(
                     reader.read(COMPONENT),
                     reader.read(BYTE),
@@ -83,7 +83,7 @@ public interface TeamAction extends PacketBuffer.Writer {
         }
 
         @Override
-        public void write(@NotNull PacketBuffer writer) {
+        public void write(@NotNull ReplayByteBuffer writer) {
             writer.write(COMPONENT, this.displayName);
             writer.write(BYTE, this.friendlyFlags);
             writer.write(STRING, this.nameTagVisibility.getIdentifier());
@@ -105,14 +105,14 @@ public interface TeamAction extends PacketBuffer.Writer {
             entities = List.copyOf(entities);
         }
 
-        public AddEntitiesToTeamAction(@NotNull PacketBuffer reader) {
+        public AddEntitiesToTeamAction(@NotNull ReplayByteBuffer reader) {
             this(
                     reader.readCollection(STRING)
             );
         }
 
         @Override
-        public void write(@NotNull PacketBuffer writer) {
+        public void write(@NotNull ReplayByteBuffer writer) {
             writer.writeCollection(STRING, this.entities);
         }
 
@@ -128,14 +128,14 @@ public interface TeamAction extends PacketBuffer.Writer {
             entities = List.copyOf(entities);
         }
 
-        public RemoveEntitiesFromTeamAction(@NotNull PacketBuffer reader) {
+        public RemoveEntitiesFromTeamAction(@NotNull ReplayByteBuffer reader) {
             this(
                     reader.readCollection(STRING)
             );
         }
 
         @Override
-        public void write(@NotNull PacketBuffer writer) {
+        public void write(@NotNull ReplayByteBuffer writer) {
             writer.writeCollection(STRING, this.entities);
         }
 

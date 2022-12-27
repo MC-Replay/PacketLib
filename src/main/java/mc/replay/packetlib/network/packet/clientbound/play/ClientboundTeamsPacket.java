@@ -1,17 +1,17 @@
 package mc.replay.packetlib.network.packet.clientbound.play;
 
 import mc.replay.packetlib.data.team.TeamAction;
-import mc.replay.packetlib.network.PacketBuffer;
+import mc.replay.packetlib.network.ReplayByteBuffer;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacketIdentifier;
 import org.jetbrains.annotations.NotNull;
 
-import static mc.replay.packetlib.network.PacketBuffer.*;
+import static mc.replay.packetlib.network.ReplayByteBuffer.*;
 
 public record ClientboundTeamsPacket(@NotNull String teamName,
                                      @NotNull TeamAction action) implements ClientboundPacket {
 
-    public ClientboundTeamsPacket(@NotNull PacketBuffer reader) {
+    public ClientboundTeamsPacket(@NotNull ReplayByteBuffer reader) {
         this(
                 reader.read(STRING),
                 switch (reader.read(BYTE)) {
@@ -26,7 +26,7 @@ public record ClientboundTeamsPacket(@NotNull String teamName,
     }
 
     @Override
-    public void write(@NotNull PacketBuffer writer) {
+    public void write(@NotNull ReplayByteBuffer writer) {
         writer.write(STRING, this.teamName);
         writer.write(BYTE, (byte) this.action.id());
         writer.write(this.action);

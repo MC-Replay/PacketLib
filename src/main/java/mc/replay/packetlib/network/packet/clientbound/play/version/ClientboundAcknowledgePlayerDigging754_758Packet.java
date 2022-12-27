@@ -1,18 +1,18 @@
 package mc.replay.packetlib.network.packet.clientbound.play.version;
 
-import mc.replay.packetlib.network.PacketBuffer;
+import mc.replay.packetlib.network.ReplayByteBuffer;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacketIdentifier;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-import static mc.replay.packetlib.network.PacketBuffer.*;
+import static mc.replay.packetlib.network.ReplayByteBuffer.*;
 
 public record ClientboundAcknowledgePlayerDigging754_758Packet(@NotNull Vector blockPosition, int blockStateId,
                                                                int stateId,
                                                                boolean successful) implements ClientboundPacket {
 
-    public ClientboundAcknowledgePlayerDigging754_758Packet(@NotNull PacketBuffer reader) {
+    public ClientboundAcknowledgePlayerDigging754_758Packet(@NotNull ReplayByteBuffer reader) {
         this(
                 reader.read(BLOCK_POSITION),
                 reader.read(VAR_INT),
@@ -22,7 +22,7 @@ public record ClientboundAcknowledgePlayerDigging754_758Packet(@NotNull Vector b
     }
 
     @Override
-    public void write(@NotNull PacketBuffer writer) {
+    public void write(@NotNull ReplayByteBuffer writer) {
         writer.write(BLOCK_POSITION, this.blockPosition);
         writer.write(VAR_INT, this.blockStateId);
         writer.write(VAR_INT, this.stateId);

@@ -1,7 +1,7 @@
 package mc.replay.packetlib;
 
 import io.netty.buffer.Unpooled;
-import mc.replay.packetlib.network.PacketBuffer;
+import mc.replay.packetlib.network.ReplayByteBuffer;
 import mc.replay.packetlib.network.PacketListener;
 import mc.replay.packetlib.network.PacketRegistry;
 import mc.replay.packetlib.network.netty.PacketLibInjector;
@@ -46,9 +46,9 @@ public final class PacketLib {
             int packetId = packet.identifier().getIdentifier();
 
             ByteBuffer buffer = ByteBuffer.allocateDirect(2_097_152);
-            PacketBuffer packetBuffer = new PacketBuffer(buffer);
+            ReplayByteBuffer byteBuffer = new ReplayByteBuffer(buffer);
 
-            packet.write(packetBuffer);
+            packet.write(byteBuffer);
 
             Object clientboundPacket = Reflections.getClientboundPacket(Unpooled.copiedBuffer(buffer), packetId);
             if (clientboundPacket == null) return;

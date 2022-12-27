@@ -1,20 +1,20 @@
 package mc.replay.packetlib.network.packet.clientbound.play.version;
 
 import mc.replay.packetlib.data.Pos;
-import mc.replay.packetlib.network.PacketBuffer;
+import mc.replay.packetlib.network.ReplayByteBuffer;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacketIdentifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-import static mc.replay.packetlib.network.PacketBuffer.*;
+import static mc.replay.packetlib.network.ReplayByteBuffer.*;
 
 public record ClientboundLivingEntitySpawn754_758Packet(int entityId, @NotNull UUID uuid, int type, @NotNull Pos position,
                                                         float headRotation, short velocityX, short velocityY,
                                                         short velocityZ) implements ClientboundPacket {
 
-    public ClientboundLivingEntitySpawn754_758Packet(@NotNull PacketBuffer reader) {
+    public ClientboundLivingEntitySpawn754_758Packet(@NotNull ReplayByteBuffer reader) {
         this(
                 reader.read(VAR_INT),
                 reader.read(UUID),
@@ -34,7 +34,7 @@ public record ClientboundLivingEntitySpawn754_758Packet(int entityId, @NotNull U
     }
 
     @Override
-    public void write(@NotNull PacketBuffer writer) {
+    public void write(@NotNull ReplayByteBuffer writer) {
         writer.write(VAR_INT, this.entityId);
         writer.write(UUID, this.uuid);
         writer.write(VAR_INT, this.type);

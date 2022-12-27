@@ -1,7 +1,7 @@
 package mc.replay.packetlib.data.entity.player;
 
 import mc.replay.packetlib.data.PlayerProfileProperty;
-import mc.replay.packetlib.network.PacketBuffer;
+import mc.replay.packetlib.network.ReplayByteBuffer;
 import net.kyori.adventure.text.Component;
 import org.bukkit.GameMode;
 import org.jetbrains.annotations.NotNull;
@@ -10,9 +10,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.UUID;
 
-import static mc.replay.packetlib.network.PacketBuffer.*;
+import static mc.replay.packetlib.network.ReplayByteBuffer.*;
 
-public interface PlayerInfoEntry extends PacketBuffer.Writer {
+public interface PlayerInfoEntry extends ReplayByteBuffer.Writer {
 
     @NotNull UUID uuid();
 
@@ -23,7 +23,7 @@ public interface PlayerInfoEntry extends PacketBuffer.Writer {
             properties = List.copyOf(properties);
         }
 
-        public AddPlayer(@NotNull UUID uuid, @NotNull PacketBuffer reader) {
+        public AddPlayer(@NotNull UUID uuid, @NotNull ReplayByteBuffer reader) {
             this(
                     uuid,
                     reader.read(STRING),
@@ -35,7 +35,7 @@ public interface PlayerInfoEntry extends PacketBuffer.Writer {
         }
 
         @Override
-        public void write(@NotNull PacketBuffer writer) {
+        public void write(@NotNull ReplayByteBuffer writer) {
             writer.write(STRING, this.name);
             writer.writeCollection(this.properties);
             writer.write(VAR_INT, this.gameMode.ordinal());
@@ -47,7 +47,7 @@ public interface PlayerInfoEntry extends PacketBuffer.Writer {
 
     record UpdateGameMode(@NotNull UUID uuid, GameMode gameMode) implements PlayerInfoEntry {
 
-        public UpdateGameMode(@NotNull UUID uuid, @NotNull PacketBuffer reader) {
+        public UpdateGameMode(@NotNull UUID uuid, @NotNull ReplayByteBuffer reader) {
             this(
                     uuid,
                     reader.readEnum(GameMode.class)
@@ -55,14 +55,14 @@ public interface PlayerInfoEntry extends PacketBuffer.Writer {
         }
 
         @Override
-        public void write(@NotNull PacketBuffer writer) {
+        public void write(@NotNull ReplayByteBuffer writer) {
             writer.write(VAR_INT, this.gameMode.ordinal());
         }
     }
 
     record UpdateLatency(@NotNull UUID uuid, int ping) implements PlayerInfoEntry {
 
-        public UpdateLatency(@NotNull UUID uuid, @NotNull PacketBuffer reader) {
+        public UpdateLatency(@NotNull UUID uuid, @NotNull ReplayByteBuffer reader) {
             this(
                     uuid,
                     reader.read(VAR_INT)
@@ -70,14 +70,14 @@ public interface PlayerInfoEntry extends PacketBuffer.Writer {
         }
 
         @Override
-        public void write(@NotNull PacketBuffer writer) {
+        public void write(@NotNull ReplayByteBuffer writer) {
             writer.write(VAR_INT, this.ping);
         }
     }
 
     record UpdateDisplayName(@NotNull UUID uuid, @Nullable Component displayName) implements PlayerInfoEntry {
 
-        public UpdateDisplayName(@NotNull UUID uuid, @NotNull PacketBuffer reader) {
+        public UpdateDisplayName(@NotNull UUID uuid, @NotNull ReplayByteBuffer reader) {
             this(
                     uuid,
                     reader.readOptional(COMPONENT)
@@ -85,7 +85,7 @@ public interface PlayerInfoEntry extends PacketBuffer.Writer {
         }
 
         @Override
-        public void write(@NotNull PacketBuffer writer) {
+        public void write(@NotNull ReplayByteBuffer writer) {
             writer.writeOptional(COMPONENT, this.displayName);
         }
     }
@@ -93,7 +93,7 @@ public interface PlayerInfoEntry extends PacketBuffer.Writer {
     record RemovePlayer(@NotNull UUID uuid) implements PlayerInfoEntry {
 
         @Override
-        public void write(@NotNull PacketBuffer writer) {
+        public void write(@NotNull ReplayByteBuffer writer) {
         }
     }
 }

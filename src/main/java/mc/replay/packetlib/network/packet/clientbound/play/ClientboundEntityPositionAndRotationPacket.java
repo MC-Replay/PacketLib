@@ -1,12 +1,12 @@
 package mc.replay.packetlib.network.packet.clientbound.play;
 
 import mc.replay.packetlib.data.Pos;
-import mc.replay.packetlib.network.PacketBuffer;
+import mc.replay.packetlib.network.ReplayByteBuffer;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacketIdentifier;
 import org.jetbrains.annotations.NotNull;
 
-import static mc.replay.packetlib.network.PacketBuffer.*;
+import static mc.replay.packetlib.network.ReplayByteBuffer.*;
 
 public record ClientboundEntityPositionAndRotationPacket(int entityId, short deltaX, short deltaY,
                                                          short deltaZ, float yaw, float pitch,
@@ -24,7 +24,7 @@ public record ClientboundEntityPositionAndRotationPacket(int entityId, short del
         );
     }
 
-    public ClientboundEntityPositionAndRotationPacket(@NotNull PacketBuffer reader) {
+    public ClientboundEntityPositionAndRotationPacket(@NotNull ReplayByteBuffer reader) {
         this(
                 reader.read(VAR_INT),
                 reader.read(SHORT),
@@ -37,7 +37,7 @@ public record ClientboundEntityPositionAndRotationPacket(int entityId, short del
     }
 
     @Override
-    public void write(@NotNull PacketBuffer writer) {
+    public void write(@NotNull ReplayByteBuffer writer) {
         writer.write(VAR_INT, this.entityId);
         writer.write(SHORT, this.deltaX);
         writer.write(SHORT, this.deltaY);

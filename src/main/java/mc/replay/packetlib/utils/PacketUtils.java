@@ -3,7 +3,7 @@ package mc.replay.packetlib.utils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import mc.replay.packetlib.PacketLib;
-import mc.replay.packetlib.network.PacketBuffer;
+import mc.replay.packetlib.network.ReplayByteBuffer;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
 import mc.replay.packetlib.network.packet.serverbound.ServerboundPacket;
 import org.jetbrains.annotations.NotNull;
@@ -22,8 +22,8 @@ public final class PacketUtils {
             if (packetId != null && PacketLib.getInstance().getPacketRegistry().isClientboundRegistered(packetId)) {
                 ByteBuffer buffer = serializePacket(packetObject);
 
-                PacketBuffer packetBuffer = new PacketBuffer(buffer);
-                return PacketLib.getInstance().getPacketRegistry().getClientboundPacket(packetId, packetBuffer);
+                ReplayByteBuffer byteBuffer = new ReplayByteBuffer(buffer);
+                return PacketLib.getInstance().getPacketRegistry().getClientboundPacket(packetId, byteBuffer);
             }
         } catch (Throwable throwable) {
             throwable.printStackTrace();
@@ -38,8 +38,8 @@ public final class PacketUtils {
             if (packetId != null && PacketLib.getInstance().getPacketRegistry().isServerboundRegistered(packetId)) {
                 ByteBuffer buffer = serializePacket(packetObject);
 
-                PacketBuffer packetBuffer = new PacketBuffer(buffer);
-                return PacketLib.getInstance().getPacketRegistry().getServerboundPacket(packetId, packetBuffer);
+                ReplayByteBuffer byteBuffer = new ReplayByteBuffer(buffer);
+                return PacketLib.getInstance().getPacketRegistry().getServerboundPacket(packetId, byteBuffer);
             }
         } catch (Throwable throwable) {
             throwable.printStackTrace();
