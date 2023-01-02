@@ -8,6 +8,7 @@ import java.util.Map;
 
 public enum ProtocolVersion {
 
+    MINECRAFT_1_19_3(761),
     MINECRAFT_1_19_2(760),
     MINECRAFT_1_19_1(760),
     MINECRAFT_1_19(759),
