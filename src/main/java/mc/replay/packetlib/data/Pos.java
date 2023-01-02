@@ -22,6 +22,16 @@ public record Pos(double x, double y, double z, float yaw, float pitch) {
                 this.x + delta.x(),
                 this.y + delta.y(),
                 this.z + delta.z(),
+                this.yaw,
+                this.pitch
+        );
+    }
+
+    public @NotNull Pos addWithRotation(@NotNull Pos delta) {
+        return new Pos(
+                this.x + delta.x(),
+                this.y + delta.y(),
+                this.z + delta.z(),
                 this.yaw + delta.yaw(),
                 this.pitch + delta.pitch()
         );
@@ -32,8 +42,18 @@ public record Pos(double x, double y, double z, float yaw, float pitch) {
                 this.x - other.x(),
                 this.y - other.y(),
                 this.z - other.z(),
-                this.yaw - other.yaw(),
-                this.pitch - other.pitch()
+                this.yaw,
+                this.pitch
+        );
+    }
+
+    public @NotNull Pos subtractWithRotation(@NotNull Pos delta) {
+        return new Pos(
+                this.x - delta.x(),
+                this.y - delta.y(),
+                this.z - delta.z(),
+                this.yaw - delta.yaw(),
+                this.pitch - delta.pitch()
         );
     }
 }

@@ -15,9 +15,9 @@ public record ClientboundEntityPositionAndRotationPacket(int entityId, short del
     public ClientboundEntityPositionAndRotationPacket(int entityId, @NotNull Pos deltaPosition, boolean onGround) {
         this(
                 entityId,
-                (short) (deltaPosition.x() * 128),
-                (short) (deltaPosition.y() * 128),
-                (short) (deltaPosition.z() * 128),
+                (short) ((deltaPosition.x() * 32) * 128),
+                (short) ((deltaPosition.y() * 32) * 128),
+                (short) ((deltaPosition.z() * 32) * 128),
                 deltaPosition.yaw(),
                 deltaPosition.pitch(),
                 onGround
