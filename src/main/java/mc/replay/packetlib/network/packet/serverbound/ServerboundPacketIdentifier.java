@@ -11,7 +11,6 @@ public enum ServerboundPacketIdentifier implements PacketIdentifier {
     CHAT_ACKNOWLEDGE,
     COMMAND_CHAT,
     CHAT_MESSAGE,
-    CHAT_PREVIEW,
     STATUS,
     SETTINGS,
     TAB_COMPLETE,
@@ -38,6 +37,7 @@ public enum ServerboundPacketIdentifier implements PacketIdentifier {
     ENTITY_ACTION,
     STEER_VEHICLE,
     PONG,
+    CHAT_SESSION_UPDATE,
     SET_RECIPE_BOOK_STATE,
     SET_DISPLAYED_RECIPE,
     NAME_ITEM,
@@ -57,6 +57,7 @@ public enum ServerboundPacketIdentifier implements PacketIdentifier {
     PLAYER_BLOCK_PLACEMENT,
     USE_ITEM,
 
+    CHAT_PREVIEW_759_760,
     WINDOW_CONFIRMATION_754;
 
     @Override
