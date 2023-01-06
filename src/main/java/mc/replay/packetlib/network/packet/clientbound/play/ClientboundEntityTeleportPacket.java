@@ -1,5 +1,6 @@
 package mc.replay.packetlib.network.packet.clientbound.play;
 
+import mc.replay.packetlib.data.Pos;
 import mc.replay.packetlib.network.ReplayByteBuffer;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacketIdentifier;
@@ -9,6 +10,18 @@ import static mc.replay.packetlib.network.ReplayByteBuffer.*;
 
 public record ClientboundEntityTeleportPacket(int entityId, double x, double y, double z, float yaw, float pitch,
                                               boolean onGround) implements ClientboundPacket {
+
+    public ClientboundEntityTeleportPacket(int entityId, Pos pos, boolean onGround) {
+        this(
+                entityId,
+                pos.x(),
+                pos.y(),
+                pos.z(),
+                pos.yaw(),
+                pos.pitch(),
+                onGround
+        );
+    }
 
     public ClientboundEntityTeleportPacket(@NotNull ReplayByteBuffer reader) {
         this(
