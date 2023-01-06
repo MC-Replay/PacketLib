@@ -259,14 +259,24 @@ public final class ReplayByteBuffer {
 
     public interface Type<T> {
 
-        @NotNull ReplayByteBufferTypes.TypeWriter<T> writer();
+        @NotNull TypeWriter<T> writer();
 
-        @NotNull ReplayByteBufferTypes.TypeReader<T> reader();
+        @NotNull TypeReader<T> reader();
     }
 
     @FunctionalInterface
     public interface Writer {
 
         void write(@NotNull ReplayByteBuffer writer);
+    }
+
+    public interface TypeWriter<T> {
+
+        long write(@NotNull ReplayByteBuffer buffer, @UnknownNullability T value);
+    }
+
+    public interface TypeReader<T> {
+
+        @UnknownNullability T read(@NotNull ReplayByteBuffer buffer);
     }
 }

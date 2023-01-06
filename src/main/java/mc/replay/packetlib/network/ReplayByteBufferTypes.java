@@ -556,17 +556,7 @@ final class ReplayByteBufferTypes {
     );
 
     record TypeImpl<T>(@NotNull Class<T> type,
-                       @NotNull TypeWriter<T> writer,
-                       @NotNull TypeReader<T> reader) implements ReplayByteBuffer.Type<T> {
-    }
-
-    interface TypeWriter<T> {
-
-        long write(@NotNull ReplayByteBuffer buffer, @UnknownNullability T value);
-    }
-
-    interface TypeReader<T> {
-
-        @UnknownNullability T read(@NotNull ReplayByteBuffer buffer);
+                       @NotNull ReplayByteBuffer.TypeWriter<T> writer,
+                       @NotNull ReplayByteBuffer.TypeReader<T> reader) implements ReplayByteBuffer.Type<T> {
     }
 }
