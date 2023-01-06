@@ -17,6 +17,16 @@ public record Pos(double x, double y, double z, float yaw, float pitch) {
         return new Pos(x, y, z, 0, 0);
     }
 
+    public @NotNull Pos withRotation(float yaw, float pitch) {
+        return new Pos(
+                this.x,
+                this.y,
+                this.z,
+                yaw,
+                pitch
+        );
+    }
+
     public @NotNull Pos add(@NotNull Pos delta) {
         return new Pos(
                 this.x + delta.x(),
