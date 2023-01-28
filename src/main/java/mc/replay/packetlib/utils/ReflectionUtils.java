@@ -63,4 +63,24 @@ public final class ReflectionUtils {
         field.setAccessible(true);
         return field;
     }
+
+    public static Field findFieldEquals(Class<?> clazz, Class<?> type) throws NoSuchFieldException {
+        for (Field field : clazz.getDeclaredFields()) {
+            if (field.getType() == type) {
+                field.setAccessible(true);
+                return field;
+            }
+        }
+        throw new NoSuchFieldException("No field of type '" + type.getName() + "' found in '" + clazz.getName() + "'");
+    }
+
+    public static Field findFieldAssignable(Class<?> clazz, Class<?> type) throws NoSuchFieldException {
+        for (Field field : clazz.getDeclaredFields()) {
+            if (field.getType().isAssignableFrom(type)) {
+                field.setAccessible(true);
+                return field;
+            }
+        }
+        throw new NoSuchFieldException("No field of type '" + type.getName() + "' found in '" + clazz.getName() + "'");
+    }
 }

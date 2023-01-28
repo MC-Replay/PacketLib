@@ -30,6 +30,9 @@ public final class Reflections {
     public static MethodHandle GET_PLAYER_CONNECTION_METHOD;
     public static MethodHandle SEND_PACKET_METHOD;
 
+    public static Field NETWORK_MANAGER_FIELD;
+    public static Field NETWORK_CHANNEL_FIELD;
+
     public static Method PACKET_FROM_ID_METHOD_754;
     public static Method PACKET_FROM_ID_METHOD_760;
     public static Method ID_FROM_PACKET_METHOD;
@@ -57,9 +60,7 @@ public final class Reflections {
 
             Class<?> CRAFT_PLAYER = ReflectionUtils.obcClass("entity.CraftPlayer");
 
-            Field playerConnectionField = Arrays.stream(ENTITY_PLAYER.getFields())
-                    .filter(field -> field.getType().isAssignableFrom(PLAYER_CONNECTION))
-                    .findFirst().orElseThrow(NoSuchFieldException::new);
+            Field playerConnectionField = ReflectionUtils.findFieldAssignable(ENTITY_PLAYER, PLAYER_CONNECTION);
 
             Method sendPacketMethod = Arrays.stream(PLAYER_CONNECTION.getMethods())
                     .filter(m -> m.getParameterCount() == 1 && m.getParameterTypes()[0] == PACKET)
@@ -75,8 +76,11 @@ public final class Reflections {
             SERVERBOUND_PROTOCOL_DIRECTION = Enum.valueOf(enumProtocolDirection.asSubclass(Enum.class), "SERVERBOUND");
             CLIENTBOUND_PROTOCOL_DIRECTION = Enum.valueOf(enumProtocolDirection.asSubclass(Enum.class), "CLIENTBOUND");
 
-            Class<?> enumProtocol = ReflectionUtils.nmsClass("network.protocol", "EnumProtocol");
+            Class<?> enumProtocol = ReflectionUtils.nmsClass("network", "EnumProtocol");
             PLAY_ENUM_PROTOCOL = enumProtocol.getMethod("a", int.class).invoke(null, 0);
+
+            NETWORK_MANAGER_FIELD = ReflectionUtils.findFieldEquals(ENTITY_PLAYER, NETWORK_MANAGER);
+            NETWORK_CHANNEL_FIELD = ReflectionUtils.findFieldEquals(NETWORK_MANAGER, Channel.class);
 
             if (VERSION.isEqual(ProtocolVersion.MINECRAFT_1_16_5)) {
                 PACKET_FROM_ID_METHOD_754 = PLAY_ENUM_PROTOCOL.getClass().getMethod("a", enumProtocolDirection, int.class);
@@ -85,7 +89,11 @@ public final class Reflections {
             }
 
             ID_FROM_PACKET_METHOD = PLAY_ENUM_PROTOCOL.getClass().getMethod("a", enumProtocolDirection, PACKET);
-            SERIALIZE_PACKET_METHOD = PACKET.getMethod("b", PACKET_DATA_SERIALIZER);
+            if (VERSION.isLower(ProtocolVersion.MINECRAFT_1_18)) {
+                SERIALIZE_PACKET_METHOD = PACKET.getMethod("b", PACKET_DATA_SERIALIZER);
+            } else {
+                SERIALIZE_PACKET_METHOD = PACKET.getMethod("a", PACKET_DATA_SERIALIZER);
+            }
         } catch (Exception exception) {
             exception.printStackTrace();
         }
@@ -155,18 +163,8 @@ public final class Reflections {
     public static Channel getPacketChannel(@NotNull Player player) {
         try {
             Object entityPlayer = getEntityPlayer(player);
-            Object networkManager = ENTITY_PLAYER.getField("networkManager").get(entityPlayer);
-
-            Object channel;
-            if (VERSION.isLowerOrEqual(ProtocolVersion.MINECRAFT_1_17_1)) {
-                channel = NETWORK_MANAGER.getField("channel").get(networkManager);
-            } else if (VERSION.isEqual(ProtocolVersion.MINECRAFT_1_18_1)) {
-                channel = NETWORK_MANAGER.getField("k").get(networkManager);
-            } else {
-                channel = NETWORK_MANAGER.getField("m").get(networkManager);
-            }
-
-            return (Channel) channel;
+            Object networkManager = NETWORK_MANAGER_FIELD.get(entityPlayer);
+            return (Channel) NETWORK_CHANNEL_FIELD.get(networkManager);
         } catch (Throwable throwable) {
             throwable.printStackTrace();
             return null;

@@ -36,8 +36,8 @@ public final class NBTUtils {
         }
 
         return new UUID(
-                (long) intArray[0] << 32 | (long) intArray[1] & 4294967295L,
-                (long) intArray[2] << 32 | (long) intArray[3] & 4294967295L
+                (long) intArray[0] << 32 | (long) intArray[1] & 0xFFFFFFFFL,
+                (long) intArray[2] << 32 | (long) intArray[3] & 0xFFFFFFFFL
         );
     }
 }
