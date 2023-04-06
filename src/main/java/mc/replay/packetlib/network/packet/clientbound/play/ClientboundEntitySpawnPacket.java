@@ -19,7 +19,7 @@ public record ClientboundEntitySpawnPacket(int entityId, @NotNull UUID uuid, int
                 reader.read(VAR_INT),
                 reader.read(UUID),
                 reader.read(VAR_INT),
-                new Pos(
+                Pos.of(
                         reader.read(DOUBLE),
                         reader.read(DOUBLE),
                         reader.read(DOUBLE),

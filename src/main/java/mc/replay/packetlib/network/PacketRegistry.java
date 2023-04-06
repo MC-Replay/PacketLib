@@ -29,6 +29,7 @@ public final class PacketRegistry {
 
         this.registerClientboundPacket(ClientboundPacketIdentifier.ACKNOWLEDGE_BLOCK_CHANGE, ClientboundAcknowledgeBlockChangePacket.class, ClientboundAcknowledgeBlockChangePacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.BLOCK_ACTION, ClientboundBlockActionPacket.class, ClientboundBlockActionPacket::new);
+        this.registerClientboundPacket(ClientboundPacketIdentifier.BLOCK_BREAK_ANIMATION, ClientboundBlockBreakAnimationPacket.class, ClientboundBlockBreakAnimationPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.BLOCK_CHANGE, ClientboundBlockChangePacket.class, ClientboundBlockChangePacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.BLOCK_ENTITY_DATA, ClientboundBlockEntityDataPacket.class, ClientboundBlockEntityDataPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.CUSTOM_SOUND_EFFECT, ClientboundCustomSoundEffectPacket.class, ClientboundCustomSoundEffectPacket::new);
@@ -42,11 +43,13 @@ public final class PacketRegistry {
         this.registerClientboundPacket(ClientboundPacketIdentifier.ENTITY_SOUND_EFFECT, ClientboundEntitySoundEffectPacket.class, ClientboundEntitySoundEffectPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.ENTITY_SPAWN, ClientboundEntitySpawnPacket.class, ClientboundEntitySpawnPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.ENTITY_TELEPORT, ClientboundEntityTeleportPacket.class, ClientboundEntityTeleportPacket::new);
+        this.registerClientboundPacket(ClientboundPacketIdentifier.EXPERIENCE_ORB_SPAWN, ClientboundExperienceOrbSpawnPacket.class, ClientboundExperienceOrbSpawnPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.MULTI_BLOCK_CHANGE, ClientboundMultiBlockChangePacket.class, ClientboundMultiBlockChangePacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.PARTICLE, ClientboundParticlePacket.class, ClientboundParticlePacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.PLAYER_INFO, ClientboundPlayerInfoPacket.class, ClientboundPlayerInfoPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.PLAYER_SPAWN, ClientboundPlayerSpawnPacket.class, ClientboundPlayerSpawnPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.SOUND_EFFECT, ClientboundSoundEffectPacket.class, ClientboundSoundEffectPacket::new);
+        this.registerClientboundPacket(ClientboundPacketIdentifier.STATISTICS, ClientboundStatisticsPacket.class, ClientboundStatisticsPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.STOP_SOUND, ClientboundStopSoundPacket.class, ClientboundStopSoundPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.TEAMS, ClientboundTeamsPacket.class, ClientboundTeamsPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.WORLD_EVENT, ClientboundWorldEventPacket.class, ClientboundWorldEventPacket::new);

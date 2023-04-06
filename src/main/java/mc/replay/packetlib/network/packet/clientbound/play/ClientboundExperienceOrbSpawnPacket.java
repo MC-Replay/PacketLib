@@ -6,40 +6,34 @@ import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacketIdentifier;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.UUID;
-
 import static mc.replay.packetlib.network.ReplayByteBuffer.*;
 
-public record ClientboundPlayerSpawnPacket(int entityId, @NotNull UUID playerUuid,
-                                           @NotNull Pos position) implements ClientboundPacket {
+public record ClientboundExperienceOrbSpawnPacket(int entityID, Pos position,
+                                                  short experienceAmount) implements ClientboundPacket {
 
-    public ClientboundPlayerSpawnPacket(@NotNull ReplayByteBuffer reader) {
+    public ClientboundExperienceOrbSpawnPacket(@NotNull ReplayByteBuffer reader) {
         this(
                 reader.read(VAR_INT),
-                reader.read(UUID),
                 Pos.of(
                         reader.read(DOUBLE),
                         reader.read(DOUBLE),
-                        reader.read(DOUBLE),
-                        reader.read(BYTE) * 360f / 256f,
-                        reader.read(BYTE) * 360f / 256f
-                )
+                        reader.read(DOUBLE)
+                ),
+                reader.read(SHORT)
         );
     }
 
     @Override
     public void write(@NotNull ReplayByteBuffer writer) {
-        writer.write(VAR_INT, this.entityId);
-        writer.write(UUID, this.playerUuid);
+        writer.write(VAR_INT, this.entityID);
         writer.write(DOUBLE, this.position.x());
         writer.write(DOUBLE, this.position.y());
         writer.write(DOUBLE, this.position.z());
-        writer.write(BYTE, (byte) (this.position.yaw() * 256f / 360f));
-        writer.write(BYTE, (byte) (this.position.pitch() * 256f / 360f));
+        writer.write(SHORT, this.experienceAmount);
     }
 
     @Override
     public @NotNull ClientboundPacketIdentifier identifier() {
-        return ClientboundPacketIdentifier.PLAYER_SPAWN;
+        return ClientboundPacketIdentifier.EXPERIENCE_ORB_SPAWN;
     }
 }
