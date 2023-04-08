@@ -28,8 +28,12 @@ final class PacketLibDecoder extends ByteToMessageDecoder {
         ReplayByteBuffer replayByteBuffer = new ReplayByteBuffer(byteBuf.nioBuffer());
         int packetId = replayByteBuffer.read(VAR_INT);
 
-        ServerboundPacket serverboundPacket = this.packetLib.getPacketRegistry().getServerboundPacket(packetId, replayByteBuffer);
-        System.out.println(serverboundPacket);
+        if (this.packetLib.getPacketListener().isListeningServerbound(packetId)) {
+            ServerboundPacket serverboundPacket = this.packetLib.getPacketRegistry().getServerboundPacket(packetId, replayByteBuffer);
+            System.out.println(serverboundPacket);
+        }
+
+        byteBuf.resetReaderIndex();
 
         try {
             list.addAll(Reflections.callDecode(this.minecraftDecoder, ctx, byteBuf));

@@ -36,11 +36,15 @@ final class PacketLibEncoder extends MessageToByteEncoder {
             packet.write(buffer);
 
             byteBuf.writeBytes(buffer.readBytes(buffer.writeIndex()));
+
+            this.packetLib.getPacketListener().publishClientbound(packet);
             return;
         }
 
         try {
             Reflections.callEncode(this.minecraftEncoder, ctx, object, byteBuf);
+
+            // If we want to listen to packets that are not sent by the PacketLib, we can do it here by reading the bytebuf.
         } catch (InvocationTargetException exception) {
             if (exception.getCause() instanceof Exception) {
                 throw (Exception) exception.getCause();
