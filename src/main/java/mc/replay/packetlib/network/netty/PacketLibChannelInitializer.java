@@ -5,6 +5,7 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.MessageToByteEncoder;
 import mc.replay.packetlib.PacketLib;
+import mc.replay.packetlib.network.user.ConnectionPlayerProvider;
 
 import java.lang.reflect.Method;
 
@@ -38,8 +39,10 @@ final class PacketLibChannelInitializer extends ChannelInitializer<Channel> {
 
     @SuppressWarnings("rawtypes")
     static void afterChannelInitialize(PacketLib packetLib, Channel channel) {
-        MessageToByteEncoder encoder = new PacketLibEncoder(packetLib, (MessageToByteEncoder) channel.pipeline().get("encoder"));
-        ByteToMessageDecoder decoder = new PacketLibDecoder(packetLib, (ByteToMessageDecoder) channel.pipeline().get("decoder"));
+        ConnectionPlayerProvider connectionPlayerProvider = new ConnectionPlayerProvider();
+
+        MessageToByteEncoder encoder = new PacketLibEncoder(packetLib, connectionPlayerProvider, (MessageToByteEncoder) channel.pipeline().get("encoder"));
+        ByteToMessageDecoder decoder = new PacketLibDecoder(packetLib, connectionPlayerProvider, (ByteToMessageDecoder) channel.pipeline().get("decoder"));
 
         channel.pipeline().replace("encoder", "encoder", encoder);
         channel.pipeline().replace("decoder", "decoder", decoder);

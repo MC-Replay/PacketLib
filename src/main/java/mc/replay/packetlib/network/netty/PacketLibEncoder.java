@@ -6,21 +6,29 @@ import io.netty.handler.codec.MessageToByteEncoder;
 import mc.replay.packetlib.PacketLib;
 import mc.replay.packetlib.network.ReplayByteBuffer;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
+import mc.replay.packetlib.network.user.ConnectionPlayerProvider;
 import mc.replay.packetlib.utils.Reflections;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.InvocationTargetException;
 
 import static mc.replay.packetlib.network.ReplayByteBuffer.VAR_INT;
 
 @SuppressWarnings("rawtypes")
-final class PacketLibEncoder extends MessageToByteEncoder {
+public final class PacketLibEncoder extends MessageToByteEncoder {
 
     private final PacketLib packetLib;
+    private final ConnectionPlayerProvider playerProvider;
     private final MessageToByteEncoder minecraftEncoder;
 
-    public PacketLibEncoder(PacketLib packetLib, MessageToByteEncoder minecraftEncoder) {
+    public PacketLibEncoder(PacketLib packetLib, ConnectionPlayerProvider playerProvider, MessageToByteEncoder minecraftEncoder) {
         this.packetLib = packetLib;
+        this.playerProvider = playerProvider;
         this.minecraftEncoder = minecraftEncoder;
+    }
+
+    public @NotNull ConnectionPlayerProvider connection() {
+        return this.playerProvider;
     }
 
     @Override

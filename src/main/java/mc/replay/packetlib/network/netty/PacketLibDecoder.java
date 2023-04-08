@@ -6,20 +6,24 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 import mc.replay.packetlib.PacketLib;
 import mc.replay.packetlib.network.ReplayByteBuffer;
 import mc.replay.packetlib.network.packet.serverbound.ServerboundPacket;
+import mc.replay.packetlib.network.user.ConnectionPlayerProvider;
 import mc.replay.packetlib.utils.Reflections;
+import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import static mc.replay.packetlib.network.ReplayByteBuffer.VAR_INT;
 
-final class PacketLibDecoder extends ByteToMessageDecoder {
+public final class PacketLibDecoder extends ByteToMessageDecoder {
 
     private final PacketLib packetLib;
+    private final ConnectionPlayerProvider playerProvider;
     private final ByteToMessageDecoder minecraftDecoder;
 
-    public PacketLibDecoder(PacketLib packetLib, ByteToMessageDecoder minecraftDecoder) {
+    public PacketLibDecoder(PacketLib packetLib, ConnectionPlayerProvider playerProvider, ByteToMessageDecoder minecraftDecoder) {
         this.packetLib = packetLib;
+        this.playerProvider = playerProvider;
         this.minecraftDecoder = minecraftDecoder;
     }
 
@@ -30,7 +34,12 @@ final class PacketLibDecoder extends ByteToMessageDecoder {
 
         if (this.packetLib.getPacketListener().isListeningServerbound(packetId)) {
             ServerboundPacket serverboundPacket = this.packetLib.getPacketRegistry().getServerboundPacket(packetId, replayByteBuffer);
-            System.out.println(serverboundPacket);
+            if (serverboundPacket != null) {
+                Player player = this.playerProvider.player();
+                if (player != null) {
+                    this.packetLib.getPacketListener().publishServerbound(player, serverboundPacket);
+                }
+            }
         }
 
         byteBuf.resetReaderIndex();

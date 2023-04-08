@@ -6,6 +6,7 @@ import mc.replay.packetlib.network.PacketRegistry;
 import mc.replay.packetlib.network.netty.PacketLibInjector;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
 import mc.replay.packetlib.network.packet.identifier.PacketIdentifierLoader;
+import mc.replay.packetlib.network.user.PacketLibConnectionHandler;
 import mc.replay.packetlib.utils.Reflections;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -35,6 +36,8 @@ public final class PacketLib {
         this.packetListener = new PacketListener();
         this.packetIdentifierLoader = new PacketIdentifierLoader();
         this.injector = new PacketLibInjector(this);
+
+        new PacketLibConnectionHandler(this);
     }
 
     public void inject() {
