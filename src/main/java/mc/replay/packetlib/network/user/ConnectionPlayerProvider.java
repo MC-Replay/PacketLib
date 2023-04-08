@@ -7,6 +7,10 @@ public final class ConnectionPlayerProvider {
 
     private Player player;
 
+    public ConnectionPlayerProvider(@Nullable Player player) {
+        this.player = player;
+    }
+
     public @Nullable Player player() {
         return (this.player != null && !this.player.isOnline()) ? null : this.player;
     }

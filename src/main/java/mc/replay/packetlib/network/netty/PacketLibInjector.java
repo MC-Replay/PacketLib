@@ -6,7 +6,9 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
 import mc.replay.packetlib.PacketLib;
 import mc.replay.packetlib.utils.Reflections;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -17,6 +19,27 @@ public final class PacketLibInjector implements Listener {
 
     public PacketLibInjector(PacketLib packetLib) {
         this.packetLib = packetLib;
+    }
+
+    public void inject(@NotNull Player player) {
+        Channel channel = Reflections.getPacketChannel(player);
+        if (channel == null || !channel.isOpen()) return;
+
+        PacketLibChannelInitializer.afterChannelInitialize(this.packetLib, channel, player);
+    }
+
+    public void uninject(@NotNull Player player) {
+        Channel channel = Reflections.getPacketChannel(player);
+        if (channel == null || !channel.isOpen()) return;
+
+        PacketLibEncoder packetLibEncoder = channel.pipeline().get(PacketLibEncoder.class);
+        PacketLibDecoder packetLibDecoder = channel.pipeline().get(PacketLibDecoder.class);
+        if (packetLibEncoder == null || packetLibDecoder == null) {
+            throw new IllegalStateException("This player is not injected!");
+        }
+
+        channel.pipeline().replace("encoder", "encoder", packetLibEncoder.original());
+        channel.pipeline().replace("decoder", "decoder", packetLibDecoder.original());
     }
 
     @SuppressWarnings("unchecked")

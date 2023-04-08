@@ -28,6 +28,8 @@ public final class PacketLib {
     private final PacketIdentifierLoader packetIdentifierLoader;
     private final PacketLibInjector injector;
 
+    private boolean globalInjection = false;
+
     public PacketLib(@NotNull JavaPlugin plugin) {
         instance = this;
 
@@ -41,11 +43,32 @@ public final class PacketLib {
     }
 
     public void inject() {
+        if (this.globalInjection) {
+            throw new IllegalStateException("Global injection is already enabled");
+        }
+
         try {
             this.injector.inject();
+            this.globalInjection = true;
         } catch (Exception exception) {
             exception.printStackTrace();
         }
+    }
+
+    public void inject(@NotNull Player player) {
+        if (this.globalInjection) {
+            throw new IllegalStateException("Global injection is enabled");
+        }
+
+        this.injector.inject(player);
+    }
+
+    public void uninject(@NotNull Player player) {
+        if (this.globalInjection) {
+            throw new IllegalStateException("Global injection is enabled");
+        }
+
+        this.injector.uninject(player);
     }
 
     public void sendPacket(@NotNull Player player, @NotNull ClientboundPacket packet) {

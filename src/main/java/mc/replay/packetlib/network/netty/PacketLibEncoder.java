@@ -19,16 +19,20 @@ public final class PacketLibEncoder extends MessageToByteEncoder {
 
     private final PacketLib packetLib;
     private final ConnectionPlayerProvider playerProvider;
-    private final MessageToByteEncoder minecraftEncoder;
+    private final MessageToByteEncoder original;
 
-    public PacketLibEncoder(PacketLib packetLib, ConnectionPlayerProvider playerProvider, MessageToByteEncoder minecraftEncoder) {
+    public PacketLibEncoder(PacketLib packetLib, ConnectionPlayerProvider playerProvider, MessageToByteEncoder original) {
         this.packetLib = packetLib;
         this.playerProvider = playerProvider;
-        this.minecraftEncoder = minecraftEncoder;
+        this.original = original;
     }
 
     public @NotNull ConnectionPlayerProvider connection() {
         return this.playerProvider;
+    }
+
+    public @NotNull MessageToByteEncoder original() {
+        return this.original;
     }
 
     @Override
@@ -50,7 +54,7 @@ public final class PacketLibEncoder extends MessageToByteEncoder {
         }
 
         try {
-            Reflections.callEncode(this.minecraftEncoder, ctx, object, byteBuf);
+            Reflections.callEncode(this.original, ctx, object, byteBuf);
 
             // If we want to listen to packets that are not sent by the PacketLib, we can do it here by reading the bytebuf.
         } catch (InvocationTargetException exception) {

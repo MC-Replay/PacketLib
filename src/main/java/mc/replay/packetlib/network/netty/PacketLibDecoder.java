@@ -9,6 +9,7 @@ import mc.replay.packetlib.network.packet.serverbound.ServerboundPacket;
 import mc.replay.packetlib.network.user.ConnectionPlayerProvider;
 import mc.replay.packetlib.utils.Reflections;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -19,12 +20,16 @@ public final class PacketLibDecoder extends ByteToMessageDecoder {
 
     private final PacketLib packetLib;
     private final ConnectionPlayerProvider playerProvider;
-    private final ByteToMessageDecoder minecraftDecoder;
+    private final ByteToMessageDecoder original;
 
-    public PacketLibDecoder(PacketLib packetLib, ConnectionPlayerProvider playerProvider, ByteToMessageDecoder minecraftDecoder) {
+    public PacketLibDecoder(PacketLib packetLib, ConnectionPlayerProvider playerProvider, ByteToMessageDecoder original) {
         this.packetLib = packetLib;
         this.playerProvider = playerProvider;
-        this.minecraftDecoder = minecraftDecoder;
+        this.original = original;
+    }
+
+    public @NotNull ByteToMessageDecoder original() {
+        return this.original;
     }
 
     @Override
@@ -45,7 +50,7 @@ public final class PacketLibDecoder extends ByteToMessageDecoder {
         byteBuf.resetReaderIndex();
 
         try {
-            list.addAll(Reflections.callDecode(this.minecraftDecoder, ctx, byteBuf));
+            list.addAll(Reflections.callDecode(this.original, ctx, byteBuf));
         } catch (InvocationTargetException e) {
             if (e.getCause() instanceof Exception) {
                 throw (Exception) e.getCause();
