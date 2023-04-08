@@ -5,6 +5,7 @@ import mc.replay.packetlib.network.packet.identifier.PacketIdentifier;
 
 public enum ClientboundPacketIdentifier implements PacketIdentifier {
 
+    BUNDLE_DELIMITER,
     ENTITY_SPAWN,
     EXPERIENCE_ORB_SPAWN,
     PLAYER_SPAWN,
@@ -17,6 +18,7 @@ public enum ClientboundPacketIdentifier implements PacketIdentifier {
     BLOCK_CHANGE,
     BOSS_BAR,
     SERVER_DIFFICULTY,
+    CHUNK_BIOMES,
     CLEAR_TITLES,
     TAB_COMPLETE,
     DECLARE_COMMANDS,
@@ -27,6 +29,7 @@ public enum ClientboundPacketIdentifier implements PacketIdentifier {
     SET_COOLDOWN,
     CUSTOM_CHAT_COMPLETIONS,
     PLUGIN_MESSAGE,
+    DAMAGE_EVENT,
     CUSTOM_SOUND_EFFECT,
     DELETE_CHAT_MESSAGE,
     DISCONNECT,
@@ -36,6 +39,7 @@ public enum ClientboundPacketIdentifier implements PacketIdentifier {
     UNLOAD_CHUNK,
     CHANGE_GAME_STATE,
     OPEN_HORSE_WINDOW,
+    HURT_ANIMATION,
     INITIALIZE_WORLD_BORDER,
     KEEP_ALIVE,
     CHUNK_DATA,
