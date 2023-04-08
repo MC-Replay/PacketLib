@@ -18,6 +18,8 @@ public final class PacketListener {
 
     private final Map<Integer, Collection<Consumer<ClientboundPacket>>> clientboundPacketListeners = new HashMap<>();
     private final Map<Integer, Collection<BiConsumer<Player, ServerboundPacket>>> serverboundPacketListeners = new HashMap<>();
+    private final Collection<Consumer<ClientboundPacket>> globalClientboundPacketListeners = new HashSet<>();
+    private final Collection<BiConsumer<Player, ServerboundPacket>> globalServerboundPacketListeners = new HashSet<>();
 
     public void listenClientbound(@NotNull ClientboundPacketIdentifier identifier, @NotNull Consumer<@NotNull ClientboundPacket> consumer) {
         this.clientboundPacketListeners.putIfAbsent(identifier.getIdentifier(), new HashSet<>());
@@ -29,7 +31,17 @@ public final class PacketListener {
         this.serverboundPacketListeners.get(identifier.getIdentifier()).add(consumer);
     }
 
+    public void listenClientbound(@NotNull Consumer<@NotNull ClientboundPacket> consumer) {
+        this.globalClientboundPacketListeners.add(consumer);
+    }
+
+    public void listenServerbound(@NotNull BiConsumer<@NotNull Player, @NotNull ServerboundPacket> consumer) {
+        this.globalServerboundPacketListeners.add(consumer);
+    }
+
     public boolean isListeningClientbound(int packetId) {
+        if (!this.globalClientboundPacketListeners.isEmpty()) return true;
+
         Collection<Consumer<ClientboundPacket>> listeners = this.clientboundPacketListeners.get(packetId);
         return listeners != null && !listeners.isEmpty();
     }
@@ -39,6 +51,8 @@ public final class PacketListener {
     }
 
     public boolean isListeningServerbound(int packetId) {
+        if (!this.globalServerboundPacketListeners.isEmpty()) return true;
+
         Collection<BiConsumer<Player, ServerboundPacket>> listeners = this.serverboundPacketListeners.get(packetId);
         return listeners != null && !listeners.isEmpty();
     }
@@ -48,6 +62,10 @@ public final class PacketListener {
     }
 
     public void publishClientbound(@NotNull ClientboundPacket packet) {
+        for (Consumer<ClientboundPacket> globalClientboundPacketListener : this.globalClientboundPacketListeners) {
+            globalClientboundPacketListener.accept(packet);
+        }
+
         Collection<Consumer<ClientboundPacket>> listeners = this.clientboundPacketListeners.get(packet.identifier().getIdentifier());
         if (listeners == null) return;
 
@@ -57,6 +75,10 @@ public final class PacketListener {
     }
 
     public void publishServerbound(@NotNull Player player, @NotNull ServerboundPacket packet) {
+        for (BiConsumer<Player, ServerboundPacket> globalServerboundPacketListener : this.globalServerboundPacketListeners) {
+            globalServerboundPacketListener.accept(player, packet);
+        }
+
         Collection<BiConsumer<Player, ServerboundPacket>> listeners = this.serverboundPacketListeners.get(packet.identifier().getIdentifier());
         if (listeners == null) return;
 
