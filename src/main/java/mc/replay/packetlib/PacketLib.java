@@ -1,7 +1,6 @@
 package mc.replay.packetlib;
 
-import io.netty.buffer.Unpooled;
-import mc.replay.packetlib.network.ReplayByteBuffer;
+import io.netty.channel.Channel;
 import mc.replay.packetlib.network.PacketListener;
 import mc.replay.packetlib.network.PacketRegistry;
 import mc.replay.packetlib.network.netty.PacketLibInjector;
@@ -9,10 +8,9 @@ import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
 import mc.replay.packetlib.network.packet.identifier.PacketIdentifierLoader;
 import mc.replay.packetlib.utils.Reflections;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-
-import java.nio.ByteBuffer;
 
 public final class PacketLib {
 
@@ -23,40 +21,57 @@ public final class PacketLib {
         return instance;
     }
 
+    private final JavaPlugin javaPlugin;
     private final PacketRegistry packetRegistry;
     private final PacketListener packetListener;
     private final PacketIdentifierLoader packetIdentifierLoader;
     private final PacketLibInjector injector;
 
-    public PacketLib() {
+    public PacketLib(@NotNull JavaPlugin plugin) {
         instance = this;
 
+        this.javaPlugin = plugin;
         this.packetRegistry = new PacketRegistry(this);
         this.packetListener = new PacketListener();
         this.packetIdentifierLoader = new PacketIdentifierLoader();
         this.injector = new PacketLibInjector(this);
     }
 
-    public void inject(@NotNull Player player, boolean listenForClientbound) {
-        this.injector.inject(player, listenForClientbound);
+    public void inject() {
+        try {
+            this.injector.inject();
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
     }
 
     public void sendPacket(@NotNull Player player, @NotNull ClientboundPacket packet) {
-        try {
-            int packetId = packet.identifier().getIdentifier();
+        Channel channel = Reflections.getPacketChannel(player);
+        if (channel == null) return;
 
-            ByteBuffer buffer = ByteBuffer.allocateDirect(2_097_152);
-            ReplayByteBuffer byteBuffer = new ReplayByteBuffer(buffer);
+        if (channel.eventLoop().inEventLoop()) {
+            if (!channel.isOpen() || !channel.isActive()) return;
 
-            packet.write(byteBuffer);
+            channel.writeAndFlush(packet).addListener(future -> {
+                if (!future.isSuccess()) {
+                    future.cause().printStackTrace();
+                }
+            });
+        } else {
+            channel.eventLoop().execute(() -> {
+                if (!channel.isOpen() || !channel.isActive()) return;
 
-            Object clientboundPacket = Reflections.getClientboundPacket(Unpooled.copiedBuffer(buffer), packetId);
-            if (clientboundPacket == null) return;
-
-            Reflections.sendPacket(player, clientboundPacket);
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
+                channel.writeAndFlush(packet).addListener(future -> {
+                    if (!future.isSuccess()) {
+                        future.cause().printStackTrace();
+                    }
+                });
+            });
         }
+    }
+
+    public @NotNull JavaPlugin getJavaPlugin() {
+        return this.javaPlugin;
     }
 
     public @NotNull PacketRegistry getPacketRegistry() {

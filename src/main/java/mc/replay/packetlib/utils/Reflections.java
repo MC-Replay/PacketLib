@@ -2,6 +2,9 @@ package mc.replay.packetlib.utils;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.ByteToMessageDecoder;
+import io.netty.handler.codec.MessageToByteEncoder;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,8 +14,11 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public final class Reflections {
 
@@ -20,6 +26,8 @@ public final class Reflections {
     }
 
     // NMS
+    public static Class<?> MINECRAFT_SERVER;
+    public static Class<?> SERVER_CONNECTION;
     public static Class<?> PACKET;
     public static Class<?> ENTITY_PLAYER;
     public static Class<?> PLAYER_CONNECTION;
@@ -33,6 +41,7 @@ public final class Reflections {
     public static Field NETWORK_MANAGER_FIELD;
     public static Field NETWORK_CHANNEL_FIELD;
 
+    public static Method GET_SERVER_CONNECTION_METHOD;
     public static Method PACKET_FROM_ID_METHOD_754;
     public static Method PACKET_FROM_ID_METHOD_760;
     public static Method ID_FROM_PACKET_METHOD;
@@ -40,17 +49,33 @@ public final class Reflections {
 
     public static Constructor<?> PACKET_DATA_SERIALIZER_CONSTRUCTOR;
 
+    public static Object MINECRAFT_SERVER_INSTANCE;
     public static Object SERVERBOUND_PROTOCOL_DIRECTION;
     public static Object CLIENTBOUND_PROTOCOL_DIRECTION;
     public static Object PLAY_ENUM_PROTOCOL;
 
-    public static ProtocolVersion VERSION;
+    private static ProtocolVersion VERSION;
+
+    private static Method DECODE_METHOD;
+    private static Method ENCODE_METHOD;
 
     static {
         try {
             VERSION = ProtocolVersion.getServerVersion();
 
             MethodHandles.Lookup lookup = MethodHandles.lookup();
+
+            MINECRAFT_SERVER = ReflectionUtils.nmsClass("server", "MinecraftServer");
+            SERVER_CONNECTION = ReflectionUtils.nmsClass("server.network", "ServerConnection");
+
+            MINECRAFT_SERVER_INSTANCE = MINECRAFT_SERVER.getMethod("getServer").invoke(null);
+
+            for (Method method : MINECRAFT_SERVER.getDeclaredMethods()) {
+                if (method.getReturnType() != SERVER_CONNECTION || method.getParameterCount() != 0) continue;
+
+                GET_SERVER_CONNECTION_METHOD = method;
+                break;
+            }
 
             PACKET = ReflectionUtils.nmsClass("network.protocol", "Packet");
             ENTITY_PLAYER = ReflectionUtils.nmsClass("server.level", "EntityPlayer");
@@ -94,6 +119,12 @@ public final class Reflections {
             } else {
                 SERIALIZE_PACKET_METHOD = PACKET.getMethod("a", PACKET_DATA_SERIALIZER);
             }
+
+            DECODE_METHOD = ByteToMessageDecoder.class.getDeclaredMethod("decode", ChannelHandlerContext.class, ByteBuf.class, List.class);
+            DECODE_METHOD.setAccessible(true);
+
+            ENCODE_METHOD = MessageToByteEncoder.class.getDeclaredMethod("encode", ChannelHandlerContext.class, Object.class, ByteBuf.class);
+            ENCODE_METHOD.setAccessible(true);
         } catch (Exception exception) {
             exception.printStackTrace();
         }
@@ -166,12 +197,32 @@ public final class Reflections {
             Object networkManager = NETWORK_MANAGER_FIELD.get(entityPlayer);
             return (Channel) NETWORK_CHANNEL_FIELD.get(networkManager);
         } catch (Throwable throwable) {
-            throwable.printStackTrace();
             return null;
         }
     }
 
     public static Object getEntityPlayer(@NotNull Player player) throws Throwable {
         return GET_PLAYER_HANDLE_METHOD.invoke(player);
+    }
+
+    public static List<Object> callDecode(ByteToMessageDecoder decoder, ChannelHandlerContext ctx, Object input) throws InvocationTargetException {
+        List<Object> output = new ArrayList<>();
+
+        try {
+            DECODE_METHOD.invoke(decoder, ctx, input, output);
+        } catch (IllegalAccessException exception) {
+            exception.printStackTrace();
+        }
+
+        return output;
+    }
+
+    @SuppressWarnings("rawtypes")
+    public static void callEncode(MessageToByteEncoder encoder, ChannelHandlerContext ctx, Object msg, ByteBuf output) throws InvocationTargetException {
+        try {
+            ENCODE_METHOD.invoke(encoder, ctx, msg, output);
+        } catch (IllegalAccessException exception) {
+            exception.printStackTrace();
+        }
     }
 }
