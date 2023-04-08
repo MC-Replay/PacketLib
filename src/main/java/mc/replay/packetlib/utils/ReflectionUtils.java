@@ -1,6 +1,8 @@
 package mc.replay.packetlib.utils;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Optional;
 
 public final class ReflectionUtils {
@@ -26,10 +28,6 @@ public final class ReflectionUtils {
         }
     }
 
-    public static boolean isRepackaged() {
-        return NMS_REPACKAGED;
-    }
-
     public static String nmsClassName(String post1_17package, String className) {
         if (NMS_REPACKAGED) {
             String classPackage = post1_17package == null || post1_17package.isEmpty() ? NM_PACKAGE : NM_PACKAGE + '.' + post1_17package;
@@ -46,16 +44,8 @@ public final class ReflectionUtils {
         return getClass(nmsClassName(post1_17package, className));
     }
 
-    public static Optional<Class<?>> nmsOptionalClass(String post1_17package, String className) {
-        return getClassOptional(nmsClassName(post1_17package, className));
-    }
-
     public static Class<?> obcClass(String className) throws ClassNotFoundException {
         return getClass(obcClassName(className));
-    }
-
-    public static Optional<Class<?>> obcOptionalClass(String className) {
-        return getClassOptional(obcClassName(className));
     }
 
     public static Field getField(Class<?> clazz, String fieldName) throws NoSuchFieldException {
@@ -82,5 +72,22 @@ public final class ReflectionUtils {
             }
         }
         throw new NoSuchFieldException("No field of type '" + type.getName() + "' found in '" + clazz.getName() + "'");
+    }
+
+    public static Method getMethod(Class<?> clazz, String methodName, Class<?>... parameterTypes) throws NoSuchMethodException {
+        Method method = clazz.getDeclaredMethod(methodName, parameterTypes);
+        method.setAccessible(true);
+        return method;
+    }
+
+    public static Method getMethod(Class<?> clazz, Class<?> returnType, Class<?>... parameterTypes) throws NoSuchMethodException {
+        for (Method method : clazz.getDeclaredMethods()) {
+            if (method.getReturnType() != returnType || !Arrays.equals(method.getParameterTypes(), parameterTypes))
+                continue;
+
+            method.setAccessible(true);
+            return method;
+        }
+        throw new NoSuchMethodException("No method with return type '" + returnType.getName() + "' and parameters '" + Arrays.toString(parameterTypes) + "' found in '" + clazz.getName() + "'");
     }
 }
