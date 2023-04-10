@@ -43,6 +43,7 @@ public final class PacketRegistry {
         this.registerClientboundPacket(ClientboundPacketIdentifier.ENTITY_SOUND_EFFECT, ClientboundEntitySoundEffectPacket.class, ClientboundEntitySoundEffectPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.ENTITY_SPAWN, ClientboundEntitySpawnPacket.class, ClientboundEntitySpawnPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.ENTITY_TELEPORT, ClientboundEntityTeleportPacket.class, ClientboundEntityTeleportPacket::new);
+        this.registerClientboundPacket(ClientboundPacketIdentifier.ENTITY_VELOCITY, ClientboundEntityVelocityPacket.class, ClientboundEntityVelocityPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.EXPERIENCE_ORB_SPAWN, ClientboundExperienceOrbSpawnPacket.class, ClientboundExperienceOrbSpawnPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.MULTI_BLOCK_CHANGE, ClientboundMultiBlockChangePacket.class, ClientboundMultiBlockChangePacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.PARTICLE, ClientboundParticlePacket.class, ClientboundParticlePacket::new);

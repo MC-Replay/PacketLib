@@ -4,6 +4,7 @@ import mc.replay.packetlib.data.Pos;
 import mc.replay.packetlib.network.ReplayByteBuffer;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacketIdentifier;
+import mc.replay.packetlib.utils.ProtocolVersion;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -24,10 +25,11 @@ public record ClientboundEntitySpawnPacket(int entityId, @NotNull UUID uuid, int
                         reader.read(DOUBLE),
                         reader.read(DOUBLE),
                         reader.read(BYTE) * 360f / 256f,
-                        reader.read(BYTE) * 360f / 256f
+                        reader.read(BYTE) * 360f / 256f,
+                        true
                 ),
-                reader.read(BYTE) * 360f / 256f,
-                reader.read(VAR_INT),
+                (ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_19)) ? reader.read(BYTE) * 360f / 256f : 0f,
+                (ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_19)) ? reader.read(VAR_INT) : reader.read(INT),
                 reader.read(SHORT),
                 reader.read(SHORT),
                 reader.read(SHORT)
@@ -46,9 +48,13 @@ public record ClientboundEntitySpawnPacket(int entityId, @NotNull UUID uuid, int
 
         writer.write(BYTE, (byte) (this.position.pitch() * 256 / 360));
         writer.write(BYTE, (byte) (this.position.yaw() * 256 / 360));
-        writer.write(BYTE, (byte) (this.headRotation * 256 / 360));
 
-        writer.write(VAR_INT, this.data);
+        if (ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_19)) {
+            writer.write(BYTE, (byte) (this.headRotation * 256 / 360));
+            writer.write(VAR_INT, this.data);
+        } else {
+            writer.write(INT, this.data);
+        }
 
         writer.write(SHORT, this.velocityX);
         writer.write(SHORT, this.velocityY);

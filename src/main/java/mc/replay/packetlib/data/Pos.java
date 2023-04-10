@@ -13,6 +13,10 @@ public record Pos(double x, double y, double z, float yaw, float pitch) {
         return new Pos(x, y, z, yaw, pitch);
     }
 
+    public static @NotNull Pos of(double x, double y, double z, float pitch, float yaw, boolean pitchFirst) {
+        return new Pos(x, y, z, yaw, pitch);
+    }
+
     public static @NotNull Pos of(double x, double y, double z) {
         return new Pos(x, y, z, 0, 0);
     }

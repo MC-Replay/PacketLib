@@ -49,13 +49,14 @@ public final class PacketLibEncoder extends MessageToByteEncoder {
 
             byteBuf.writeBytes(buffer.readBytes(buffer.writeIndex()));
 
-            this.packetLib.getPacketListener().publishClientbound(packet);
+            if (this.packetLib.getPacketListener().isListeningClientbound(packet.identifier())) {
+                this.packetLib.getPacketListener().publishClientbound(packet);
+            }
             return;
         }
 
         try {
             Reflections.callEncode(this.original, ctx, object, byteBuf);
-
             // If we want to listen to packets that are not sent by the PacketLib, we can do it here by reading the bytebuf.
         } catch (InvocationTargetException exception) {
             if (exception.getCause() instanceof Exception) {
