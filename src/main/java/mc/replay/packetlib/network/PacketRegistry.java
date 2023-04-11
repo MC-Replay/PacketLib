@@ -1,6 +1,5 @@
 package mc.replay.packetlib.network;
 
-import mc.replay.packetlib.PacketLib;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacketIdentifier;
 import mc.replay.packetlib.network.packet.clientbound.play.*;
@@ -19,14 +18,10 @@ import java.util.function.Function;
 
 public final class PacketRegistry {
 
-    private final PacketLib packetLib;
-
     private final Map<ServerboundPacketIdentifier, PacketDefinition<ServerboundPacketIdentifier, ? extends ServerboundPacket>> serverboundPacketRegistry = new HashMap<>();
     private final Map<ClientboundPacketIdentifier, PacketDefinition<ClientboundPacketIdentifier, ? extends ClientboundPacket>> clientboundPacketRegistry = new HashMap<>();
 
-    public PacketRegistry(PacketLib packetLib) {
-        this.packetLib = packetLib;
-
+    public PacketRegistry() {
         this.registerClientboundPacket(ClientboundPacketIdentifier.ACKNOWLEDGE_BLOCK_CHANGE, ClientboundAcknowledgeBlockChangePacket.class, ClientboundAcknowledgeBlockChangePacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.BLOCK_ACTION, ClientboundBlockActionPacket.class, ClientboundBlockActionPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.BLOCK_BREAK_ANIMATION, ClientboundBlockBreakAnimationPacket.class, ClientboundBlockBreakAnimationPacket::new);
@@ -42,6 +37,7 @@ public final class PacketRegistry {
         this.registerClientboundPacket(ClientboundPacketIdentifier.ENTITY_ROTATION, ClientboundEntityRotationPacket.class, ClientboundEntityRotationPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.ENTITY_SOUND_EFFECT, ClientboundEntitySoundEffectPacket.class, ClientboundEntitySoundEffectPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.ENTITY_SPAWN, ClientboundEntitySpawnPacket.class, ClientboundEntitySpawnPacket::new);
+        this.registerClientboundPacket(ClientboundPacketIdentifier.ENTITY_STATUS, ClientboundEntityStatusPacket.class, ClientboundEntityStatusPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.ENTITY_TELEPORT, ClientboundEntityTeleportPacket.class, ClientboundEntityTeleportPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.ENTITY_VELOCITY, ClientboundEntityVelocityPacket.class, ClientboundEntityVelocityPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.EXPERIENCE_ORB_SPAWN, ClientboundExperienceOrbSpawnPacket.class, ClientboundExperienceOrbSpawnPacket::new);

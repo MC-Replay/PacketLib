@@ -142,6 +142,16 @@ public final class Metadata {
         return (Type<T>) SERIALIZERS.get((byte) type);
     }
 
+    public static @NotNull Metadata fromEntries(@NotNull Map<Integer, Entry<?>> entries) {
+        Metadata metadata = new Metadata();
+        for (Map.Entry<Integer, Entry<?>> entry : entries.entrySet()) {
+            if (entry.getKey() == null || entry.getValue() == null) continue;
+
+            metadata.setIndex(entry.getKey(), entry.getValue());
+        }
+        return metadata;
+    }
+
     private Entry<?>[] entries = new Entry<?>[0];
     private Map<Integer, Entry<?>> entryMap = null;
 

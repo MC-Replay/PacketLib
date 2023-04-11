@@ -34,7 +34,7 @@ public final class PacketLib {
         instance = this;
 
         this.javaPlugin = plugin;
-        this.packetRegistry = new PacketRegistry(this);
+        this.packetRegistry = new PacketRegistry();
         this.packetListener = new PacketListener();
         this.packetIdentifierLoader = new PacketIdentifierLoader();
         this.injector = new PacketLibInjector(this);
