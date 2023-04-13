@@ -6,6 +6,7 @@ import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacketIdentifier;
 import org.jetbrains.annotations.NotNull;
 
+import static mc.replay.packetlib.network.ReplayByteBuffer.BYTE;
 import static mc.replay.packetlib.network.ReplayByteBuffer.VAR_INT;
 
 public record ClientboundEntityAnimationPacket(int entityId,
@@ -14,14 +15,14 @@ public record ClientboundEntityAnimationPacket(int entityId,
     public ClientboundEntityAnimationPacket(@NotNull ReplayByteBuffer reader) {
         this(
                 reader.read(VAR_INT),
-                reader.readEnum(EntityAnimation.class)
+                EntityAnimation.values()[reader.read(BYTE)]
         );
     }
 
     @Override
     public void write(@NotNull ReplayByteBuffer writer) {
         writer.write(VAR_INT, this.entityId);
-        writer.writeEnum(EntityAnimation.class, this.animation);
+        writer.write(BYTE, (byte) this.animation.ordinal());
     }
 
     @Override
