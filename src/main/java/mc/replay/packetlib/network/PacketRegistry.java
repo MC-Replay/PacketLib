@@ -27,6 +27,7 @@ public final class PacketRegistry {
         this.registerClientboundPacket(ClientboundPacketIdentifier.BLOCK_BREAK_ANIMATION, ClientboundBlockBreakAnimationPacket.class, ClientboundBlockBreakAnimationPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.BLOCK_CHANGE, ClientboundBlockChangePacket.class, ClientboundBlockChangePacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.BLOCK_ENTITY_DATA, ClientboundBlockEntityDataPacket.class, ClientboundBlockEntityDataPacket::new);
+        this.registerClientboundPacket(ClientboundPacketIdentifier.COLLECT_ITEM, ClientboundCollectItemPacket.class, ClientboundCollectItemPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.CUSTOM_SOUND_EFFECT, ClientboundCustomSoundEffectPacket.class, ClientboundCustomSoundEffectPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.ENTITY_ANIMATION, ClientboundEntityAnimationPacket.class, ClientboundEntityAnimationPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.ENTITY_DESTROY, ClientboundEntityDestroyPacket.class, ClientboundEntityDestroyPacket::new);
