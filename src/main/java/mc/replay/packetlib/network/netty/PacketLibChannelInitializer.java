@@ -43,7 +43,7 @@ final class PacketLibChannelInitializer extends ChannelInitializer<Channel> {
     static void afterChannelInitialize(PacketLib packetLib, Channel channel, @Nullable Player player) {
         ConnectionPlayerProvider connectionPlayerProvider = new ConnectionPlayerProvider(player);
 
-        MessageToByteEncoder encoder = new PacketLibEncoder(packetLib, connectionPlayerProvider, (MessageToByteEncoder) channel.pipeline().get("encoder"));
+        MessageToByteEncoder encoder = new PacketLibEncoder(connectionPlayerProvider, (MessageToByteEncoder) channel.pipeline().get("encoder"));
         ByteToMessageDecoder decoder = new PacketLibDecoder(packetLib, connectionPlayerProvider, (ByteToMessageDecoder) channel.pipeline().get("decoder"));
 
         channel.pipeline().replace("encoder", "encoder", encoder);

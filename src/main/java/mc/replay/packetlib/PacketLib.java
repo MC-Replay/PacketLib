@@ -1,6 +1,7 @@
 package mc.replay.packetlib;
 
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFutureListener;
 import mc.replay.packetlib.network.PacketListener;
 import mc.replay.packetlib.network.PacketRegistry;
 import mc.replay.packetlib.network.netty.PacketLibInjector;
@@ -76,22 +77,10 @@ public final class PacketLib {
         if (channel == null) return;
 
         if (channel.eventLoop().inEventLoop()) {
-            if (!channel.isOpen() || !channel.isActive()) return;
-
-            channel.writeAndFlush(packet).addListener(future -> {
-                if (!future.isSuccess()) {
-                    future.cause().printStackTrace();
-                }
-            });
+            this.writeAndFlushPacket(channel, packet);
         } else {
             channel.eventLoop().execute(() -> {
-                if (!channel.isOpen() || !channel.isActive()) return;
-
-                channel.writeAndFlush(packet).addListener(future -> {
-                    if (!future.isSuccess()) {
-                        future.cause().printStackTrace();
-                    }
-                });
+                this.writeAndFlushPacket(channel, packet);
             });
         }
     }
@@ -114,5 +103,15 @@ public final class PacketLib {
 
     public @NotNull PacketLibInjector getInjector() {
         return this.injector;
+    }
+
+    private void writeAndFlushPacket(Channel channel, ClientboundPacket packet) {
+        if (!channel.isOpen() || !channel.isActive()) return;
+
+        channel.writeAndFlush(packet).addListener(future -> {
+            if (future.isSuccess() && this.packetListener.isListeningClientbound(packet.identifier())) {
+                this.packetListener.publishClientbound(packet);
+            }
+        }).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
     }
 }

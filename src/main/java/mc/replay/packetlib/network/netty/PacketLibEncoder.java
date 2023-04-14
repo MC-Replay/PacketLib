@@ -3,7 +3,6 @@ package mc.replay.packetlib.network.netty;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
-import mc.replay.packetlib.PacketLib;
 import mc.replay.packetlib.network.ReplayByteBuffer;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
 import mc.replay.packetlib.network.user.ConnectionPlayerProvider;
@@ -17,12 +16,10 @@ import static mc.replay.packetlib.network.ReplayByteBuffer.VAR_INT;
 @SuppressWarnings("rawtypes")
 public final class PacketLibEncoder extends MessageToByteEncoder {
 
-    private final PacketLib packetLib;
     private final ConnectionPlayerProvider playerProvider;
     private final MessageToByteEncoder original;
 
-    public PacketLibEncoder(PacketLib packetLib, ConnectionPlayerProvider playerProvider, MessageToByteEncoder original) {
-        this.packetLib = packetLib;
+    public PacketLibEncoder(ConnectionPlayerProvider playerProvider, MessageToByteEncoder original) {
         this.playerProvider = playerProvider;
         this.original = original;
     }
@@ -48,10 +45,6 @@ public final class PacketLibEncoder extends MessageToByteEncoder {
             packet.write(buffer);
 
             byteBuf.writeBytes(buffer.readBytes(buffer.writeIndex()));
-
-            if (this.packetLib.getPacketListener().isListeningClientbound(packet.identifier())) {
-                this.packetLib.getPacketListener().publishClientbound(packet);
-            }
             return;
         }
 
@@ -65,5 +58,9 @@ public final class PacketLibEncoder extends MessageToByteEncoder {
                 throw (Error) exception.getCause();
             }
         }
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
     }
 }
