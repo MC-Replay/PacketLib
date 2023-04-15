@@ -46,6 +46,7 @@ public final class PacketRegistry {
         this.registerClientboundPacket(ClientboundPacketIdentifier.PARTICLE, ClientboundParticlePacket.class, ClientboundParticlePacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.PLAYER_INFO, ClientboundPlayerInfoPacket.class, ClientboundPlayerInfoPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.PLAYER_SPAWN, ClientboundPlayerSpawnPacket.class, ClientboundPlayerSpawnPacket::new);
+        this.registerClientboundPacket(ClientboundPacketIdentifier.SET_PASSENGERS, ClientboundSetPassengersPacket.class, ClientboundSetPassengersPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.SOUND_EFFECT, ClientboundSoundEffectPacket.class, ClientboundSoundEffectPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.STATISTICS, ClientboundStatisticsPacket.class, ClientboundStatisticsPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.STOP_SOUND, ClientboundStopSoundPacket.class, ClientboundStopSoundPacket::new);
