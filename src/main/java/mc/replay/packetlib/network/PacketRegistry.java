@@ -9,6 +9,7 @@ import mc.replay.packetlib.network.packet.identifier.PacketIdentifier;
 import mc.replay.packetlib.network.packet.serverbound.ServerboundPacket;
 import mc.replay.packetlib.network.packet.serverbound.ServerboundPacketIdentifier;
 import mc.replay.packetlib.network.packet.serverbound.play.ServerboundAnimationPacket;
+import mc.replay.packetlib.network.packet.serverbound.play.ServerboundInteractEntityPacket;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,6 +58,7 @@ public final class PacketRegistry {
         this.registerClientboundPacket(ClientboundPacketIdentifier.SPAWN_LIVING_ENTITY_754_758, ClientboundLivingEntitySpawn754_758Packet.class, ClientboundLivingEntitySpawn754_758Packet::new);
 
         this.registerServerboundPacket(ServerboundPacketIdentifier.ANIMATION, ServerboundAnimationPacket.class, ServerboundAnimationPacket::new);
+        this.registerServerboundPacket(ServerboundPacketIdentifier.INTERACT_ENTITY, ServerboundInteractEntityPacket.class, ServerboundInteractEntityPacket::new);
     }
 
     public boolean isClientboundRegistered(@Nullable ClientboundPacketIdentifier identifier) {
