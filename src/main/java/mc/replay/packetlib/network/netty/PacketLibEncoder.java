@@ -3,23 +3,31 @@ package mc.replay.packetlib.network.netty;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
+import mc.replay.packetlib.PacketLib;
 import mc.replay.packetlib.network.ReplayByteBuffer;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
 import mc.replay.packetlib.network.user.ConnectionPlayerProvider;
 import mc.replay.packetlib.utils.Reflections;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.HashSet;
 
 import static mc.replay.packetlib.network.ReplayByteBuffer.VAR_INT;
 
 @SuppressWarnings("rawtypes")
 public final class PacketLibEncoder extends MessageToByteEncoder {
 
+    private final Collection<PacketLib> instances = new HashSet<>();
+
     private final ConnectionPlayerProvider playerProvider;
     private final MessageToByteEncoder original;
 
-    public PacketLibEncoder(ConnectionPlayerProvider playerProvider, MessageToByteEncoder original) {
+    public PacketLibEncoder(PacketLib instance, ConnectionPlayerProvider playerProvider, MessageToByteEncoder original) {
+        this.instances.add(instance);
+
         this.playerProvider = playerProvider;
         this.original = original;
     }
@@ -30,6 +38,20 @@ public final class PacketLibEncoder extends MessageToByteEncoder {
 
     public @NotNull MessageToByteEncoder original() {
         return this.original;
+    }
+
+    @NotNull Collection<PacketLib> getInstances() {
+        return this.instances;
+    }
+
+    void addInstance(@NotNull PacketLib instance) {
+        if (!this.instances.contains(instance)) {
+            this.instances.add(instance);
+        }
+    }
+
+    void removeInstance(@NotNull PacketLib instance) {
+        this.instances.remove(instance);
     }
 
     @Override
@@ -50,7 +72,22 @@ public final class PacketLibEncoder extends MessageToByteEncoder {
 
         try {
             Reflections.callEncode(this.original, ctx, object, byteBuf);
-            // If we want to listen to packets that are not sent by the PacketLib, we can do it here by reading the bytebuf.
+
+            ReplayByteBuffer buffer = new ReplayByteBuffer(byteBuf.nioBuffer());
+            int packetId = buffer.read(VAR_INT);
+
+            Collection<PacketLib> listeningInstances = this.findListeningMinecraftInstances(packetId);
+            if (listeningInstances.isEmpty()) return;
+
+            Player player = this.playerProvider.player();
+            if (player == null) return;
+
+            ClientboundPacket clientboundPacket = PacketLib.getPacketRegistry().getClientboundPacket(packetId, buffer);
+            if (clientboundPacket == null) return;
+
+            for (PacketLib instance : listeningInstances) {
+                instance.packetListener().publishClientbound(player, clientboundPacket);
+            }
         } catch (InvocationTargetException exception) {
             if (exception.getCause() instanceof Exception) {
                 throw (Exception) exception.getCause();
@@ -60,7 +97,13 @@ public final class PacketLibEncoder extends MessageToByteEncoder {
         }
     }
 
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    private Collection<PacketLib> findListeningMinecraftInstances(int packetId) {
+        Collection<PacketLib> instances = new HashSet<>();
+        for (PacketLib instance : this.instances) {
+            if (instance.settings().listenMinecraftClientbound() && instance.packetListener().isListeningClientbound(packetId)) {
+                instances.add(instance);
+            }
+        }
+        return instances;
     }
 }

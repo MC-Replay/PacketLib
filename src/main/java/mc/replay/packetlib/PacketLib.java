@@ -1,117 +1,44 @@
 package mc.replay.packetlib;
 
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFutureListener;
 import mc.replay.packetlib.network.PacketListener;
 import mc.replay.packetlib.network.PacketRegistry;
-import mc.replay.packetlib.network.netty.PacketLibInjector;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
 import mc.replay.packetlib.network.packet.identifier.PacketIdentifierLoader;
-import mc.replay.packetlib.network.user.PacketLibConnectionHandler;
-import mc.replay.packetlib.utils.Reflections;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-public final class PacketLib {
+public interface PacketLib {
 
-    private static PacketLib instance;
-
-    @ApiStatus.Internal
-    public static PacketLib getInstance() {
-        return instance;
+    static @NotNull PacketLibBuilder builder() {
+        return new PacketLibBuilderImpl();
     }
 
-    private final JavaPlugin javaPlugin;
-    private final PacketRegistry packetRegistry;
-    private final PacketListener packetListener;
-    private final PacketIdentifierLoader packetIdentifierLoader;
-    private final PacketLibInjector injector;
-
-    private boolean globalInjection = false;
-
-    public PacketLib(@NotNull JavaPlugin plugin) {
-        instance = this;
-
-        this.javaPlugin = plugin;
-        this.packetRegistry = new PacketRegistry();
-        this.packetListener = new PacketListener();
-        this.packetIdentifierLoader = new PacketIdentifierLoader();
-        this.injector = new PacketLibInjector(this);
-
-        new PacketLibConnectionHandler(this);
+    static @NotNull PacketLib getInstance(@NotNull JavaPlugin javaPlugin) {
+        return PacketLibImpl.getInstance(javaPlugin);
     }
 
-    public void inject() {
-        if (this.globalInjection) {
-            throw new IllegalStateException("Global injection is already enabled");
-        }
-
-        try {
-            this.injector.inject();
-            this.globalInjection = true;
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
+    static boolean hasInstance(@NotNull JavaPlugin javaPlugin) {
+        return PacketLibImpl.hasInstance(javaPlugin);
     }
 
-    public void inject(@NotNull Player player) {
-        if (this.globalInjection) {
-            throw new IllegalStateException("Global injection is enabled");
-        }
-
-        this.injector.inject(player);
+    static @NotNull PacketIdentifierLoader getPacketIdentifierLoader() {
+        return PacketLibImpl.PACKET_IDENTIFIER_LOADER;
     }
 
-    public void uninject(@NotNull Player player) {
-        if (this.globalInjection) {
-            throw new IllegalStateException("Global injection is enabled");
-        }
-
-        this.injector.uninject(player);
+    static @NotNull PacketRegistry getPacketRegistry() {
+        return PacketLibImpl.PACKET_REGISTRY;
     }
 
-    public void sendPacket(@NotNull Player player, @NotNull ClientboundPacket packet) {
-        Channel channel = Reflections.getPacketChannel(player);
-        if (channel == null) return;
+    @NotNull JavaPlugin javaPlugin();
 
-        if (channel.eventLoop().inEventLoop()) {
-            this.writeAndFlushPacket(channel, packet);
-        } else {
-            channel.eventLoop().execute(() -> {
-                this.writeAndFlushPacket(channel, packet);
-            });
-        }
-    }
+    @NotNull PacketLibSettings settings();
 
-    public @NotNull JavaPlugin getJavaPlugin() {
-        return this.javaPlugin;
-    }
+    @NotNull PacketListener packetListener();
 
-    public @NotNull PacketRegistry getPacketRegistry() {
-        return this.packetRegistry;
-    }
+    void inject(@NotNull Player player);
 
-    public @NotNull PacketListener getPacketListener() {
-        return this.packetListener;
-    }
+    void uninject(@NotNull Player player);
 
-    public @NotNull PacketIdentifierLoader getPacketIdentifierLoader() {
-        return this.packetIdentifierLoader;
-    }
-
-    public @NotNull PacketLibInjector getInjector() {
-        return this.injector;
-    }
-
-    private void writeAndFlushPacket(Channel channel, ClientboundPacket packet) {
-        if (!channel.isOpen() || !channel.isActive()) return;
-
-        channel.writeAndFlush(packet).addListener(future -> {
-            if (future.isSuccess() && this.packetListener.isListeningClientbound(packet.identifier())) {
-                this.packetListener.publishClientbound(packet);
-            }
-        }).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
-    }
+    void sendPacket(@NotNull Player player, @NotNull ClientboundPacket packet);
 }

@@ -24,11 +24,11 @@ final class PacketLibChannelInitializer extends ChannelInitializer<Channel> {
         }
     }
 
-    private final PacketLib packetLib;
+    private final PacketLib instance;
     private final ChannelInitializer<Channel> original;
 
-    public PacketLibChannelInitializer(PacketLib packetLib, ChannelInitializer<Channel> original) {
-        this.packetLib = packetLib;
+    public PacketLibChannelInitializer(PacketLib instance, ChannelInitializer<Channel> original) {
+        this.instance = instance;
         this.original = original;
     }
 
@@ -36,17 +36,27 @@ final class PacketLibChannelInitializer extends ChannelInitializer<Channel> {
     protected void initChannel(Channel channel) throws Exception {
         INIT_CHANNEL_METHOD.invoke(this.original, channel);
 
-        afterChannelInitialize(this.packetLib, channel, null);
+        afterChannelInitialize(this.instance, channel, null);
     }
 
     @SuppressWarnings("rawtypes")
-    static void afterChannelInitialize(PacketLib packetLib, Channel channel, @Nullable Player player) {
+    static void afterChannelInitialize(PacketLib instance, Channel channel, @Nullable Player player) {
         ConnectionPlayerProvider connectionPlayerProvider = new ConnectionPlayerProvider(player);
 
-        MessageToByteEncoder encoder = new PacketLibEncoder(connectionPlayerProvider, (MessageToByteEncoder) channel.pipeline().get("encoder"));
-        ByteToMessageDecoder decoder = new PacketLibDecoder(packetLib, connectionPlayerProvider, (ByteToMessageDecoder) channel.pipeline().get("decoder"));
+        MessageToByteEncoder currentEncoder = (MessageToByteEncoder) channel.pipeline().get("encoder");
+        ByteToMessageDecoder currentDecoder = (ByteToMessageDecoder) channel.pipeline().get("decoder");
 
-        channel.pipeline().replace("encoder", "encoder", encoder);
-        channel.pipeline().replace("decoder", "decoder", decoder);
+        // If another plugin has already initialized PacketLib for this player, we can just add an instance to the existing encoders and decoders.
+        if (currentEncoder instanceof PacketLibEncoder packetLibEncoder && currentDecoder instanceof PacketLibDecoder packetLibDecoder) {
+            packetLibEncoder.addInstance(instance);
+            packetLibDecoder.addInstance(instance);
+            return;
+        }
+
+        MessageToByteEncoder newEncoder = new PacketLibEncoder(instance, connectionPlayerProvider, currentEncoder);
+        ByteToMessageDecoder newDecoder = new PacketLibDecoder(instance, connectionPlayerProvider, currentDecoder);
+
+        channel.pipeline().replace("encoder", "encoder", newEncoder);
+        channel.pipeline().replace("decoder", "decoder", newDecoder);
     }
 }

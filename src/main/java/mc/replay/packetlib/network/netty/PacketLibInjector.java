@@ -15,17 +15,17 @@ import java.util.List;
 
 public final class PacketLibInjector implements Listener {
 
-    private final PacketLib packetLib;
+    private final PacketLib instance;
 
-    public PacketLibInjector(PacketLib packetLib) {
-        this.packetLib = packetLib;
+    public PacketLibInjector(PacketLib instance) {
+        this.instance = instance;
     }
 
     public void inject(@NotNull Player player) {
         Channel channel = Reflections.getPacketChannel(player);
         if (channel == null || !channel.isOpen()) return;
 
-        PacketLibChannelInitializer.afterChannelInitialize(this.packetLib, channel, player);
+        PacketLibChannelInitializer.afterChannelInitialize(this.instance, channel, player);
     }
 
     public void uninject(@NotNull Player player) {
@@ -38,8 +38,19 @@ public final class PacketLibInjector implements Listener {
             throw new IllegalStateException("This player is not injected!");
         }
 
-        channel.pipeline().replace("encoder", "encoder", packetLibEncoder.original());
-        channel.pipeline().replace("decoder", "decoder", packetLibDecoder.original());
+        // If there are still other instances using this encoder, we just remove this instance.
+        if (packetLibEncoder.getInstances().size() >= 2) {
+            packetLibEncoder.removeInstance(this.instance);
+        } else {
+            channel.pipeline().replace("encoder", "encoder", packetLibEncoder.original());
+        }
+
+        // If there are still other instances using this decoder, we just remove this instance.
+        if (packetLibDecoder.getInstances().size() >= 2) {
+            packetLibDecoder.removeInstance(this.instance);
+        } else {
+            channel.pipeline().replace("decoder", "decoder", packetLibDecoder.original());
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -99,7 +110,7 @@ public final class PacketLibInjector implements Listener {
         }
 
         try {
-            ChannelInitializer<Channel> newChildHandler = new PacketLibChannelInitializer(this.packetLib, childHandler);
+            ChannelInitializer<Channel> newChildHandler = new PacketLibChannelInitializer(this.instance, childHandler);
             childHandlerField.set(channelHandler, newChildHandler);
             System.out.println("Injected PacketLib into the server!");
         } catch (Exception exception) {

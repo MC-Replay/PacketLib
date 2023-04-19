@@ -13,8 +13,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 public final class PacketLibConnectionHandler implements Listener {
 
-    public PacketLibConnectionHandler(PacketLib packetLib) {
-        Bukkit.getServer().getPluginManager().registerEvents(this, packetLib.getJavaPlugin());
+    public PacketLibConnectionHandler(PacketLib intance) {
+        Bukkit.getServer().getPluginManager().registerEvents(this, intance.javaPlugin());
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -24,7 +24,7 @@ public final class PacketLibConnectionHandler implements Listener {
         if (channel == null || !channel.isOpen()) return;
 
         ConnectionPlayerProvider userConnection = this.getUserConnection(channel);
-        if (userConnection == null) return;
+        if (userConnection == null || userConnection.player() != null) return;
 
         userConnection.player(player);
     }

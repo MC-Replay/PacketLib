@@ -62,6 +62,6 @@ public enum ServerboundPacketIdentifier implements PacketIdentifier {
 
     @Override
     public int getIdentifier() {
-        return PacketLib.getInstance().getPacketIdentifierLoader().getServerboundIdentifiers().getOrDefault(this, -1);
+        return PacketLib.getPacketIdentifierLoader().getServerboundIdentifiers().getOrDefault(this, -1);
     }
 }

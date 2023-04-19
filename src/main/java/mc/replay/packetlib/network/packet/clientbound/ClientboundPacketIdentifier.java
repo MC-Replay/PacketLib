@@ -131,6 +131,6 @@ public enum ClientboundPacketIdentifier implements PacketIdentifier {
 
     @Override
     public int getIdentifier() {
-        return PacketLib.getInstance().getPacketIdentifierLoader().getClientboundIdentifiers().getOrDefault(this, -1);
+        return PacketLib.getPacketIdentifierLoader().getClientboundIdentifiers().getOrDefault(this, -1);
     }
 }
