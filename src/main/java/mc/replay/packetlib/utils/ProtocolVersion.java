@@ -22,13 +22,32 @@ public enum ProtocolVersion {
     NOT_SUPPORTED(0);
 
     private final int number;
+    private final byte[] byteArray;
 
     ProtocolVersion(int number) {
         this.number = number;
+
+        if (number == 0) {
+            this.byteArray = new byte[0];
+            return;
+        }
+
+        String versionString = this.name().substring(this.name().indexOf('_') + 1);
+        String[] version = versionString.split("_");
+
+        byte[] bytes = new byte[version.length];
+        for (int i = 0; i < bytes.length; i++) {
+            bytes[i] = Byte.parseByte(version[i]);
+        }
+        this.byteArray = bytes;
     }
 
     public int getNumber() {
         return this.number;
+    }
+
+    public byte[] asByteArray() {
+        return this.byteArray;
     }
 
     public boolean isLowerOrEqual(@NotNull ProtocolVersion version) {
@@ -102,5 +121,17 @@ public enum ProtocolVersion {
         }
 
         return NOT_SUPPORTED;
+    }
+
+    public static @NotNull ProtocolVersion fromByteArray(byte[] bytes) {
+        if (bytes.length == 0) return NOT_SUPPORTED;
+
+        StringBuilder versionString = new StringBuilder();
+        for (byte b : bytes) {
+            versionString.append(b).append(".");
+        }
+        versionString.deleteCharAt(versionString.length() - 1);
+
+        return getByVersionString(versionString.toString());
     }
 }

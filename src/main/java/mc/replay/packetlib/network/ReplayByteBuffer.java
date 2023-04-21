@@ -3,6 +3,7 @@ package mc.replay.packetlib.network;
 import com.github.steveice10.opennbt.tag.builtin.Tag;
 import mc.replay.packetlib.data.Item;
 import mc.replay.packetlib.utils.Either;
+import mc.replay.packetlib.utils.ProtocolVersion;
 import net.kyori.adventure.text.Component;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Pose;
@@ -45,6 +46,7 @@ public final class ReplayByteBuffer {
     public static Type<long[]> LONG_ARRAY = ReplayByteBufferTypes.LONG_ARRAY;
     public static Type<int[]> VAR_INT_ARRAY = ReplayByteBufferTypes.VAR_INT_ARRAY;
     public static Type<long[]> VAR_LONG_ARRAY = ReplayByteBufferTypes.VAR_LONG_ARRAY;
+    public static Type<ProtocolVersion> PROTOCOL_VERSION = ReplayByteBufferTypes.PROTOCOL_VERSION;
 
     public static Type<Component> OPT_CHAT = ReplayByteBufferTypes.OPT_CHAT;
     public static Type<Vector> ROTATION = ReplayByteBufferTypes.ROTATION;

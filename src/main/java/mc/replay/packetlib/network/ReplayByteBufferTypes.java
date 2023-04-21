@@ -4,6 +4,7 @@ import com.github.steveice10.opennbt.NBTIO;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.opennbt.tag.builtin.Tag;
 import mc.replay.packetlib.data.Item;
+import mc.replay.packetlib.utils.ProtocolVersion;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.block.BlockFace;
@@ -417,6 +418,17 @@ final class ReplayByteBufferTypes {
                     longs[i] = buffer.read(VAR_LONG);
                 }
                 return longs;
+            }
+    );
+
+    static final TypeImpl<ProtocolVersion> PROTOCOL_VERSION = new TypeImpl<>(ProtocolVersion.class,
+            (buffer, value) -> {
+                buffer.write(BYTE_ARRAY, value.asByteArray());
+                return -1;
+            },
+            buffer -> {
+                final byte[] bytes = buffer.read(BYTE_ARRAY);
+                return ProtocolVersion.fromByteArray(bytes);
             }
     );
 

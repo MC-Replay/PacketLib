@@ -13,8 +13,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 public final class PacketLibConnectionHandler implements Listener {
 
-    public PacketLibConnectionHandler(PacketLib intance) {
-        Bukkit.getServer().getPluginManager().registerEvents(this, intance.javaPlugin());
+    public PacketLibConnectionHandler(PacketLib instance) {
+        Bukkit.getServer().getPluginManager().registerEvents(this, instance.javaPlugin());
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
