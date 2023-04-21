@@ -8,8 +8,7 @@ import mc.replay.packetlib.network.packet.clientbound.play.version.ClientboundLi
 import mc.replay.packetlib.network.packet.identifier.PacketIdentifier;
 import mc.replay.packetlib.network.packet.serverbound.ServerboundPacket;
 import mc.replay.packetlib.network.packet.serverbound.ServerboundPacketIdentifier;
-import mc.replay.packetlib.network.packet.serverbound.play.ServerboundAnimationPacket;
-import mc.replay.packetlib.network.packet.serverbound.play.ServerboundInteractEntityPacket;
+import mc.replay.packetlib.network.packet.serverbound.play.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,6 +45,7 @@ public final class PacketRegistry {
         this.registerClientboundPacket(ClientboundPacketIdentifier.MULTI_BLOCK_CHANGE, ClientboundMultiBlockChangePacket.class, ClientboundMultiBlockChangePacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.PARTICLE, ClientboundParticlePacket.class, ClientboundParticlePacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.PLAYER_INFO, ClientboundPlayerInfoPacket.class, ClientboundPlayerInfoPacket::new);
+        this.registerClientboundPacket(ClientboundPacketIdentifier.PLAYER_POSITION_AND_LOOK, ClientboundPlayerPositionAndLookPacket.class, ClientboundPlayerPositionAndLookPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.PLAYER_SPAWN, ClientboundPlayerSpawnPacket.class, ClientboundPlayerSpawnPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.SET_PASSENGERS, ClientboundSetPassengersPacket.class, ClientboundSetPassengersPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.SOUND_EFFECT, ClientboundSoundEffectPacket.class, ClientboundSoundEffectPacket::new);
@@ -59,6 +59,9 @@ public final class PacketRegistry {
 
         this.registerServerboundPacket(ServerboundPacketIdentifier.ANIMATION, ServerboundAnimationPacket.class, ServerboundAnimationPacket::new);
         this.registerServerboundPacket(ServerboundPacketIdentifier.INTERACT_ENTITY, ServerboundInteractEntityPacket.class, ServerboundInteractEntityPacket::new);
+        this.registerServerboundPacket(ServerboundPacketIdentifier.PLAYER_POSITION_AND_ROTATION, ServerboundPlayerPositionAndRotationPacket.class, ServerboundPlayerPositionAndRotationPacket::new);
+        this.registerServerboundPacket(ServerboundPacketIdentifier.PLAYER_POSITION, ServerboundPlayerPositionPacket.class, ServerboundPlayerPositionPacket::new);
+        this.registerServerboundPacket(ServerboundPacketIdentifier.PLAYER_ROTATION, ServerboundPlayerRotationPacket.class, ServerboundPlayerRotationPacket::new);
     }
 
     public boolean isClientboundRegistered(@Nullable ClientboundPacketIdentifier identifier) {
