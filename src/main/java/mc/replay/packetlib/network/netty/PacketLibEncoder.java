@@ -5,6 +5,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 import mc.replay.packetlib.PacketLib;
 import mc.replay.packetlib.network.ReplayByteBuffer;
+import mc.replay.packetlib.network.netty.exception.SkipEncodeException;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
 import mc.replay.packetlib.network.user.ConnectionPlayerProvider;
 import mc.replay.packetlib.utils.Reflections;
@@ -85,8 +86,15 @@ public final class PacketLibEncoder extends MessageToByteEncoder {
             ClientboundPacket clientboundPacket = PacketLib.getPacketRegistry().getClientboundPacket(packetId, buffer);
             if (clientboundPacket == null) return;
 
+            boolean shouldCancel = false;
             for (PacketLib instance : listeningInstances) {
-                instance.packetListener().publishClientbound(player, clientboundPacket);
+                boolean cancel = instance.packetListener().publishClientbound(player, clientboundPacket);
+                if (cancel) shouldCancel = true;
+            }
+
+            if (shouldCancel) {
+                byteBuf.clear();
+                throw new SkipEncodeException();
             }
         } catch (InvocationTargetException exception) {
             if (exception.getCause() instanceof Exception) {

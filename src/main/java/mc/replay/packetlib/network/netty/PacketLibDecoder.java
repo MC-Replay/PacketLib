@@ -63,8 +63,15 @@ public final class PacketLibDecoder extends ByteToMessageDecoder {
                 ServerboundPacket serverboundPacket = PacketLib.getPacketRegistry().getServerboundPacket(packetId, replayByteBuffer);
 
                 if (serverboundPacket != null) {
+                    boolean shouldCancel = false;
                     for (PacketLib instance : listeningInstances) {
-                        instance.packetListener().publishServerbound(player, serverboundPacket);
+                        boolean cancel = instance.packetListener().publishServerbound(player, serverboundPacket);
+                        if (cancel) shouldCancel = true;
+                    }
+
+                    if (shouldCancel) {
+                        byteBuf.clear();
+                        return;
                     }
                 }
             }

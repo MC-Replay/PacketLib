@@ -12,36 +12,67 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 
 public final class PacketListener {
 
-    private final Map<Integer, Collection<BiConsumer<Player, ClientboundPacket>>> clientboundPacketListeners = new HashMap<>();
-    private final Map<Integer, Collection<BiConsumer<Player, ServerboundPacket>>> serverboundPacketListeners = new HashMap<>();
-    private final Collection<BiConsumer<Player, ClientboundPacket>> globalClientboundPacketListeners = new HashSet<>();
-    private final Collection<BiConsumer<Player, ServerboundPacket>> globalServerboundPacketListeners = new HashSet<>();
+    private final Map<Integer, Collection<BiFunction<Player, ClientboundPacket, Boolean>>> clientboundPacketListeners = new HashMap<>();
+    private final Map<Integer, Collection<BiFunction<Player, ServerboundPacket, Boolean>>> serverboundPacketListeners = new HashMap<>();
+    private final Collection<BiFunction<Player, ClientboundPacket, Boolean>> globalClientboundPacketListeners = new HashSet<>();
+    private final Collection<BiFunction<Player, ServerboundPacket, Boolean>> globalServerboundPacketListeners = new HashSet<>();
 
     public void listenClientbound(@NotNull ClientboundPacketIdentifier identifier, @NotNull BiConsumer<Player, ClientboundPacket> consumer) {
         this.clientboundPacketListeners.putIfAbsent(identifier.getIdentifier(), new HashSet<>());
-        this.clientboundPacketListeners.get(identifier.getIdentifier()).add(consumer);
+        this.clientboundPacketListeners.get(identifier.getIdentifier()).add((player, packet) -> {
+            consumer.accept(player, packet);
+            return false;
+        });
+    }
+
+    public void interceptClientbound(@NotNull ClientboundPacketIdentifier identifier, @NotNull BiFunction<Player, ClientboundPacket, Boolean> function) {
+        this.clientboundPacketListeners.putIfAbsent(identifier.getIdentifier(), new HashSet<>());
+        this.clientboundPacketListeners.get(identifier.getIdentifier()).add(function);
     }
 
     public void listenServerbound(@NotNull ServerboundPacketIdentifier identifier, @NotNull BiConsumer<@NotNull Player, @NotNull ServerboundPacket> consumer) {
         this.serverboundPacketListeners.putIfAbsent(identifier.getIdentifier(), new HashSet<>());
-        this.serverboundPacketListeners.get(identifier.getIdentifier()).add(consumer);
+        this.serverboundPacketListeners.get(identifier.getIdentifier()).add((player, packet) -> {
+            consumer.accept(player, packet);
+            return false;
+        });
+    }
+
+    public void interceptServerbound(@NotNull ServerboundPacketIdentifier identifier, @NotNull BiFunction<@NotNull Player, @NotNull ServerboundPacket, Boolean> function) {
+        this.serverboundPacketListeners.putIfAbsent(identifier.getIdentifier(), new HashSet<>());
+        this.serverboundPacketListeners.get(identifier.getIdentifier()).add(function);
     }
 
     public void listenClientbound(@NotNull BiConsumer<Player, ClientboundPacket> consumer) {
-        this.globalClientboundPacketListeners.add(consumer);
+        this.globalClientboundPacketListeners.add((player, packet) -> {
+            consumer.accept(player, packet);
+            return false;
+        });
+    }
+
+    public void interceptClientbound(@NotNull BiFunction<Player, ClientboundPacket, Boolean> function) {
+        this.globalClientboundPacketListeners.add(function);
     }
 
     public void listenServerbound(@NotNull BiConsumer<@NotNull Player, @NotNull ServerboundPacket> consumer) {
-        this.globalServerboundPacketListeners.add(consumer);
+        this.globalServerboundPacketListeners.add((player, packet) -> {
+            consumer.accept(player, packet);
+            return false;
+        });
+    }
+
+    public void interceptServerbound(@NotNull BiFunction<@NotNull Player, @NotNull ServerboundPacket, Boolean> function) {
+        this.globalServerboundPacketListeners.add(function);
     }
 
     public boolean isListeningClientbound(int packetId) {
         if (!this.globalClientboundPacketListeners.isEmpty()) return true;
 
-        Collection<BiConsumer<Player, ClientboundPacket>> listeners = this.clientboundPacketListeners.get(packetId);
+        Collection<BiFunction<Player, ClientboundPacket, Boolean>> listeners = this.clientboundPacketListeners.get(packetId);
         return listeners != null && !listeners.isEmpty();
     }
 
@@ -52,7 +83,7 @@ public final class PacketListener {
     public boolean isListeningServerbound(int packetId) {
         if (!this.globalServerboundPacketListeners.isEmpty()) return true;
 
-        Collection<BiConsumer<Player, ServerboundPacket>> listeners = this.serverboundPacketListeners.get(packetId);
+        Collection<BiFunction<Player, ServerboundPacket, Boolean>> listeners = this.serverboundPacketListeners.get(packetId);
         return listeners != null && !listeners.isEmpty();
     }
 
@@ -60,29 +91,39 @@ public final class PacketListener {
         return this.isListeningServerbound(identifier.getIdentifier());
     }
 
-    public void publishClientbound(@NotNull Player player, @NotNull ClientboundPacket packet) {
-        for (BiConsumer<Player, ClientboundPacket> globalClientboundPacketListener : this.globalClientboundPacketListeners) {
-            globalClientboundPacketListener.accept(player, packet);
+    public boolean publishClientbound(@NotNull Player player, @NotNull ClientboundPacket packet) {
+        boolean shouldCancel = false;
+        for (BiFunction<Player, ClientboundPacket, Boolean> globalClientboundPacketListener : this.globalClientboundPacketListeners) {
+            boolean cancel = globalClientboundPacketListener.apply(player, packet);
+            if (cancel) shouldCancel = true;
         }
 
-        Collection<BiConsumer<Player, ClientboundPacket>> listeners = this.clientboundPacketListeners.get(packet.identifier().getIdentifier());
-        if (listeners == null) return;
+        Collection<BiFunction<Player, ClientboundPacket, Boolean>> listeners = this.clientboundPacketListeners.get(packet.identifier().getIdentifier());
+        if (listeners == null) return shouldCancel;
 
-        for (BiConsumer<Player, ClientboundPacket> listener : listeners) {
-            listener.accept(player, packet);
+        for (BiFunction<Player, ClientboundPacket, Boolean> listener : listeners) {
+            boolean cancel = listener.apply(player, packet);
+            if (cancel) shouldCancel = true;
         }
+
+        return shouldCancel;
     }
 
-    public void publishServerbound(@NotNull Player player, @NotNull ServerboundPacket packet) {
-        for (BiConsumer<Player, ServerboundPacket> globalServerboundPacketListener : this.globalServerboundPacketListeners) {
-            globalServerboundPacketListener.accept(player, packet);
+    public boolean publishServerbound(@NotNull Player player, @NotNull ServerboundPacket packet) {
+        boolean shouldCancel = false;
+        for (BiFunction<Player, ServerboundPacket, Boolean> globalClientboundPacketListener : this.globalServerboundPacketListeners) {
+            boolean cancel = globalClientboundPacketListener.apply(player, packet);
+            if (cancel) shouldCancel = true;
         }
 
-        Collection<BiConsumer<Player, ServerboundPacket>> listeners = this.serverboundPacketListeners.get(packet.identifier().getIdentifier());
-        if (listeners == null) return;
+        Collection<BiFunction<Player, ServerboundPacket, Boolean>> listeners = this.serverboundPacketListeners.get(packet.identifier().getIdentifier());
+        if (listeners == null) return shouldCancel;
 
-        for (BiConsumer<Player, ServerboundPacket> listener : listeners) {
-            listener.accept(player, packet);
+        for (BiFunction<Player, ServerboundPacket, Boolean> listener : listeners) {
+            boolean cancel = listener.apply(player, packet);
+            if (cancel) shouldCancel = true;
         }
+
+        return shouldCancel;
     }
 }
