@@ -59,6 +59,8 @@ public final class PacketRegistry {
 
         this.registerServerboundPacket(ServerboundPacketIdentifier.ANIMATION, ServerboundAnimationPacket.class, ServerboundAnimationPacket::new);
         this.registerServerboundPacket(ServerboundPacketIdentifier.INTERACT_ENTITY, ServerboundInteractEntityPacket.class, ServerboundInteractEntityPacket::new);
+        this.registerServerboundPacket(ServerboundPacketIdentifier.PLAYER_BLOCK_PLACEMENT, ServerboundPlayerBlockPlacementPacket.class, ServerboundPlayerBlockPlacementPacket::new);
+        this.registerServerboundPacket(ServerboundPacketIdentifier.PLAYER_DIGGING, ServerboundPlayerDiggingPacket.class, ServerboundPlayerDiggingPacket::new);
         this.registerServerboundPacket(ServerboundPacketIdentifier.PLAYER_POSITION_AND_ROTATION, ServerboundPlayerPositionAndRotationPacket.class, ServerboundPlayerPositionAndRotationPacket::new);
         this.registerServerboundPacket(ServerboundPacketIdentifier.PLAYER_POSITION, ServerboundPlayerPositionPacket.class, ServerboundPlayerPositionPacket::new);
         this.registerServerboundPacket(ServerboundPacketIdentifier.PLAYER_ROTATION, ServerboundPlayerRotationPacket.class, ServerboundPlayerRotationPacket::new);

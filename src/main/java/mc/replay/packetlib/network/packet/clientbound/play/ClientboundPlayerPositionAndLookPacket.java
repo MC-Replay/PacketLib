@@ -57,7 +57,9 @@ public record ClientboundPlayerPositionAndLookPacket(double x, double y, double 
                 reader.read(FLOAT),
                 reader.read(BYTE),
                 reader.read(VAR_INT),
-                (ProtocolVersion.getServerVersion().isEqual(ProtocolVersion.MINECRAFT_1_16_5)) ? reader.read(BOOLEAN) : false
+                (ProtocolVersion.getServerVersion().isEqual(ProtocolVersion.MINECRAFT_1_16_5))
+                        ? reader.read(BOOLEAN)
+                        : false
         );
     }
 
