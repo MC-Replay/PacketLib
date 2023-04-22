@@ -52,32 +52,34 @@ public final class PacketLibDecoder extends ByteToMessageDecoder {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf byteBuf, List<Object> list) throws Exception {
-        ReplayByteBuffer replayByteBuffer = new ReplayByteBuffer(byteBuf.nioBuffer());
-        int packetId = replayByteBuffer.read(VAR_INT);
+        if (!this.instances.isEmpty()) {
+            ReplayByteBuffer replayByteBuffer = new ReplayByteBuffer(byteBuf.nioBuffer());
+            int packetId = replayByteBuffer.read(VAR_INT);
 
-        Collection<PacketLib> listeningInstances = this.findListeningInstances(packetId);
-        if (!listeningInstances.isEmpty()) {
-            Player player = this.playerProvider.player();
+            Collection<PacketLib> listeningInstances = this.findListeningInstances(packetId);
+            if (!listeningInstances.isEmpty()) {
+                Player player = this.playerProvider.player();
 
-            if (player != null) {
-                ServerboundPacket serverboundPacket = PacketLib.getPacketRegistry().getServerboundPacket(packetId, replayByteBuffer);
+                if (player != null) {
+                    ServerboundPacket serverboundPacket = PacketLib.getPacketRegistry().getServerboundPacket(packetId, replayByteBuffer);
 
-                if (serverboundPacket != null) {
-                    boolean shouldCancel = false;
-                    for (PacketLib instance : listeningInstances) {
-                        boolean cancel = instance.packetListener().publishServerbound(player, serverboundPacket);
-                        if (cancel) shouldCancel = true;
-                    }
+                    if (serverboundPacket != null) {
+                        boolean shouldCancel = false;
+                        for (PacketLib instance : listeningInstances) {
+                            boolean cancel = instance.packetListener().publishServerbound(player, serverboundPacket);
+                            if (cancel) shouldCancel = true;
+                        }
 
-                    if (shouldCancel) {
-                        byteBuf.clear();
-                        return;
+                        if (shouldCancel) {
+                            byteBuf.clear();
+                            return;
+                        }
                     }
                 }
             }
-        }
 
-        byteBuf.resetReaderIndex();
+            byteBuf.resetReaderIndex();
+        }
 
         try {
             list.addAll(Reflections.callDecode(this.original, ctx, byteBuf));

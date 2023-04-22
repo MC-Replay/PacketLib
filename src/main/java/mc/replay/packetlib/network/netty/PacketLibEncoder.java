@@ -63,6 +63,8 @@ public final class PacketLibEncoder extends MessageToByteEncoder {
         }
 
         if (object instanceof ClientboundPacket packet) {
+            if (this.instances.isEmpty()) return;
+
             ReplayByteBuffer buffer = new ReplayByteBuffer(byteBuf.nioBuffer());
             buffer.write(VAR_INT, packet.identifier().getIdentifier());
             packet.write(buffer);
@@ -73,6 +75,7 @@ public final class PacketLibEncoder extends MessageToByteEncoder {
 
         try {
             Reflections.callEncode(this.original, ctx, object, byteBuf);
+            if (this.instances.isEmpty()) return;
 
             ReplayByteBuffer buffer = new ReplayByteBuffer(byteBuf.nioBuffer());
             int packetId = buffer.read(VAR_INT);

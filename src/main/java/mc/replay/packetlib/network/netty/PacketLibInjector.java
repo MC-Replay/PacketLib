@@ -38,19 +38,10 @@ public final class PacketLibInjector implements Listener {
             throw new IllegalStateException("This player is not injected!");
         }
 
-        // If there are still other instances using this encoder, we just remove this instance.
-        if (packetLibEncoder.getInstances().size() >= 2) {
-            packetLibEncoder.removeInstance(this.instance);
-        } else {
-            channel.pipeline().replace("encoder", "encoder", packetLibEncoder.original());
-        }
-
-        // If there are still other instances using this decoder, we just remove this instance.
-        if (packetLibDecoder.getInstances().size() >= 2) {
-            packetLibDecoder.removeInstance(this.instance);
-        } else {
-            channel.pipeline().replace("decoder", "decoder", packetLibDecoder.original());
-        }
+        // Since Minecraft's encoder and decoder are not shareable, we can't remove them from the pipeline if there is just one instance registered.
+        // Instead, we just remove this instance for the encoder and decoder and ignore all things that are ours.
+        packetLibEncoder.removeInstance(this.instance);
+        packetLibDecoder.removeInstance(this.instance);
     }
 
     @SuppressWarnings("unchecked")
