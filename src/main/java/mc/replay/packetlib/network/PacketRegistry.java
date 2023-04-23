@@ -52,6 +52,7 @@ public final class PacketRegistry {
         this.registerClientboundPacket(ClientboundPacketIdentifier.STATISTICS, ClientboundStatisticsPacket.class, ClientboundStatisticsPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.STOP_SOUND, ClientboundStopSoundPacket.class, ClientboundStopSoundPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.TEAMS, ClientboundTeamsPacket.class, ClientboundTeamsPacket::new);
+        this.registerClientboundPacket(ClientboundPacketIdentifier.VEHICLE_MOVE, ClientboundVehicleMovePacket.class, ClientboundVehicleMovePacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.WORLD_EVENT, ClientboundWorldEventPacket.class, ClientboundWorldEventPacket::new);
 
         this.registerClientboundPacket(ClientboundPacketIdentifier.ACKNOWLEDGE_PLAYER_DIGGING_754_758, ClientboundAcknowledgePlayerDigging754_758Packet.class, ClientboundAcknowledgePlayerDigging754_758Packet::new);
