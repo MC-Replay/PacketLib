@@ -1,6 +1,7 @@
 package mc.replay.packetlib.network.packet.clientbound.play;
 
 import mc.replay.packetlib.network.ReplayByteBuffer;
+import mc.replay.packetlib.network.packet.PacketInfo;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacketIdentifier;
 import mc.replay.packetlib.utils.AdventurePacketConverter;
@@ -13,6 +14,7 @@ import java.util.UUID;
 
 import static mc.replay.packetlib.network.ReplayByteBuffer.*;
 
+@PacketInfo
 public record ClientboundSystemChatMessagePacket(@NotNull Component message, @NotNull ChatPosition position,
                                                  @Nullable UUID sender) implements ClientboundPacket {
 
@@ -76,7 +78,7 @@ public record ClientboundSystemChatMessagePacket(@NotNull Component message, @No
 
     @Override
     public @NotNull ClientboundPacketIdentifier identifier() {
-        return ClientboundPacketIdentifier.DISGUISED_CHAT;
+        return ClientboundPacketIdentifier.SYSTEM_CHAT;
     }
 
     public enum ChatPosition {

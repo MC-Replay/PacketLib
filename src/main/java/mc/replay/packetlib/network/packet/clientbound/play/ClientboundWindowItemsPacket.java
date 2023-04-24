@@ -2,6 +2,7 @@ package mc.replay.packetlib.network.packet.clientbound.play;
 
 import mc.replay.packetlib.data.Item;
 import mc.replay.packetlib.network.ReplayByteBuffer;
+import mc.replay.packetlib.network.packet.PacketInfo;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacketIdentifier;
 import mc.replay.packetlib.utils.ProtocolVersion;
@@ -11,6 +12,7 @@ import java.util.List;
 
 import static mc.replay.packetlib.network.ReplayByteBuffer.*;
 
+@PacketInfo
 public record ClientboundWindowItemsPacket(byte windowId, int stateId, @NotNull List<Item> items,
                                            @NotNull Item carriedItem) implements ClientboundPacket {
 

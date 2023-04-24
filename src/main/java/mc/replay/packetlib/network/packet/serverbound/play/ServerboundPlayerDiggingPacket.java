@@ -2,6 +2,7 @@ package mc.replay.packetlib.network.packet.serverbound.play;
 
 import mc.replay.packetlib.data.entity.player.DiggingStatus;
 import mc.replay.packetlib.network.ReplayByteBuffer;
+import mc.replay.packetlib.network.packet.PacketInfo;
 import mc.replay.packetlib.network.packet.serverbound.ServerboundPacket;
 import mc.replay.packetlib.network.packet.serverbound.ServerboundPacketIdentifier;
 import mc.replay.packetlib.utils.ProtocolVersion;
@@ -11,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static mc.replay.packetlib.network.ReplayByteBuffer.*;
 
+@PacketInfo
 public record ServerboundPlayerDiggingPacket(@NotNull DiggingStatus status, @NotNull Vector blockPosition,
                                              @NotNull BlockFace blockFace,
                                              int sequence) implements ServerboundPacket {

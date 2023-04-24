@@ -3,6 +3,7 @@ package mc.replay.packetlib.network.packet.clientbound.play;
 import mc.replay.packetlib.data.entity.player.PlayerInfoAction;
 import mc.replay.packetlib.data.entity.player.PlayerInfoEntry;
 import mc.replay.packetlib.network.ReplayByteBuffer;
+import mc.replay.packetlib.network.packet.PacketInfo;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacketIdentifier;
 import org.jetbrains.annotations.NotNull;
@@ -12,6 +13,7 @@ import java.util.UUID;
 
 import static mc.replay.packetlib.network.ReplayByteBuffer.UUID;
 
+@PacketInfo
 public record ClientboundPlayerInfoPacket(@NotNull PlayerInfoAction action,
                                           @NotNull List<PlayerInfoEntry> entries) implements ClientboundPacket {
 

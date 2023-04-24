@@ -1,9 +1,11 @@
 package mc.replay.packetlib.network.packet.clientbound.play;
 
 import mc.replay.packetlib.network.ReplayByteBuffer;
+import mc.replay.packetlib.network.packet.PacketInfo;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacketIdentifier;
 import mc.replay.packetlib.utils.AdventurePacketConverter;
+import mc.replay.packetlib.utils.ProtocolVersion;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import static mc.replay.packetlib.network.ReplayByteBuffer.COMPONENT;
 import static mc.replay.packetlib.network.ReplayByteBuffer.VAR_INT;
 
+@PacketInfo(since = ProtocolVersion.MINECRAFT_1_19_3)
 public record ClientboundDisguisedChatPacket(@NotNull Component message, int chatType, @NotNull Component chatTypeName,
                                              @Nullable Component targetName) implements ClientboundPacket {
 

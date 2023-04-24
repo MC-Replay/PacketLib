@@ -2,6 +2,7 @@ package mc.replay.packetlib.network.packet.clientbound.play;
 
 import mc.replay.packetlib.data.Pos;
 import mc.replay.packetlib.network.ReplayByteBuffer;
+import mc.replay.packetlib.network.packet.PacketInfo;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacketIdentifier;
 import mc.replay.packetlib.utils.ProtocolVersion;
@@ -9,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static mc.replay.packetlib.network.ReplayByteBuffer.*;
 
+@PacketInfo
 public record ClientboundPlayerPositionAndLookPacket(double x, double y, double z, float yaw, float pitch,
                                                      byte flags, int teleportId,
                                                      boolean dismountVehicle) implements ClientboundPacket {

@@ -2,6 +2,7 @@ package mc.replay.packetlib.network.packet.clientbound.play;
 
 import mc.replay.packetlib.data.entity.Metadata;
 import mc.replay.packetlib.network.ReplayByteBuffer;
+import mc.replay.packetlib.network.packet.PacketInfo;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacketIdentifier;
 import org.jetbrains.annotations.NotNull;
@@ -12,6 +13,7 @@ import java.util.Map;
 import static mc.replay.packetlib.network.ReplayByteBuffer.BYTE;
 import static mc.replay.packetlib.network.ReplayByteBuffer.VAR_INT;
 
+@PacketInfo
 public record ClientboundEntityMetadataPacket(int entityId,
                                               @NotNull Map<Integer, Metadata.Entry<?>> entries) implements ClientboundPacket {
 

@@ -22,7 +22,7 @@
     "SET_SLOT": "0x13",
     "SET_COOLDOWN": "0x14",
     "PLUGIN_MESSAGE": "0x15",
-    "CUSTOM_SOUND_EFFECT": "0x16",
+    "CUSTOM_SOUND_EFFECT_754_760": "0x16",
     "DISCONNECT": "0x17",
     "ENTITY_STATUS": "0x18",
     "EXPLOSION": "0x19",

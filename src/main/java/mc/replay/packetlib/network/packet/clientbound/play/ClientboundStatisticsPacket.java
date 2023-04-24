@@ -2,12 +2,14 @@ package mc.replay.packetlib.network.packet.clientbound.play;
 
 import mc.replay.packetlib.data.entity.statistic.Statistic;
 import mc.replay.packetlib.network.ReplayByteBuffer;
+import mc.replay.packetlib.network.packet.PacketInfo;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacketIdentifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+@PacketInfo
 public record ClientboundStatisticsPacket(List<Statistic> statistics) implements ClientboundPacket {
 
     public ClientboundStatisticsPacket(@NotNull ReplayByteBuffer reader) {

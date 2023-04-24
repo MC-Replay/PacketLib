@@ -1,12 +1,14 @@
 package mc.replay.packetlib.network.packet.clientbound.play;
 
 import mc.replay.packetlib.network.ReplayByteBuffer;
+import mc.replay.packetlib.network.packet.PacketInfo;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacketIdentifier;
 import org.jetbrains.annotations.NotNull;
 
 import static mc.replay.packetlib.network.ReplayByteBuffer.*;
 
+@PacketInfo
 public record ClientboundMultiBlockChangePacket(long chunkSectionPosition, boolean suppressLightUpdates,
                                                 long[] blocks) implements ClientboundPacket {
 

@@ -1,6 +1,7 @@
 package mc.replay.packetlib.network.packet.clientbound.play;
 
 import mc.replay.packetlib.network.ReplayByteBuffer;
+import mc.replay.packetlib.network.packet.PacketInfo;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacketIdentifier;
 import org.bukkit.inventory.InventoryView;
@@ -9,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import static mc.replay.packetlib.network.ReplayByteBuffer.BYTE;
 import static mc.replay.packetlib.network.ReplayByteBuffer.SHORT;
 
+@PacketInfo
 public record ClientboundWindowPropertyPacket(byte windowId, short property, short value) implements ClientboundPacket {
 
     public ClientboundWindowPropertyPacket(byte windowId, @NotNull InventoryView.Property property, short value) {

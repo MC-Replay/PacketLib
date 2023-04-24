@@ -1,6 +1,7 @@
-package mc.replay.packetlib.network.packet.clientbound.play;
+package mc.replay.packetlib.network.packet.clientbound.play.legacy;
 
 import mc.replay.packetlib.network.ReplayByteBuffer;
+import mc.replay.packetlib.network.packet.PacketInfo;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacketIdentifier;
 import mc.replay.packetlib.utils.ProtocolVersion;
@@ -8,11 +9,13 @@ import org.jetbrains.annotations.NotNull;
 
 import static mc.replay.packetlib.network.ReplayByteBuffer.*;
 
-public record ClientboundCustomSoundEffectPacket(@NotNull String soundName, int sourceId, int x, int y,
-                                                 int z,
-                                                 float volume, float pitch, long seed) implements ClientboundPacket {
+@PacketInfo(until = ProtocolVersion.MINECRAFT_1_19_2)
+public record ClientboundCustomSoundEffect_754_760Packet(@NotNull String soundName, int sourceId, int x, int y,
+                                                         int z,
+                                                         float volume, float pitch,
+                                                         long seed) implements ClientboundPacket {
 
-    public ClientboundCustomSoundEffectPacket(@NotNull ReplayByteBuffer reader) {
+    public ClientboundCustomSoundEffect_754_760Packet(@NotNull ReplayByteBuffer reader) {
         this(
                 reader.read(STRING),
                 reader.read(VAR_INT),
@@ -44,6 +47,6 @@ public record ClientboundCustomSoundEffectPacket(@NotNull String soundName, int 
 
     @Override
     public @NotNull ClientboundPacketIdentifier identifier() {
-        return ClientboundPacketIdentifier.CUSTOM_SOUND_EFFECT;
+        return ClientboundPacketIdentifier.CUSTOM_SOUND_EFFECT_754_760;
     }
 }

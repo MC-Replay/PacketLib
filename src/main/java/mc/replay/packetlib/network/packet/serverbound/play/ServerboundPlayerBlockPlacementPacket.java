@@ -2,6 +2,7 @@ package mc.replay.packetlib.network.packet.serverbound.play;
 
 import mc.replay.packetlib.data.entity.PlayerHand;
 import mc.replay.packetlib.network.ReplayByteBuffer;
+import mc.replay.packetlib.network.packet.PacketInfo;
 import mc.replay.packetlib.network.packet.serverbound.ServerboundPacket;
 import mc.replay.packetlib.network.packet.serverbound.ServerboundPacketIdentifier;
 import mc.replay.packetlib.utils.ProtocolVersion;
@@ -11,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static mc.replay.packetlib.network.ReplayByteBuffer.*;
 
+@PacketInfo
 public record ServerboundPlayerBlockPlacementPacket(@NotNull PlayerHand hand, @NotNull Vector blockPosition,
                                                     @NotNull BlockFace blockFace, float cursorPositionX,
                                                     float cursorPositionY, float cursorPositionZ, boolean insideBlock,

@@ -1,12 +1,14 @@
 package mc.replay.packetlib.network.packet.clientbound.play;
 
 import mc.replay.packetlib.network.ReplayByteBuffer;
+import mc.replay.packetlib.network.packet.PacketInfo;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacketIdentifier;
 import org.jetbrains.annotations.NotNull;
 
 import static mc.replay.packetlib.network.ReplayByteBuffer.*;
 
+@PacketInfo
 public record ClientboundParticlePacket(int particleId, boolean longDistance, double x, double y, double z,
                                         float offsetX, float offsetY, float offsetZ, float particleData,
                                         int particleCount, byte[] data) implements ClientboundPacket {

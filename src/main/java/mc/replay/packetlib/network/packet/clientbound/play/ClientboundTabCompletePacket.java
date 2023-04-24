@@ -1,6 +1,7 @@
 package mc.replay.packetlib.network.packet.clientbound.play;
 
 import mc.replay.packetlib.network.ReplayByteBuffer;
+import mc.replay.packetlib.network.packet.PacketInfo;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacketIdentifier;
 import mc.replay.packetlib.utils.AdventurePacketConverter;
@@ -12,6 +13,7 @@ import java.util.List;
 
 import static mc.replay.packetlib.network.ReplayByteBuffer.*;
 
+@PacketInfo
 public record ClientboundTabCompletePacket(int transactionId, int start, int length,
                                            @NotNull List<Match> matches) implements ClientboundPacket {
 

@@ -1,14 +1,18 @@
 package mc.replay.packetlib.network;
 
+import mc.replay.packetlib.network.packet.PacketInfo;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacketIdentifier;
 import mc.replay.packetlib.network.packet.clientbound.play.*;
-import mc.replay.packetlib.network.packet.clientbound.play.version.ClientboundAcknowledgePlayerDigging754_758Packet;
-import mc.replay.packetlib.network.packet.clientbound.play.version.ClientboundLivingEntitySpawn754_758Packet;
+import mc.replay.packetlib.network.packet.clientbound.play.legacy.ClientboundAcknowledgePlayerDigging754_758Packet;
+import mc.replay.packetlib.network.packet.clientbound.play.legacy.ClientboundCustomSoundEffect_754_760Packet;
+import mc.replay.packetlib.network.packet.clientbound.play.legacy.ClientboundLivingEntitySpawn754_758Packet;
+import mc.replay.packetlib.network.packet.clientbound.play.legacy.ClientboundPaintingSpawn754_758Packet;
 import mc.replay.packetlib.network.packet.identifier.PacketIdentifier;
 import mc.replay.packetlib.network.packet.serverbound.ServerboundPacket;
 import mc.replay.packetlib.network.packet.serverbound.ServerboundPacketIdentifier;
 import mc.replay.packetlib.network.packet.serverbound.play.*;
+import mc.replay.packetlib.utils.ProtocolVersion;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,7 +33,6 @@ public final class PacketRegistry {
         this.registerClientboundPacket(ClientboundPacketIdentifier.BLOCK_ENTITY_DATA, ClientboundBlockEntityDataPacket.class, ClientboundBlockEntityDataPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.COLLECT_ITEM, ClientboundCollectItemPacket.class, ClientboundCollectItemPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.CUSTOM_CHAT_COMPLETIONS, ClientboundCustomChatCompletionPacket.class, ClientboundCustomChatCompletionPacket::new);
-        this.registerClientboundPacket(ClientboundPacketIdentifier.CUSTOM_SOUND_EFFECT, ClientboundCustomSoundEffectPacket.class, ClientboundCustomSoundEffectPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.DELETE_CHAT_MESSAGE, ClientboundDeleteChatPacket.class, ClientboundDeleteChatPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.DISGUISED_CHAT, ClientboundDisguisedChatPacket.class, ClientboundDisguisedChatPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.ENTITY_ANIMATION, ClientboundEntityAnimationPacket.class, ClientboundEntityAnimationPacket::new);
@@ -72,7 +75,9 @@ public final class PacketRegistry {
         this.registerClientboundPacket(ClientboundPacketIdentifier.WORLD_EVENT, ClientboundWorldEventPacket.class, ClientboundWorldEventPacket::new);
 
         this.registerClientboundPacket(ClientboundPacketIdentifier.ACKNOWLEDGE_PLAYER_DIGGING_754_758, ClientboundAcknowledgePlayerDigging754_758Packet.class, ClientboundAcknowledgePlayerDigging754_758Packet::new);
+        this.registerClientboundPacket(ClientboundPacketIdentifier.CUSTOM_SOUND_EFFECT_754_760, ClientboundCustomSoundEffect_754_760Packet.class, ClientboundCustomSoundEffect_754_760Packet::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.SPAWN_LIVING_ENTITY_754_758, ClientboundLivingEntitySpawn754_758Packet.class, ClientboundLivingEntitySpawn754_758Packet::new);
+        this.registerClientboundPacket(ClientboundPacketIdentifier.SPAWN_PAINTING_754_758, ClientboundPaintingSpawn754_758Packet.class, ClientboundPaintingSpawn754_758Packet::new);
 
         this.registerServerboundPacket(ServerboundPacketIdentifier.ANIMATION, ServerboundAnimationPacket.class, ServerboundAnimationPacket::new);
         this.registerServerboundPacket(ServerboundPacketIdentifier.INTERACT_ENTITY, ServerboundInteractEntityPacket.class, ServerboundInteractEntityPacket::new);
@@ -132,12 +137,27 @@ public final class PacketRegistry {
     private <P extends ClientboundPacket> void registerClientboundPacket(@NotNull ClientboundPacketIdentifier identifier,
                                                                          @NotNull Class<P> packetClass,
                                                                          @NotNull Function<@NotNull ReplayByteBuffer, @NotNull P> packetConstructor) {
+        if (!this.validatePacketInfo(packetClass)) return;
+
         this.clientboundPacketRegistry.put(identifier, new PacketDefinition<>(identifier, packetClass, packetConstructor));
     }
 
     private <P extends ServerboundPacket> void registerServerboundPacket(@NotNull ServerboundPacketIdentifier identifier,
                                                                          @NotNull Class<P> packetClass,
                                                                          @NotNull Function<@NotNull ReplayByteBuffer, @NotNull P> packetConstructor) {
+        if (!this.validatePacketInfo(packetClass)) return;
+
         this.serverboundPacketRegistry.put(identifier, new PacketDefinition<>(identifier, packetClass, packetConstructor));
+    }
+
+    private boolean validatePacketInfo(Class<?> packetClass) {
+        PacketInfo annotation = packetClass.getAnnotation(PacketInfo.class);
+        if (annotation == null) {
+            throw new IllegalArgumentException("Packet class " + packetClass.getName() + " is missing @PacketInfo annotation");
+        }
+
+        // Prevent conflicts with newer and older packets
+        return !annotation.since().isHigher(ProtocolVersion.getServerVersion())
+                && !annotation.until().isLower(ProtocolVersion.getServerVersion());
     }
 }

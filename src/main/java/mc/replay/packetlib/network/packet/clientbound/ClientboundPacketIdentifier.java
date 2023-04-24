@@ -30,7 +30,7 @@ public enum ClientboundPacketIdentifier implements PacketIdentifier {
     CUSTOM_CHAT_COMPLETIONS,
     PLUGIN_MESSAGE,
     DAMAGE_EVENT,
-    CUSTOM_SOUND_EFFECT,
+    CUSTOM_SOUND_EFFECT_754_760,
     DELETE_CHAT_MESSAGE,
     DISCONNECT,
     DISGUISED_CHAT,

@@ -2,6 +2,7 @@ package mc.replay.packetlib.network.packet.clientbound.play;
 
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import mc.replay.packetlib.network.ReplayByteBuffer;
+import mc.replay.packetlib.network.packet.PacketInfo;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacketIdentifier;
 import org.bukkit.util.Vector;
@@ -10,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 import static mc.replay.packetlib.network.ReplayByteBuffer.*;
 
+@PacketInfo
 public record ClientboundBlockEntityDataPacket(@NotNull Vector blockPosition, int action,
                                                @Nullable CompoundTag data) implements ClientboundPacket {
 

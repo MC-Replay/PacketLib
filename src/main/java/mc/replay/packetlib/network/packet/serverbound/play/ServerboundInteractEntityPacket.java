@@ -2,6 +2,7 @@ package mc.replay.packetlib.network.packet.serverbound.play;
 
 import mc.replay.packetlib.data.entity.InteractEntityType;
 import mc.replay.packetlib.network.ReplayByteBuffer;
+import mc.replay.packetlib.network.packet.PacketInfo;
 import mc.replay.packetlib.network.packet.serverbound.ServerboundPacket;
 import mc.replay.packetlib.network.packet.serverbound.ServerboundPacketIdentifier;
 import org.jetbrains.annotations.NotNull;
@@ -9,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import static mc.replay.packetlib.network.ReplayByteBuffer.BOOLEAN;
 import static mc.replay.packetlib.network.ReplayByteBuffer.VAR_INT;
 
+@PacketInfo
 public record ServerboundInteractEntityPacket(int targetId, @NotNull InteractEntityType type,
                                               boolean sneaking) implements ServerboundPacket {
 

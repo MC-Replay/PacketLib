@@ -1,16 +1,20 @@
-package mc.replay.packetlib.network.packet.clientbound.play.version;
+package mc.replay.packetlib.network.packet.clientbound.play.legacy;
 
 import mc.replay.packetlib.data.Pos;
 import mc.replay.packetlib.network.ReplayByteBuffer;
+import mc.replay.packetlib.network.packet.PacketInfo;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacketIdentifier;
+import mc.replay.packetlib.utils.ProtocolVersion;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
 import static mc.replay.packetlib.network.ReplayByteBuffer.*;
 
-public record ClientboundLivingEntitySpawn754_758Packet(int entityId, @NotNull UUID uuid, int type, @NotNull Pos position,
+@PacketInfo(until = ProtocolVersion.MINECRAFT_1_18_2)
+public record ClientboundLivingEntitySpawn754_758Packet(int entityId, @NotNull UUID uuid, int type,
+                                                        @NotNull Pos position,
                                                         float headRotation, short velocityX, short velocityY,
                                                         short velocityZ) implements ClientboundPacket {
 
