@@ -1,6 +1,8 @@
 package mc.replay.packetlib.utils;
 
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -9,6 +11,7 @@ import java.util.Map;
 public class AdventurePacketConverter {
 
     private static final Map<NamedTextColor, Integer> NAMED_TEXT_COLOR_ID_MAP = new HashMap<>(16);
+    private static final PlainTextComponentSerializer PLAIN_TEXT_COMPONENT_SERIALIZER = PlainTextComponentSerializer.plainText();
 
     static {
         NAMED_TEXT_COLOR_ID_MAP.put(NamedTextColor.BLACK, 0);
@@ -41,5 +44,13 @@ public class AdventurePacketConverter {
         }
 
         return NamedTextColor.BLACK;
+    }
+
+    public static @NotNull String asPlain(@NotNull Component component) {
+        return PLAIN_TEXT_COMPONENT_SERIALIZER.serialize(component);
+    }
+
+    public static @NotNull Component asComponent(@NotNull String plain) {
+        return PLAIN_TEXT_COMPONENT_SERIALIZER.deserialize(plain);
     }
 }

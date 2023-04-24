@@ -2,6 +2,7 @@ package mc.replay.packetlib.data.entity.player;
 
 import mc.replay.packetlib.data.PlayerProfileProperty;
 import mc.replay.packetlib.network.ReplayByteBuffer;
+import mc.replay.packetlib.utils.AdventurePacketConverter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.GameMode;
 import org.jetbrains.annotations.NotNull;
@@ -23,6 +24,18 @@ public interface PlayerInfoEntry extends ReplayByteBuffer.Writer {
             properties = List.copyOf(properties);
         }
 
+        public AddPlayer(@NotNull UUID uuid, String name, List<PlayerProfileProperty> properties, GameMode gameMode,
+                         int ping, @Nullable String plainDisplayName) {
+            this(
+                    uuid,
+                    name,
+                    properties,
+                    gameMode,
+                    ping,
+                    (plainDisplayName == null) ? null : AdventurePacketConverter.asComponent(plainDisplayName)
+            );
+        }
+
         public AddPlayer(@NotNull UUID uuid, @NotNull ReplayByteBuffer reader) {
             this(
                     uuid,
@@ -32,6 +45,10 @@ public interface PlayerInfoEntry extends ReplayByteBuffer.Writer {
                     reader.read(VAR_INT),
                     reader.readOptional(COMPONENT)
             );
+        }
+
+        public @Nullable String displayNameAsPlain() {
+            return (this.displayName == null) ? null : AdventurePacketConverter.asPlain(this.displayName);
         }
 
         @Override
@@ -77,11 +94,22 @@ public interface PlayerInfoEntry extends ReplayByteBuffer.Writer {
 
     record UpdateDisplayName(@NotNull UUID uuid, @Nullable Component displayName) implements PlayerInfoEntry {
 
+        public UpdateDisplayName(@NotNull UUID uuid, @Nullable String plainDisplayName) {
+            this(
+                    uuid,
+                    (plainDisplayName) == null ? null : AdventurePacketConverter.asComponent(plainDisplayName)
+            );
+        }
+
         public UpdateDisplayName(@NotNull UUID uuid, @NotNull ReplayByteBuffer reader) {
             this(
                     uuid,
                     reader.readOptional(COMPONENT)
             );
+        }
+
+        public @Nullable String displayNameAsPlain() {
+            return (this.displayName == null) ? null : AdventurePacketConverter.asPlain(this.displayName);
         }
 
         @Override

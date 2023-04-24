@@ -28,7 +28,10 @@ public final class PacketRegistry {
         this.registerClientboundPacket(ClientboundPacketIdentifier.BLOCK_CHANGE, ClientboundBlockChangePacket.class, ClientboundBlockChangePacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.BLOCK_ENTITY_DATA, ClientboundBlockEntityDataPacket.class, ClientboundBlockEntityDataPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.COLLECT_ITEM, ClientboundCollectItemPacket.class, ClientboundCollectItemPacket::new);
+        this.registerClientboundPacket(ClientboundPacketIdentifier.CUSTOM_CHAT_COMPLETIONS, ClientboundCustomChatCompletionPacket.class, ClientboundCustomChatCompletionPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.CUSTOM_SOUND_EFFECT, ClientboundCustomSoundEffectPacket.class, ClientboundCustomSoundEffectPacket::new);
+        this.registerClientboundPacket(ClientboundPacketIdentifier.DELETE_CHAT_MESSAGE, ClientboundDeleteChatPacket.class, ClientboundDeleteChatPacket::new);
+        this.registerClientboundPacket(ClientboundPacketIdentifier.DISGUISED_CHAT, ClientboundDisguisedChatPacket.class, ClientboundDisguisedChatPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.ENTITY_ANIMATION, ClientboundEntityAnimationPacket.class, ClientboundEntityAnimationPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.ENTITY_ATTACH, ClientboundEntityAttachPacket.class, ClientboundEntityAttachPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.ENTITY_DESTROY, ClientboundEntityDestroyPacket.class, ClientboundEntityDestroyPacket::new);
@@ -58,6 +61,8 @@ public final class PacketRegistry {
         this.registerClientboundPacket(ClientboundPacketIdentifier.SOUND_EFFECT, ClientboundSoundEffectPacket.class, ClientboundSoundEffectPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.STATISTICS, ClientboundStatisticsPacket.class, ClientboundStatisticsPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.STOP_SOUND, ClientboundStopSoundPacket.class, ClientboundStopSoundPacket::new);
+        this.registerClientboundPacket(ClientboundPacketIdentifier.SYSTEM_CHAT, ClientboundSystemChatMessagePacket.class, ClientboundSystemChatMessagePacket::new);
+        this.registerClientboundPacket(ClientboundPacketIdentifier.TAB_COMPLETE, ClientboundTabCompletePacket.class, ClientboundTabCompletePacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.TEAMS, ClientboundTeamsPacket.class, ClientboundTeamsPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.TIME_UPDATE, ClientboundTimeUpdatePacket.class, ClientboundTimeUpdatePacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.UPDATE_HEALTH, ClientboundUpdateHealthPacket.class, ClientboundUpdateHealthPacket::new);
