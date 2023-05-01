@@ -155,6 +155,17 @@ public final class Metadata {
     private Entry<?>[] entries = new Entry<?>[0];
     private Map<Integer, Entry<?>> entryMap = null;
 
+    private boolean detectChanges = false;
+    private Map<Integer, Entry<?>> changes = null;
+
+    public void detectChanges(boolean detectChanges) {
+        this.detectChanges = detectChanges;
+
+        if (!detectChanges) {
+            this.changes = null;
+        }
+    }
+
     @SuppressWarnings("unchecked")
     public <T> T getIndex(int index, @Nullable T defaultValue) {
         final Entry<?>[] entries = this.entries;
@@ -172,6 +183,14 @@ public final class Metadata {
 
         entries[index] = entry;
         this.entryMap = null;
+
+        if (this.detectChanges) {
+            if (this.changes == null) {
+                this.changes = new HashMap<>();
+            }
+
+            this.changes.put(index, entry);
+        }
     }
 
     public Map<Integer, Entry<?>> getEntries() {
@@ -186,6 +205,10 @@ public final class Metadata {
             this.entryMap = Map.copyOf(map);
         }
         return map;
+    }
+
+    public @Nullable Map<Integer, Entry<?>> getChanges() {
+        return this.changes;
     }
 
     public record Entry<T>(int type, @UnknownNullability T value,
