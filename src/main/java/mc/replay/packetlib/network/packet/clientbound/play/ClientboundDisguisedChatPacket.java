@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import static mc.replay.packetlib.network.ReplayByteBuffer.COMPONENT;
 import static mc.replay.packetlib.network.ReplayByteBuffer.VAR_INT;
 
-@PacketInfo(since = ProtocolVersion.MINECRAFT_1_19_3)
+@PacketInfo(since = ProtocolVersion.MINECRAFT_1_19_4)
 public record ClientboundDisguisedChatPacket(@NotNull Component message, int chatType, @NotNull Component chatTypeName,
                                              @Nullable Component targetName) implements ClientboundPacket {
 

@@ -8,7 +8,7 @@ import mc.replay.packetlib.network.packet.clientbound.ClientboundPacketIdentifie
 import mc.replay.packetlib.utils.ProtocolVersion;
 import org.jetbrains.annotations.NotNull;
 
-@PacketInfo(since = ProtocolVersion.MINECRAFT_1_19_1)
+@PacketInfo(since = ProtocolVersion.MINECRAFT_1_19_4)
 public record ClientboundDeleteChatPacket(@NotNull MessageSignature signature) implements ClientboundPacket {
 
     public ClientboundDeleteChatPacket(@NotNull ReplayByteBuffer reader) {

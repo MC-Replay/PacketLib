@@ -27,7 +27,7 @@ public record ServerboundPlayerBlockPlacementPacket(@NotNull PlayerHand hand, @N
                 reader.read(FLOAT),
                 reader.read(FLOAT),
                 reader.read(BOOLEAN),
-                (ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_19))
+                (ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_19_4))
                         ? reader.read(VAR_INT)
                         : -1
         );

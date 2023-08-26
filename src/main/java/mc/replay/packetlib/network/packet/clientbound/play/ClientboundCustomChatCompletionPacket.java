@@ -11,7 +11,7 @@ import java.util.List;
 
 import static mc.replay.packetlib.network.ReplayByteBuffer.STRING;
 
-@PacketInfo(since = ProtocolVersion.MINECRAFT_1_19_1)
+@PacketInfo(since = ProtocolVersion.MINECRAFT_1_19_4)
 public record ClientboundCustomChatCompletionPacket(@NotNull Action action,
                                                     @NotNull List<@NotNull String> entries) implements ClientboundPacket {
 

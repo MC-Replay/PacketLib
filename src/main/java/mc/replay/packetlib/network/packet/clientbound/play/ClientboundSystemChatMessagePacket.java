@@ -19,7 +19,7 @@ public record ClientboundSystemChatMessagePacket(@NotNull Component message, @No
                                                  @Nullable UUID sender) implements ClientboundPacket {
 
     public ClientboundSystemChatMessagePacket {
-        if (sender == null && ProtocolVersion.getServerVersion().isLower(ProtocolVersion.MINECRAFT_1_19)) {
+        if (sender == null && ProtocolVersion.getServerVersion().isLowerOrEqual(ProtocolVersion.MINECRAFT_1_18_2)) {
             sender = new UUID(0L, 0L); // Always displays chat message
         }
     }
@@ -51,10 +51,10 @@ public record ClientboundSystemChatMessagePacket(@NotNull Component message, @No
     public ClientboundSystemChatMessagePacket(@NotNull ReplayByteBuffer reader) {
         this(
                 reader.read(COMPONENT),
-                (ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_19))
+                (ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_19_4))
                         ? (reader.read(BOOLEAN)) ? ChatPosition.SYSTEM : ChatPosition.ACTION_BAR
                         : reader.readEnum(ChatPosition.class),
-                (ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_19))
+                (ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_19_4))
                         ? null
                         : reader.read(UUID)
         );
@@ -68,7 +68,7 @@ public record ClientboundSystemChatMessagePacket(@NotNull Component message, @No
     public void write(@NotNull ReplayByteBuffer writer) {
         writer.write(COMPONENT, this.message);
 
-        if (ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_19)) {
+        if (ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_19_4)) {
             writer.write(BOOLEAN, this.position == ChatPosition.SYSTEM);
         } else {
             writer.writeEnum(ChatPosition.class, this.position);

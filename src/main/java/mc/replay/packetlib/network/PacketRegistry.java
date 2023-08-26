@@ -5,7 +5,7 @@ import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacketIdentifier;
 import mc.replay.packetlib.network.packet.clientbound.play.*;
 import mc.replay.packetlib.network.packet.clientbound.play.legacy.ClientboundAcknowledgePlayerDigging754_758Packet;
-import mc.replay.packetlib.network.packet.clientbound.play.legacy.ClientboundCustomSoundEffect_754_760Packet;
+import mc.replay.packetlib.network.packet.clientbound.play.legacy.ClientboundCustomSoundEffect_754_758Packet;
 import mc.replay.packetlib.network.packet.clientbound.play.legacy.ClientboundLivingEntitySpawn754_758Packet;
 import mc.replay.packetlib.network.packet.clientbound.play.legacy.ClientboundPaintingSpawn754_758Packet;
 import mc.replay.packetlib.network.packet.identifier.PacketIdentifier;
@@ -75,7 +75,7 @@ public final class PacketRegistry {
         this.registerClientboundPacket(ClientboundPacketIdentifier.WORLD_EVENT, ClientboundWorldEventPacket.class, ClientboundWorldEventPacket::new);
 
         this.registerClientboundPacket(ClientboundPacketIdentifier.ACKNOWLEDGE_PLAYER_DIGGING_754_758, ClientboundAcknowledgePlayerDigging754_758Packet.class, ClientboundAcknowledgePlayerDigging754_758Packet::new);
-        this.registerClientboundPacket(ClientboundPacketIdentifier.CUSTOM_SOUND_EFFECT_754_760, ClientboundCustomSoundEffect_754_760Packet.class, ClientboundCustomSoundEffect_754_760Packet::new);
+        this.registerClientboundPacket(ClientboundPacketIdentifier.CUSTOM_SOUND_EFFECT_754_760, ClientboundCustomSoundEffect_754_758Packet.class, ClientboundCustomSoundEffect_754_758Packet::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.SPAWN_LIVING_ENTITY_754_758, ClientboundLivingEntitySpawn754_758Packet.class, ClientboundLivingEntitySpawn754_758Packet::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.SPAWN_PAINTING_754_758, ClientboundPaintingSpawn754_758Packet.class, ClientboundPaintingSpawn754_758Packet::new);
 

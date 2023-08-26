@@ -22,7 +22,7 @@ public record ServerboundPlayerDiggingPacket(@NotNull DiggingStatus status, @Not
                 reader.readEnum(DiggingStatus.class),
                 reader.read(BLOCK_POSITION),
                 reader.read(BLOCK_FACE),
-                (ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_19))
+                (ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_19_4))
                         ? reader.read(VAR_INT)
                         : -1
         );

@@ -30,8 +30,8 @@ public record ClientboundEntitySpawnPacket(int entityId, @NotNull UUID uuid, int
                         reader.read(BYTE) * 360f / 256f,
                         true
                 ),
-                (ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_19)) ? reader.read(BYTE) * 360f / 256f : 0f,
-                (ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_19)) ? reader.read(VAR_INT) : reader.read(INT),
+                (ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_19_4)) ? reader.read(BYTE) * 360f / 256f : 0f,
+                (ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_19_4)) ? reader.read(VAR_INT) : reader.read(INT),
                 reader.read(SHORT),
                 reader.read(SHORT),
                 reader.read(SHORT)
@@ -51,7 +51,7 @@ public record ClientboundEntitySpawnPacket(int entityId, @NotNull UUID uuid, int
         writer.write(BYTE, (byte) (this.position.pitch() * 256 / 360));
         writer.write(BYTE, (byte) (this.position.yaw() * 256 / 360));
 
-        if (ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_19)) {
+        if (ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_19_4)) {
             writer.write(BYTE, (byte) (this.headRotation * 256 / 360));
             writer.write(VAR_INT, this.data);
         } else {

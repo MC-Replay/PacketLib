@@ -9,13 +9,13 @@ import org.jetbrains.annotations.NotNull;
 
 import static mc.replay.packetlib.network.ReplayByteBuffer.*;
 
-@PacketInfo(until = ProtocolVersion.MINECRAFT_1_19_2)
-public record ClientboundCustomSoundEffect_754_760Packet(@NotNull String soundName, int sourceId, int x, int y,
+@PacketInfo(until = ProtocolVersion.MINECRAFT_1_18_2)
+public record ClientboundCustomSoundEffect_754_758Packet(@NotNull String soundName, int sourceId, int x, int y,
                                                          int z,
                                                          float volume, float pitch,
                                                          long seed) implements ClientboundPacket {
 
-    public ClientboundCustomSoundEffect_754_760Packet(@NotNull ReplayByteBuffer reader) {
+    public ClientboundCustomSoundEffect_754_758Packet(@NotNull ReplayByteBuffer reader) {
         this(
                 reader.read(STRING),
                 reader.read(VAR_INT),
@@ -24,9 +24,7 @@ public record ClientboundCustomSoundEffect_754_760Packet(@NotNull String soundNa
                 reader.read(INT) / 8,
                 reader.read(FLOAT),
                 reader.read(FLOAT),
-                (ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_19))
-                        ? 0
-                        : reader.read(LONG)
+                reader.read(LONG)
         );
     }
 
@@ -39,10 +37,7 @@ public record ClientboundCustomSoundEffect_754_760Packet(@NotNull String soundNa
         writer.write(INT, this.z * 8);
         writer.write(FLOAT, this.volume);
         writer.write(FLOAT, this.pitch);
-
-        if (ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_19)) {
-            writer.write(LONG, this.seed);
-        }
+        writer.write(LONG, this.seed);
     }
 
     @Override
