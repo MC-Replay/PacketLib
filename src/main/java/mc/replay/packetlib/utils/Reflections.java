@@ -32,6 +32,7 @@ public final class Reflections {
     public static MethodHandle GET_PLAYER_HANDLE_METHOD;
     public static Method GET_SERVER_CONNECTION_METHOD;
 
+    public static Field PLAYER_CONNECTION_FIELD;
     public static Field NETWORK_MANAGER_FIELD;
     public static Field NETWORK_CHANNEL_FIELD;
 
@@ -58,7 +59,8 @@ public final class Reflections {
             Class<?> craftPlayerClass = ReflectionUtils.obcClass("entity.CraftPlayer");
             GET_PLAYER_HANDLE_METHOD = lookup.findVirtual(craftPlayerClass, "getHandle", MethodType.methodType(ENTITY_PLAYER));
 
-            NETWORK_MANAGER_FIELD = ReflectionUtils.findFieldEquals(ENTITY_PLAYER, NETWORK_MANAGER);
+            PLAYER_CONNECTION_FIELD = ReflectionUtils.findFieldEquals(ENTITY_PLAYER, PLAYER_CONNECTION);
+            NETWORK_MANAGER_FIELD = ReflectionUtils.findFieldEquals(PLAYER_CONNECTION, NETWORK_MANAGER);
             NETWORK_CHANNEL_FIELD = ReflectionUtils.findFieldEquals(NETWORK_MANAGER, Channel.class);
 
             DECODE_METHOD = ReflectionUtils.getMethod(ByteToMessageDecoder.class, "decode", ChannelHandlerContext.class, ByteBuf.class, List.class);
@@ -71,7 +73,8 @@ public final class Reflections {
     public static Channel getPacketChannel(@NotNull Player player) {
         try {
             Object entityPlayer = getEntityPlayer(player);
-            Object networkManager = NETWORK_MANAGER_FIELD.get(entityPlayer);
+            Object playerConnection = PLAYER_CONNECTION_FIELD.get(entityPlayer);
+            Object networkManager = NETWORK_MANAGER_FIELD.get(playerConnection);
             return (Channel) NETWORK_CHANNEL_FIELD.get(networkManager);
         } catch (Throwable throwable) {
             return null;
