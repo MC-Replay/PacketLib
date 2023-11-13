@@ -4,10 +4,7 @@ import mc.replay.packetlib.network.packet.PacketInfo;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacketIdentifier;
 import mc.replay.packetlib.network.packet.clientbound.play.*;
-import mc.replay.packetlib.network.packet.clientbound.play.legacy.ClientboundAcknowledgePlayerDigging754_758Packet;
-import mc.replay.packetlib.network.packet.clientbound.play.legacy.ClientboundCustomSoundEffect_754_758Packet;
-import mc.replay.packetlib.network.packet.clientbound.play.legacy.ClientboundLivingEntitySpawn754_758Packet;
-import mc.replay.packetlib.network.packet.clientbound.play.legacy.ClientboundPaintingSpawn754_758Packet;
+import mc.replay.packetlib.network.packet.clientbound.play.legacy.*;
 import mc.replay.packetlib.network.packet.identifier.PacketIdentifier;
 import mc.replay.packetlib.network.packet.serverbound.ServerboundPacket;
 import mc.replay.packetlib.network.packet.serverbound.ServerboundPacketIdentifier;
@@ -79,6 +76,7 @@ public final class PacketRegistry {
         this.registerClientboundPacket(ClientboundPacketIdentifier.CUSTOM_SOUND_EFFECT_754_760, ClientboundCustomSoundEffect_754_758Packet.class, ClientboundCustomSoundEffect_754_758Packet::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.SPAWN_LIVING_ENTITY_754_758, ClientboundLivingEntitySpawn754_758Packet.class, ClientboundLivingEntitySpawn754_758Packet::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.SPAWN_PAINTING_754_758, ClientboundPaintingSpawn754_758Packet.class, ClientboundPaintingSpawn754_758Packet::new);
+        this.registerClientboundPacket(ClientboundPacketIdentifier.PLAYER_INFO_754_758, ClientboundPlayerInfo754_758Packet.class, ClientboundPlayerInfo754_758Packet::new);
 
         this.registerServerboundPacket(ServerboundPacketIdentifier.ANIMATION, ServerboundAnimationPacket.class, ServerboundAnimationPacket::new);
         this.registerServerboundPacket(ServerboundPacketIdentifier.INTERACT_ENTITY, ServerboundInteractEntityPacket.class, ServerboundInteractEntityPacket::new);
