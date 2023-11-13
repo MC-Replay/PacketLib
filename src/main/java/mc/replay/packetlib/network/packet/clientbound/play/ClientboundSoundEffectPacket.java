@@ -47,7 +47,7 @@ public record ClientboundSoundEffectPacket(Integer soundId, @Nullable String sou
     // Custom sound effect equivalent for versions 1.19.4 and higher
     public ClientboundSoundEffectPacket(@NotNull String soundName, float range, int sourceId, int x, int y, int z, float volume, float pitch, long seed) {
         this(
-                0,
+                null,
                 soundName,
                 range,
                 sourceId,
@@ -81,8 +81,6 @@ public record ClientboundSoundEffectPacket(Integer soundId, @Nullable String sou
 
     @Override
     public void write(@NotNull ReplayByteBuffer writer) {
-        writer.write(VAR_INT, this.soundId);
-
         boolean is1194 = ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_19_4);
         if (is1194) {
             if (this.soundId != null) {
@@ -133,7 +131,7 @@ public record ClientboundSoundEffectPacket(Integer soundId, @Nullable String sou
         int z = reader.read(INT) / 8;
         float volume = reader.read(FLOAT);
         float pitch = reader.read(FLOAT);
-        long seed = (is1194) ? reader.read(LONG) : 0;
+        Long seed = (is1194) ? reader.read(LONG) : null;
 
         return new ClientboundSoundEffectPacket(soundId, soundName, range, sourceId, x, y, z, volume, pitch, seed);
     }

@@ -69,7 +69,8 @@ public final class PacketLibEncoder extends MessageToByteEncoder {
             buffer.write(VAR_INT, packet.identifier().getIdentifier());
             packet.write(buffer);
 
-            byteBuf.writeBytes(buffer.readBytes(buffer.writeIndex()));
+            byte[] bytes = buffer.readBytes(buffer.writeIndex());
+            byteBuf.writeBytes(bytes);
             return;
         }
 

@@ -69,7 +69,7 @@ public final class ReplayByteBuffer {
     public <T> void write(@NotNull Type<T> type, @UnknownNullability T value) {
         final long length = type.writer().write(this, value);
         if (length != -1) {
-            this.writeIndex += length;
+            this.writeIndex += (int) length;
         }
     }
 

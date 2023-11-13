@@ -52,7 +52,7 @@ public record ClientboundSystemChatMessagePacket(@NotNull Component message, @No
         this(
                 reader.read(COMPONENT),
                 (ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_19_4))
-                        ? (reader.read(BOOLEAN)) ? ChatPosition.SYSTEM : ChatPosition.ACTION_BAR
+                        ? (reader.read(BOOLEAN)) ? ChatPosition.ACTION_BAR : ChatPosition.SYSTEM
                         : reader.readEnum(ChatPosition.class),
                 (ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_19_4))
                         ? null
@@ -69,7 +69,7 @@ public record ClientboundSystemChatMessagePacket(@NotNull Component message, @No
         writer.write(COMPONENT, this.message);
 
         if (ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_19_4)) {
-            writer.write(BOOLEAN, this.position == ChatPosition.SYSTEM);
+            writer.write(BOOLEAN, this.position == ChatPosition.ACTION_BAR);
         } else {
             writer.writeEnum(ChatPosition.class, this.position);
             writer.write(UUID, this.sender);
