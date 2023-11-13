@@ -36,7 +36,6 @@ public final class Reflections {
     public static Field NETWORK_MANAGER_FIELD;
     public static Field NETWORK_CHANNEL_FIELD;
 
-
     public static Object MINECRAFT_SERVER_INSTANCE;
 
     private static Method DECODE_METHOD;
