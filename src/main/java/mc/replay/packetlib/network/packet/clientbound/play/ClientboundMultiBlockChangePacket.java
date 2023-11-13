@@ -4,6 +4,7 @@ import mc.replay.packetlib.network.ReplayByteBuffer;
 import mc.replay.packetlib.network.packet.PacketInfo;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacket;
 import mc.replay.packetlib.network.packet.clientbound.ClientboundPacketIdentifier;
+import mc.replay.packetlib.utils.ProtocolVersion;
 import org.jetbrains.annotations.NotNull;
 
 import static mc.replay.packetlib.network.ReplayByteBuffer.*;
@@ -15,7 +16,9 @@ public record ClientboundMultiBlockChangePacket(long chunkSectionPosition, boole
     public ClientboundMultiBlockChangePacket(@NotNull ReplayByteBuffer reader) {
         this(
                 reader.read(LONG),
-                reader.read(BOOLEAN),
+                (ProtocolVersion.getServerVersion().isLowerOrEqual(ProtocolVersion.MINECRAFT_1_19_4))
+                        ? reader.read(BOOLEAN)
+                        : false,
                 reader.read(VAR_LONG_ARRAY)
         );
     }
@@ -23,7 +26,11 @@ public record ClientboundMultiBlockChangePacket(long chunkSectionPosition, boole
     @Override
     public void write(@NotNull ReplayByteBuffer writer) {
         writer.write(LONG, this.chunkSectionPosition);
-        writer.write(BOOLEAN, this.suppressLightUpdates);
+
+        if (ProtocolVersion.getServerVersion().isLowerOrEqual(ProtocolVersion.MINECRAFT_1_19_4)) {
+            writer.write(BOOLEAN, this.suppressLightUpdates);
+        }
+
         writer.write(VAR_LONG_ARRAY, this.blocks);
     }
 
