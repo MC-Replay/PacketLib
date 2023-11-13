@@ -14,5 +14,5 @@ public @interface PacketInfo {
 
     @NotNull ProtocolVersion since() default ProtocolVersion.MINECRAFT_1_16_5;
 
-    @NotNull ProtocolVersion until() default ProtocolVersion.MINECRAFT_1_19_4;
+    @NotNull ProtocolVersion until() default ProtocolVersion.MINECRAFT_1_20_1;
 }
