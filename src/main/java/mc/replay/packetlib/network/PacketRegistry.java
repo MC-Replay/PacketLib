@@ -55,6 +55,7 @@ public final class PacketRegistry {
         this.registerClientboundPacket(ClientboundPacketIdentifier.HELD_ITEM_CHANGE, ClientboundHeldItemChangePacket.class, ClientboundHeldItemChangePacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.MULTI_BLOCK_CHANGE, ClientboundMultiBlockChangePacket.class, ClientboundMultiBlockChangePacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.PARTICLE, ClientboundParticlePacket.class, ClientboundParticlePacket::new);
+        this.registerClientboundPacket(ClientboundPacketIdentifier.PLAYER_INFO_REMOVE, ClientboundPlayerInfoRemovePacket.class, ClientboundPlayerInfoRemovePacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.PLAYER_INFO, ClientboundPlayerInfoPacket.class, ClientboundPlayerInfoPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.PLAYER_POSITION_AND_LOOK, ClientboundPlayerPositionAndLookPacket.class, ClientboundPlayerPositionAndLookPacket::new);
         this.registerClientboundPacket(ClientboundPacketIdentifier.PLAYER_SPAWN, ClientboundPlayerSpawnPacket.class, ClientboundPlayerSpawnPacket::new);

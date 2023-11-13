@@ -64,6 +64,7 @@ public enum ClientboundPacketIdentifier implements PacketIdentifier {
     END_COMBAT_EVENT,
     ENTER_COMBAT_EVENT,
     DEATH_COMBAT_EVENT,
+    PLAYER_INFO_REMOVE,
     PLAYER_INFO,
     FACE_PLAYER,
     PLAYER_POSITION_AND_LOOK,
