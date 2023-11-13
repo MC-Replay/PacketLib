@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import static mc.replay.packetlib.network.ReplayByteBuffer.*;
 
 @PacketInfo
-public record ClientboundSoundEffectPacket(int soundId, @Nullable String soundName, @Nullable Boolean hasFixedRange,
+public record ClientboundSoundEffectPacket(Integer soundId, @Nullable String soundName,
                                            @Nullable Float range, int sourceId, int x, int y,
                                            int z, float volume, float pitch,
                                            @Nullable Long seed) implements ClientboundPacket {
@@ -19,7 +19,6 @@ public record ClientboundSoundEffectPacket(int soundId, @Nullable String soundNa
     public ClientboundSoundEffectPacket(int soundId, int sourceId, int x, int y, int z, float volume, float pitch, @Nullable Long seed) {
         this(
                 soundId,
-                null,
                 null,
                 null,
                 sourceId,
@@ -46,11 +45,10 @@ public record ClientboundSoundEffectPacket(int soundId, @Nullable String soundNa
     }
 
     // Custom sound effect equivalent for versions 1.19.4 and higher
-    public ClientboundSoundEffectPacket(@NotNull String soundName, boolean hasFixedRange, float range, int sourceId, int x, int y, int z, float volume, float pitch, long seed) {
+    public ClientboundSoundEffectPacket(@NotNull String soundName, float range, int sourceId, int x, int y, int z, float volume, float pitch, long seed) {
         this(
                 0,
                 soundName,
-                hasFixedRange,
                 range,
                 sourceId,
                 x,
@@ -63,26 +61,21 @@ public record ClientboundSoundEffectPacket(int soundId, @Nullable String soundNa
     }
 
     public ClientboundSoundEffectPacket(@NotNull ReplayByteBuffer reader) {
+        this(read(reader));
+    }
+
+    private ClientboundSoundEffectPacket(ClientboundSoundEffectPacket packet) {
         this(
-                reader.read(VAR_INT),
-                (ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_19_4))
-                        ? reader.readOptional(STRING)
-                        : null,
-                (ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_19_4))
-                        ? reader.readOptional(BOOLEAN)
-                        : null,
-                (ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_19_4))
-                        ? reader.readOptional(FLOAT)
-                        : null,
-                reader.read(VAR_INT),
-                reader.read(INT) / 8,
-                reader.read(INT) / 8,
-                reader.read(INT) / 8,
-                reader.read(FLOAT),
-                reader.read(FLOAT),
-                (ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_19_4))
-                        ? reader.read(LONG)
-                        : null
+                packet.soundId(),
+                packet.soundName(),
+                packet.range(),
+                packet.sourceId(),
+                packet.x(),
+                packet.y(),
+                packet.z(),
+                packet.volume(),
+                packet.pitch(),
+                packet.seed()
         );
     }
 
@@ -92,9 +85,15 @@ public record ClientboundSoundEffectPacket(int soundId, @Nullable String soundNa
 
         boolean is1194 = ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_19_4);
         if (is1194) {
-            writer.writeOptional(STRING, this.soundName);
-            writer.writeOptional(BOOLEAN, this.hasFixedRange);
-            writer.writeOptional(FLOAT, this.range);
+            if (this.soundId != null) {
+                writer.write(VAR_INT, this.soundId + 1);
+            } else {
+                writer.write(VAR_INT, 0);
+                writer.write(STRING, this.soundName);
+                writer.writeOptional(FLOAT, this.range);
+            }
+        } else {
+            writer.write(VAR_INT, this.soundId);
         }
 
         writer.write(VAR_INT, this.sourceId);
@@ -112,5 +111,30 @@ public record ClientboundSoundEffectPacket(int soundId, @Nullable String soundNa
     @Override
     public @NotNull ClientboundPacketIdentifier identifier() {
         return ClientboundPacketIdentifier.SOUND_EFFECT;
+    }
+
+    private static ClientboundSoundEffectPacket read(ReplayByteBuffer reader) {
+        Integer soundId = reader.read(VAR_INT);
+        String soundName = null;
+        Float range = null;
+
+        boolean is1194 = ProtocolVersion.getServerVersion().isHigherOrEqual(ProtocolVersion.MINECRAFT_1_19_4);
+        if (is1194) {
+            if (soundId == 0) {
+                soundId = null;
+                soundName = reader.read(STRING);
+                range = reader.readOptional(FLOAT);
+            }
+        }
+
+        int sourceId = reader.read(VAR_INT);
+        int x = reader.read(INT) / 8;
+        int y = reader.read(INT) / 8;
+        int z = reader.read(INT) / 8;
+        float volume = reader.read(FLOAT);
+        float pitch = reader.read(FLOAT);
+        long seed = (is1194) ? reader.read(LONG) : 0;
+
+        return new ClientboundSoundEffectPacket(soundId, soundName, range, sourceId, x, y, z, volume, pitch, seed);
     }
 }
